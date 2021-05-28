@@ -1,0 +1,81 @@
+.notification-item {
+	animation: SlideLeft 0.4s forwards;
+	margin-bottom: 5px;
+}
+
+.notification-content {
+	display: flex;
+	align-items: center;
+	padding: 10px 0;
+}
+
+.notification-icon {
+	margin: 0 15px;
+}
+
+.notification-text {
+	padding: 0;
+	margin: 0;
+	line-height: 1.5rem;
+}
+
+.notification-bar {
+	height: 5px;
+	background-color: red;
+}
+
+.notification-item.exit {
+	animation: SlideRight 0.2s forwards;
+}
+
+.notification-item.notification-error {
+	background-color: #ffa7a7;
+	color: #a12929;
+}
+
+.notification-item.notification-success {
+	background-color: #bdfdbb;
+	color: #279736;
+}
+
+.notification-item.notification-error .notification-bar {
+	background-color: #fd4646;
+}
+
+.notification-item.notification-success .notification-bar {
+	background-color: #4cfd46;
+}
+
+.notification-item .fa-times {
+	color: #a12929;
+	font-size: 1.1rem;
+}
+
+.notification-item .fa-check {
+	color: #279736;
+	font-size: 1.1rem;
+}
+
+@keyframes SlideLeft {
+	0% {
+		transform: translateX(100%);
+	}
+	30% {
+		transform: translateX(-10%);
+	}
+	50% {
+		transform: translateX(-5%);
+	}
+	100% {
+		transform: translateX(-7%);
+	}
+}
+
+@keyframes SlideRight {
+	0% {
+		transform: translateX(-7%);
+	}
+	100% {
+		transform: translateX(100%);
+	}
+}

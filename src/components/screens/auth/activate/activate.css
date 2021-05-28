@@ -1,0 +1,45 @@
+.activation-container {
+	width: 100%;
+	min-height: 100vh;
+
+	margin: 0 auto;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	user-select: none;
+}
+
+.activation-wrapper {
+	text-align: center;
+	z-index: 1;
+}
+
+.activation-status {
+	font-size: 2rem;
+	margin-bottom: 2rem;
+}
+
+.activation-link {
+	padding: 10px 15px;
+	background-color: #17beec;
+	color: #ffffff;
+}
+
+.activation-link:hover {
+	background-color: #10afdb;
+	color: #ffffff;
+}
+
+@media (max-width: 600px) {
+	.activation-status {
+		font-size: 1.5rem;
+		margin-bottom: 1.5rem;
+	}
+	.activation-link {
+		padding: 10px 15px;
+		font-size: 0.8rem;
+	}
+}

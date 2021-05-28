@@ -1,0 +1,88 @@
+/* Layout */
+.container {
+	position: fixed;
+
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+
+	background-color: #00000065;
+
+	z-index: 1;
+
+	animation-name: fadeIn;
+	animation-duration: 0.3s;
+}
+
+.modal {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+	max-width: 500px;
+	width: 90%;
+
+	max-height: 400px;
+
+	background-color: #fefefe;
+	z-index: 100;
+
+	animation-name: modalAppears;
+	animation-duration: 0.3s;
+}
+
+/* Modal header */
+.modalHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	border-bottom: 1px solid #d7d7d7;
+
+	padding: 1em;
+}
+
+.modalHeader span {
+	font-size: 20px;
+}
+
+/* Modal content */
+.modalContent {
+	padding: 1em;
+	overflow-y: auto;
+}
+
+/* Modal footer */
+.modalFooter {
+	display: flex;
+	padding: 1rem;
+	border-top: 1px solid #d7d7d7;
+}
+
+.modalFooter button:not(:first-child) {
+    margin-left: 5px;
+}
+
+/* Animation */
+@keyframes modalAppears {
+	from {
+		top: -50%;
+	}
+	to {
+		top: 50%;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

@@ -1,0 +1,27 @@
+.otpbox-container {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+.otpbox-input {
+	height: 35px;
+	width: 35px;
+
+	text-align: center;
+	caret-color: transparent;
+
+	border: none;
+	border-bottom: 3px solid #d7d7d7;
+	outline: none;
+}
+
+.otpbox-input:focus {
+	border-bottom: 3px solid #17beec;
+	animation: blink 1.5s linear infinite;
+}
+
+@keyframes blink {
+	50% {
+		border-color: transparent;
+	}
+}

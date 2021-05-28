@@ -1,0 +1,68 @@
+* {
+	box-sizing: border-box;
+}
+
+.topbar-container {
+	display: flex;
+    flex-direction: column;
+
+	position: relative;
+
+	overflow-x: auto;
+	overflow-y: hidden;
+
+	max-width: 100%;
+}
+
+.topbar-item {
+	position: relative;
+
+	color: #83818c;
+	text-decoration: none;
+    
+	margin: 0 6px;
+	padding: 20px;
+    
+	transition: 0.3s;
+	z-index: 1;
+}
+
+.topbar-indicator {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+    
+	height: 5px;
+    
+	border-radius: 8px 8px 0 0;
+
+	transition: 0.4s;
+	z-index: 1;
+}
+
+.topbar-item.is-active {
+    color: #17beec;
+}
+
+.topbar-item.is-active ~ .topbar-indicator {
+	background: #17beec;
+}
+
+@media (max-width: 850px) {
+	.topbar-container {
+		flex-direction: row;
+		justify-content: space-around;
+		width: 100%;
+
+		overflow-x: auto;
+	}
+}
+
+@media (max-width: 500px) {
+	.topbar-container {
+		justify-content: space-between;
+	}
+	.topbar-item {
+		margin: 0 10px;
+	}
+}
