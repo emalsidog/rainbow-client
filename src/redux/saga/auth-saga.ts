@@ -44,12 +44,11 @@ function* register(action: RegisterRequest) {
 
 function* login(action: LoginRequest) {
 	try {
-		const { data } = yield call(() =>
+		const { data: { body } } = yield call(() =>
 			AxiosPostRequest("/authentication/login", action.payload)
 		);
-		const { user } = data.body;
 
-		yield put(setUser(user));
+		yield put(setUser(body));
 		yield put(authActions.loginSuccess());
 	} catch (error) {
 		yield put(authActions.loginFailure());
