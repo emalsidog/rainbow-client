@@ -30,4 +30,5 @@ export interface IsLoading {
 	changeName: boolean;
 	changeProfileId: boolean;
 	changeEmail: boolean;
+	deleteAccount: boolean;
 }

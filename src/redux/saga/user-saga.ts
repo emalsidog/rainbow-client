@@ -3,7 +3,7 @@ import { takeEvery, call, put } from "redux-saga/effects";
 
 // Actions
 import * as userActions from "../actions/user-actions";
-import { loginSuccess } from "../actions/auth-actions";
+import { loginSuccess, logoutSuccess } from "../actions/auth-actions";
 import { addNotification } from "../actions/notifications-actions";
 
 // Utils
@@ -15,6 +15,7 @@ import {
 	ChangeProfileIdRequest,
 	ChangeEmailReqRequest,
 	ChangeEmailRequest,
+	DeleteAccountRequest,
 } from "../actions/types/user-actions-types/user-actions-types";
 import { UserExtended } from "../actions/types/user-actions-types/user-common-types";
 
@@ -27,6 +28,7 @@ export function* userWatcher() {
 	yield takeEvery("CHANGE_EMAIL_REQ_REQUEST", changeEmailRequest);
 	yield takeEvery("CHANGE_EMAIL_REQUEST", changeEmail);
 	yield takeEvery("CHANGE_EMAIL_ABORT_REQUEST", changeEmailAbort);
+	yield takeEvery("DELETE_ACCOUNT_REQUEST", deleteAccount);
 }
 
 function* currentUser() {
@@ -135,5 +137,20 @@ function* changeEmailAbort() {
 		const { status } = error.response.data;
 		yield put(userActions.changeEmailAbortFailure());
 		yield put(addNotification(status));
+	}
+}
+
+function* deleteAccount(action: DeleteAccountRequest) {
+	const payload = { password: action.password };
+	try {
+		const { data: { status } } = yield call(() => AxiosPostRequest("/settings/delete", payload));
+
+		yield put(logoutSuccess());
+		yield put(userActions.deleteAccountSuccess());
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.deleteAccountFailure());
+		yield put(addNotification(status));	
 	}
 }

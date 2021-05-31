@@ -1,59 +1,60 @@
 // Dependencies
-import React from "react";
+import React, { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
-
-// Selectors
-import { selectUser } from "../../../../redux/selectors/user-selector";
+import { NavHashLink } from "react-router-hash-link";
 
 // Styles
 import "./sidebar.css";
 
-const Sidebar = () => {
-	const user = useSelector(selectUser);
+// Types
+interface SidebarProps {
+	children: ReactNode;
+	secondSidebar?: boolean;
+}
 
+interface SidebarItemProps {
+	children: ReactNode;
+	linkTo: string;
+	hashLink?: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = (props) => {
+	const { children, secondSidebar = false } = props;
+
+	const classNames = secondSidebar
+		? "col-2 sidebar-container right-sidebar"
+		: "col-2 sidebar-container left-sidebar";
+
+	return <div className={classNames}>{children}</div>;
+};
+
+const SidebarItem: React.FC<SidebarItemProps> = (props) => {
+	const { children, linkTo, hashLink = false } = props;
+
+	const scrollWithOffset = (el: HTMLElement) => {
+		const yCoordinate = el.getBoundingClientRect().top + window.pageYOffset;
+		const yOffset = -60;
+		window.scrollTo({ top: yCoordinate + yOffset, behavior: "smooth" });
+	};
+
+	if (hashLink) {
+		return (
+			<NavHashLink
+				className="sidebar-item"
+				activeClassName="active"
+				to={linkTo}
+				scroll={scrollWithOffset}
+			>
+				{children}
+			</NavHashLink>
+		);
+	}
 	return (
-		<div className="col-2 sidebar-container">
-			<NavLink
-				className="sidebar-item"
-				activeClassName="active"
-				to={`/${user.profileId}`}
-			>
-				<i className="fas fa-home fa-fw"></i>
-
-				<span>Home</span>
-			</NavLink>
-
-			<NavLink
-				className="sidebar-item"
-				activeClassName="active"
-				to="/friends"
-			>
-				<span>
-					<i className="fas fa-user-friends fa-fw"></i>
-				</span>
-				Friends
-			</NavLink>
-
-			<NavLink
-				className="sidebar-item"
-				activeClassName="active"
-				to="/messenger"
-			>
-				<i className="fas fa-envelope fa-fw"></i>
-				<span>Messenger</span>
-			</NavLink>
-
-			<NavLink
-				className="sidebar-item"
-				activeClassName="active"
-				to="/music"
-			>
-				<i className="fas fa-music fa-fw"></i>
-				<span>Music</span>
-			</NavLink>
-		</div>
+		<NavLink className="sidebar-item" activeClassName="active" to={linkTo}>
+			{children}
+		</NavLink>
 	);
 };
 
 export default Sidebar;
+export { SidebarItem };

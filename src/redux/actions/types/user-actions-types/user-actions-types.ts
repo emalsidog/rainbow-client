@@ -31,10 +31,18 @@ const CHANGE_EMAIL_ABORT_REQUEST = "CHANGE_EMAIL_ABORT_REQUEST";
 const CHANGE_EMAIL_ABORT_SUCCESS = "CHANGE_EMAIL_ABORT_SUCCESS";
 const CHANGE_EMAIL_ABORT_FAILURE = "CHANGE_EMAIL_ABORT_FAILURE";
 
+const DELETE_ACCOUNT_REQUEST = "DELETE_ACCOUNT_REQUEST";
+const DELETE_ACCOUNT_SUCCESS = "DELETE_ACCOUNT_SUCCESS";
+const DELETE_ACCOUNT_FAILURE = "DELETE_ACCOUNT_FAILURE";
+
+// SET USER
+
 export interface SetUser {
 	type: typeof SET_USER;
 	payload: UserExtended;
 }
+
+// GET USER
 
 export interface GetUserRequest {
 	type: typeof GET_USER_REQUEST;
@@ -127,6 +135,21 @@ export interface ChangeEmailAbortFailure {
 	type: typeof CHANGE_EMAIL_ABORT_FAILURE;
 }
 
+// DELETE ACCOUNT
+
+export interface DeleteAccountRequest {
+	type: typeof DELETE_ACCOUNT_REQUEST;
+	password: string;
+}
+
+export interface DeleteAccountSuccess {
+	type: typeof DELETE_ACCOUNT_SUCCESS;
+}
+
+export interface DeleteAccountFailure {
+	type: typeof DELETE_ACCOUNT_FAILURE;
+}
+
 export type UserActionTypes =
 	| SetUser
 	| GetUserRequest
@@ -146,4 +169,7 @@ export type UserActionTypes =
 	| ChangeEmailFailure
 	| ChangeEmailAbortRequest
 	| ChangeEmailAbortSuccess
-	| ChangeEmailAbortFailure;
+	| ChangeEmailAbortFailure
+	| DeleteAccountRequest
+	| DeleteAccountSuccess
+	| DeleteAccountFailure;

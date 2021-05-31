@@ -110,3 +110,18 @@ export const changeEmailAbortSuccess = (
 export const changeEmailAbortFailure = (): AppActionTypes => ({
 	type: "CHANGE_EMAIL_ABORT_FAILURE",
 });
+
+// DELETE ACCOUNT
+
+export const deleteAccountRequest = (password: string): AppActionTypes => ({
+	type: "DELETE_ACCOUNT_REQUEST",
+	password,
+});
+
+export const deleteAccountSuccess = (): AppActionTypes => ({
+	type: "DELETE_ACCOUNT_SUCCESS",
+});
+
+export const deleteAccountFailure = (): AppActionTypes => ({
+	type: "DELETE_ACCOUNT_FAILURE",
+});

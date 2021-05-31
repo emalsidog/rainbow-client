@@ -27,13 +27,14 @@ const initialState: InitialState = {
 	emailChangingProcess: {
 		timeToNextEmail: undefined,
 		isChangingProcess: false,
-		newEmail: ""
+		newEmail: "",
 	},
 
 	isLoading: {
 		changeName: false,
 		changeProfileId: false,
 		changeEmail: false,
+		deleteAccount: false,
 	},
 };
 
@@ -246,6 +247,42 @@ export const user = (
 				isLoading: {
 					...state.isLoading,
 					changeEmail: false,
+				},
+			};
+		}
+
+		// DELETE ACCOUNT
+
+		case "DELETE_ACCOUNT_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					deleteAccount: true,
+				},
+			};
+		}
+		case "DELETE_ACCOUNT_SUCCESS": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					deleteAccount: false,
+				},
+				user: {
+					givenName: "",
+					familyName: "",
+					email: "",
+					profileId: "",
+				},
+			};
+		}
+		case "DELETE_ACCOUNT_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					deleteAccount: false,
 				},
 			};
 		}

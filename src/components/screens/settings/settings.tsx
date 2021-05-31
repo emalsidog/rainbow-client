@@ -14,23 +14,41 @@ import "./settings.css";
 
 // Components
 import Layout from "../../common/layout";
+import SectionHeading from "./settings-components/section-heading";
 
 import ChangeName from "./settings-components/change-name";
 import ChangeProfileId from "./settings-components/change-profileId";
 import ChangeEmail from "./settings-components/change-email";
+import DeleteAccount from "./settings-components/delete-account";
 
 const Settings: React.FC = () => {
 	const user = useSelector(selectUser);
 	const emailChangingProcess = useSelector(selectEmailChangingProcess);
 	const isLoading = useSelector(selectIsLoading);
 
+	const secondSidebarOptions = [
+		{
+			title: "Personal info",
+			linkTo: "#personal-info",
+			hashLink: true,
+		},
+		{
+			title: "Danger zone",
+			linkTo: "#danger-zone",
+			hashLink: true,
+		},
+	];
+
 	return (
-		<Layout>
+		<Layout secondSidebar secondSidebarOptions={secondSidebarOptions}>
 			<div className="settings-wrapper">
-				<div className="settings-heading">
-					<span>Personal info</span>
-					<p>Basic information about you, like name and photo</p>
-				</div>
+				<SectionHeading
+					anchor="personal-info"
+					title="Personal info"
+					description="Basic information about you, like name and photo"
+					displayStyle="DEFAULT"
+					isFirst
+				/>
 
 				<ChangeName
 					isLoading={isLoading.changeName}
@@ -48,6 +66,15 @@ const Settings: React.FC = () => {
 					email={user.email}
 					emailChangingProcess={emailChangingProcess}
 				/>
+
+				<SectionHeading
+					anchor="danger-zone"
+					title="Danger zone"
+					description="Here you are able to do things, that can NOT be fixed. Be careful"
+					displayStyle="DANGER"
+				/>
+
+				<DeleteAccount isLoading={isLoading.deleteAccount} />
 			</div>
 		</Layout>
 	);

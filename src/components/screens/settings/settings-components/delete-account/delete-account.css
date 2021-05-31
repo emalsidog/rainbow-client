@@ -1,0 +1,9 @@
+.delete-info {
+	border-left: 2px solid red;
+	padding-left: 10px;
+}
+
+.delete-info span {
+	color: gray;
+	font-size: 14px;
+}

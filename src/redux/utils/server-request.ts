@@ -37,7 +37,7 @@ export const AxiosPostRequest = async (url: string, payload: any) => {
 	} catch (error) {
 		if (error.response.status === 401) {
 			try {
-				await axios.post(`${_url}/authentication/refresh`, {
+				await axios.get(`${_url}/authentication/refresh`, {
 					withCredentials: true,
 				});
 				const data = await axios.post(`${_url}${url}`, payload, {
