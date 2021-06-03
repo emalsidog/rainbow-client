@@ -16,6 +16,9 @@ import Activate from "../screens/auth/activate";
 import Reset from "../screens/auth/reset";
 
 import Profile from "../screens/profile";
+import Friends from "../screens/friends";
+import Messenger from "../screens/messenger";
+import Music from "../screens/music";
 import Settings from "../screens/settings";
 
 import Notification from "../common/notification";
@@ -47,6 +50,9 @@ const App: React.FC = () => {
 			/>
 			<Switch>
 				<ProtectedRoute exact path="/settings" component={Settings} />
+				<ProtectedRoute exact path="/friends" component={Friends} />
+				<ProtectedRoute exact path="/messenger" component={Messenger} />
+				<ProtectedRoute exact path="/music" component={Music} />
 				<ProtectedRoute exact path="/:profileId" component={Profile} />
 
 				<Route path="/users/login" component={Login} />

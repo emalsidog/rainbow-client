@@ -141,7 +141,7 @@ const Login: React.FC = () => {
 								type="password"
 								disabled={isLoading}
 							/>
-							<ShowFormError message={errors.email?.message} />
+							<ShowFormError message={errors.password?.message} />
 						</div>
 
 						<button

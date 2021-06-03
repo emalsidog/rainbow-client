@@ -19,6 +19,11 @@ import SectionHeading from "./settings-components/section-heading";
 import ChangeName from "./settings-components/change-name";
 import ChangeProfileId from "./settings-components/change-profileId";
 import ChangeEmail from "./settings-components/change-email";
+import ChangePassword from "./settings-components/change-password";
+import ChangeAvatar from "./settings-components/change-avatar";
+import ChangeBio from "./settings-components/change-bio";
+import ChangeBirthday from "./settings-components/change-birthday";
+
 import DeleteAccount from "./settings-components/delete-account";
 
 const Settings: React.FC = () => {
@@ -26,21 +31,8 @@ const Settings: React.FC = () => {
 	const emailChangingProcess = useSelector(selectEmailChangingProcess);
 	const isLoading = useSelector(selectIsLoading);
 
-	const secondSidebarOptions = [
-		{
-			title: "Personal info",
-			linkTo: "#personal-info",
-			hashLink: true,
-		},
-		{
-			title: "Danger zone",
-			linkTo: "#danger-zone",
-			hashLink: true,
-		},
-	];
-
 	return (
-		<Layout secondSidebar secondSidebarOptions={secondSidebarOptions}>
+		<Layout>
 			<div className="settings-wrapper">
 				<SectionHeading
 					anchor="personal-info"
@@ -56,9 +48,37 @@ const Settings: React.FC = () => {
 					familyName={user.familyName}
 				/>
 
+				<ChangeBio isLoading={isLoading.changeBio} bio={user.bio} />
+
+				<ChangeAvatar isLoading={isLoading.changePhoto} />
+
+				<ChangeBirthday
+					isLoading={isLoading.changeBirthday}
+					birthday={user.birthday}
+				/>
+
+				<SectionHeading
+					anchor="account-info"
+					title="Account info"
+					description="Your account data such as profile ID"
+					displayStyle="DEFAULT"
+				/>
+
 				<ChangeProfileId
 					isLoading={isLoading.changeProfileId}
 					profileId={user.profileId}
+				/>
+
+				<ChangePassword
+					lastTimeChanged={user.lastTimeChanged}
+					isLoading={isLoading.changePassword}
+				/>
+
+				<SectionHeading
+					anchor="contact-info"
+					title="Contact info"
+					description="Your contact info. It can not be seen by other users"
+					displayStyle="DEFAULT"
 				/>
 
 				<ChangeEmail

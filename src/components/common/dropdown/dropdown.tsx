@@ -4,12 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 // Styles
 import "./dropdown.css";
 
-// Assets
-import birby from "../../../assets/images/Birby.png"; // Test image
-
 // Types
 interface DropdownProps {
 	children: React.ReactNode;
+	avatar: string;
 }
 
 interface DropdownItemProps {
@@ -18,7 +16,7 @@ interface DropdownItemProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
-	const { children } = props;
+	const { children, avatar } = props;
 
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const ref = useRef<HTMLDivElement>(null);
@@ -49,7 +47,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 		<div className="dd-wrapper" ref={ref}>
 			<div onClick={handleClick} className="dd-header">
 				<div className="dd-header-img">
-					<img src={birby} alt="" />
+					<img src={avatar} alt="You" />
 				</div>
 			</div>
 			{isVisible ? <div className="dd-list">{children}</div> : null}

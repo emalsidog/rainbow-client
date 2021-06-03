@@ -66,7 +66,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 
 			<div className="settings-row-change">
 				<span>
-					http://localhost/<b>{userInput}</b>
+					http://localhost:3000/<b>{userInput}</b>
 				</span>
 				{changeProfileIdShow && (
 					<form

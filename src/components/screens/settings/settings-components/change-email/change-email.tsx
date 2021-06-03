@@ -36,8 +36,7 @@ interface Inputs {
 
 const ChangeEmail: React.FC<ChangeEmailProps> = (props) => {
 	const { email, isLoading, emailChangingProcess } = props;
-	const { isChangingProcess, timeToNextEmail, newEmail } =
-		emailChangingProcess;
+	const { isChangingProcess, timeToNextEmail, newEmail } = emailChangingProcess;
 
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 	const [timeLeft, setTimeLeft] = useState<string | null>(null);
@@ -55,21 +54,24 @@ const ChangeEmail: React.FC<ChangeEmailProps> = (props) => {
 		dispatch(changeEmailReqRequest(data.email));
 	};
 
+	// On code submition
 	const onCodeSubmit = () => {
 		const otpString = otp.join("");
-
 		dispatch(changeEmailRequest(otpString));
 	};
 
+	// On code resending
 	const onCodeResend = () => {
 		dispatch(changeEmailReqRequest(newEmail));
 	};
 
+	// On aborting
 	const onAbort = () => {
 		dispatch(changeEmailAbortRequest());
 		setTimeLeft(null);
 	};
 
+	// Setting interval
 	useEffect(() => {
 		let intervalId: number;
 

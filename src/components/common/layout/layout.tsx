@@ -35,7 +35,11 @@ const Layout: React.FC<LayoutProps> = (props) => {
 
 	const secondSidebarRender = secondSidebarOptions?.map((options) => {
 		return (
-			<SidebarItem key={options.title} hashLink={options.hashLink} linkTo={options.linkTo}>
+			<SidebarItem
+				key={options.title}
+				hashLink={options.hashLink}
+				linkTo={options.linkTo}
+			>
 				<span>{options.title}</span>
 			</SidebarItem>
 		);
@@ -66,7 +70,9 @@ const Layout: React.FC<LayoutProps> = (props) => {
 
 				{children}
 
-				{secondSidebar && <Sidebar secondSidebar>{secondSidebarRender}</Sidebar>}
+				{secondSidebar && (
+					<Sidebar secondSidebar>{secondSidebarRender}</Sidebar>
+				)}
 			</main>
 		</React.Fragment>
 	);

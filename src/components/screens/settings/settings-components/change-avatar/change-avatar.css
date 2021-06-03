@@ -1,0 +1,26 @@
+.change-avatar-from {
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+
+.change-avatar-from input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    position: absolute;
+    z-index: -10;
+}
+
+.change-avatar-from label {
+    font-weight: 600;
+}
+
+.change-avatar-from label:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.change-avatar-from div {
+    padding: 20px 0 10px 0;
+}

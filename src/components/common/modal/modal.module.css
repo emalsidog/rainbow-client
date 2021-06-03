@@ -27,8 +27,6 @@
 	max-width: 500px;
 	width: 90%;
 
-	max-height: 400px;
-
 	background-color: #fefefe;
 	z-index: 100;
 
@@ -54,7 +52,13 @@
 /* Modal content */
 .modalContent {
 	padding: 1em;
+	height: auto;
 	overflow-y: auto;
+	max-height: 500px;
+}
+
+.modalContent img {
+	max-height: 500px;
 }
 
 /* Modal footer */

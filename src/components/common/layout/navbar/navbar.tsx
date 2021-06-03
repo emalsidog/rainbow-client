@@ -58,7 +58,7 @@ const Navbar = () => {
 				<div className="navbar-logo">
 					<img src={logo} alt="Rainbow" />
 				</div>
-				<Dropdown>
+				<Dropdown avatar={user.avatar}>
 					<DropdownItem
 						onClick={handleProfile}
 						title={`${user.givenName} ${user.familyName}`}

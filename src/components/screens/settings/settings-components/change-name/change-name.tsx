@@ -51,6 +51,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 		dispatch(changeNameRequest(data));
 	};
 
+	// Reset values (react hook form needs it after loading data from the server)
 	useEffect(() => {
 		reset({ givenName, familyName });
 	}, [givenName, familyName, reset]);

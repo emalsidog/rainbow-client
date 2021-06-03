@@ -17,10 +17,14 @@ interface InitialState {
 
 const initialState: InitialState = {
 	user: {
+		avatar: "",
+		bio: "",
+		birthday: undefined,
 		givenName: "",
 		familyName: "",
 		email: "",
 		profileId: "",
+		lastTimeChanged: undefined,
 	},
 	isFetching: true,
 
@@ -35,6 +39,10 @@ const initialState: InitialState = {
 		changeProfileId: false,
 		changeEmail: false,
 		deleteAccount: false,
+		changePassword: false,
+		changePhoto: false,
+		changeBio: false,
+		changeBirthday: false,
 	},
 };
 
@@ -270,10 +278,14 @@ export const user = (
 					deleteAccount: false,
 				},
 				user: {
+					avatar: "",
+					bio: "",
+					birthday: undefined,
 					givenName: "",
 					familyName: "",
 					email: "",
 					profileId: "",
+					lastTimeChanged: undefined,
 				},
 			};
 		}
@@ -287,9 +299,146 @@ export const user = (
 			};
 		}
 
-		default:
+		// CHANGE PASSWORD
+
+		case "CHANGE_PASSWORD_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changePassword: true,
+				},
+			};
+		}
+		case "CHANGE_PASSWORD_SUCCESS": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changePassword: false,
+				},
+				user: {
+					...state.user,
+					lastTimeChanged: action.lastTimeChanged,
+				},
+			};
+		}
+		case "CHANGE_PASSWORD_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changePassword: false,
+				},
+			};
+		}
+
+		// CHANGE PHOTO
+
+		case "CHANGE_AVATAR_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changePhoto: true,
+				},
+			};
+		}
+		case "CHANGE_AVATAR_SUCCESS": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changePhoto: false,
+				},
+				user: {
+					...state.user,
+					avatar: action.avatar,
+				},
+			};
+		}
+		case "CHANGE_AVATAR_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changePhoto: false,
+				},
+			};
+		}
+
+		// CHANGE BIO
+
+		case "CHANGE_BIO_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changeBio: true,
+				},
+			};
+		}
+		case "CHANGE_BIO_SUCCESS": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changeBio: false,
+				},
+				user: {
+					...state.user,
+					bio: action.bio,
+				},
+			};
+		}
+		case "CHANGE_BIO_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changeBio: false,
+				},
+			};
+		}
+
+		// CHANGE BIRTHDAY
+		
+		case "CHANGE_BIRTHDAY_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changeBirthday: true,
+				},
+			};
+		}
+		case "CHANGE_BIRTHDAY_SUCCESS": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changeBirthday: false,
+				},
+				user: {
+					...state.user,
+					birthday: action.birthday,
+				},
+			};
+		}
+		case "CHANGE_BIRTHDAY_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					changeBirthday: false,
+				},
+			};
+		}
+
+		default: {
 			return {
 				...state,
 			};
+		}
 	}
 };

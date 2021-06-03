@@ -1,8 +1,10 @@
 // Types
 import { AppActionTypes } from "./types";
 import {
+	ChangeBirthday,
 	ChangeEmail,
 	ChangeName,
+	ChangePassword,
 	EmailChangingProcess,
 	UserExtended,
 } from "./types/user-actions-types/user-common-types";
@@ -124,4 +126,74 @@ export const deleteAccountSuccess = (): AppActionTypes => ({
 
 export const deleteAccountFailure = (): AppActionTypes => ({
 	type: "DELETE_ACCOUNT_FAILURE",
+});
+
+// CHANGE PASSWORD
+
+export const changePasswordRequest = (
+	payload: ChangePassword
+): AppActionTypes => ({
+	type: "CHANGE_PASSWORD_REQUEST",
+	payload,
+});
+
+export const changePasswordSuccess = (
+	lastTimeChanged: Date
+): AppActionTypes => ({
+	type: "CHANGE_PASSWORD_SUCCESS",
+	lastTimeChanged,
+});
+
+export const changePasswordFailure = (): AppActionTypes => ({
+	type: "CHANGE_PASSWORD_FAILURE",
+});
+
+// CHANGE PHOTO
+
+export const changePhotoRequest = (avatar: FormData): AppActionTypes => ({
+	type: "CHANGE_AVATAR_REQUEST",
+	avatar,
+});
+
+export const changePhotoSuccess = (avatar: string): AppActionTypes => ({
+	type: "CHANGE_AVATAR_SUCCESS",
+	avatar,
+});
+
+export const changePhotoFailure = (): AppActionTypes => ({
+	type: "CHANGE_AVATAR_FAILURE",
+});
+
+// CHANGE BIO
+
+export const changeBioRequest = (bio: string): AppActionTypes => ({
+	type: "CHANGE_BIO_REQUEST",
+	bio,
+});
+
+export const changeBioSuccess = (bio: string): AppActionTypes => ({
+	type: "CHANGE_BIO_SUCCESS",
+	bio,
+});
+
+export const changeBioFailure = (): AppActionTypes => ({
+	type: "CHANGE_BIO_FAILURE",
+});
+
+// CHANGE BIRTHDAY
+
+export const changeBirthdayRequest = (
+	payload: ChangeBirthday
+): AppActionTypes => ({
+	type: "CHANGE_BIRTHDAY_REQUEST",
+	payload,
+});
+
+export const changeBirthdaySuccess = (birthday: Date): AppActionTypes => ({
+	type: "CHANGE_BIRTHDAY_SUCCESS",
+	birthday,
+});
+
+export const changeBirthdayFailure = (): AppActionTypes => ({
+	type: "CHANGE_BIRTHDAY_FAILURE",
 });

@@ -25,6 +25,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = (props) => {
 		<div id={anchor} className={classNames}>
 			<span>{title}</span>
 			<p>{description}</p>
+			<div className="border" />
 		</div>
 	);
 };

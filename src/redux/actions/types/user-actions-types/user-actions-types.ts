@@ -3,6 +3,8 @@ import {
 	UserExtended,
 	EmailChangingProcess,
 	ChangeEmail,
+	ChangePassword,
+	ChangeBirthday,
 } from "./user-common-types";
 
 const SET_USER = "SET_USER";
@@ -34,6 +36,22 @@ const CHANGE_EMAIL_ABORT_FAILURE = "CHANGE_EMAIL_ABORT_FAILURE";
 const DELETE_ACCOUNT_REQUEST = "DELETE_ACCOUNT_REQUEST";
 const DELETE_ACCOUNT_SUCCESS = "DELETE_ACCOUNT_SUCCESS";
 const DELETE_ACCOUNT_FAILURE = "DELETE_ACCOUNT_FAILURE";
+
+const CHANGE_PASSWORD_REQUEST = "CHANGE_PASSWORD_REQUEST";
+const CHANGE_PASSWORD_SUCCESS = "CHANGE_PASSWORD_SUCCESS";
+const CHANGE_PASSWORD_FAILURE = "CHANGE_PASSWORD_FAILURE";
+
+const CHANGE_AVATAR_REQUEST = "CHANGE_AVATAR_REQUEST";
+const CHANGE_AVATAR_SUCCESS = "CHANGE_AVATAR_SUCCESS";
+const CHANGE_AVATAR_FAILURE = "CHANGE_AVATAR_FAILURE";
+
+const CHANGE_BIO_REQUEST = "CHANGE_BIO_REQUEST";
+const CHANGE_BIO_SUCCESS = "CHANGE_BIO_SUCCESS";
+const CHANGE_BIO_FAILURE = "CHANGE_BIO_FAILURE";
+
+const CHANGE_BIRTHDAY_REQUEST = "CHANGE_BIRTHDAY_REQUEST";
+const CHANGE_BIRTHDAY_SUCCESS = "CHANGE_BIRTHDAY_SUCCESS";
+const CHANGE_BIRTHDAY_FAILURE = "CHANGE_BIRTHDAY_FAILURE";
 
 // SET USER
 
@@ -150,6 +168,70 @@ export interface DeleteAccountFailure {
 	type: typeof DELETE_ACCOUNT_FAILURE;
 }
 
+// CHANGE PASSWORD
+
+export interface ChangePasswordRequest {
+	type: typeof CHANGE_PASSWORD_REQUEST;
+	payload: ChangePassword;
+}
+
+export interface ChangePasswordSuccess {
+	type: typeof CHANGE_PASSWORD_SUCCESS;
+	lastTimeChanged: Date;
+}
+
+export interface ChangePasswordFailure {
+	type: typeof CHANGE_PASSWORD_FAILURE;
+}
+
+// CHANGE PHOTO
+
+export interface ChangeAvatarRequest {
+	type: typeof CHANGE_AVATAR_REQUEST;
+	avatar: FormData;
+}
+
+export interface ChangeAvatarSuccess {
+	type: typeof CHANGE_AVATAR_SUCCESS;
+	avatar: string;
+}
+
+export interface ChangeAvatarFailure {
+	type: typeof CHANGE_AVATAR_FAILURE;
+}
+
+// CHANGE BIO
+
+export interface ChangeBioRequest {
+	type: typeof CHANGE_BIO_REQUEST;
+	bio: string;
+}
+
+export interface ChangeBioSuccess {
+	type: typeof CHANGE_BIO_SUCCESS;
+	bio: string;
+}
+
+export interface ChangeBioFailure {
+	type: typeof CHANGE_BIO_FAILURE;
+}
+
+// CHANGE BIRTHDAY
+
+export interface ChangeBirthdayRequest {
+	type: typeof CHANGE_BIRTHDAY_REQUEST;
+	payload: ChangeBirthday;
+}
+
+export interface ChangeBirthdaySuccess {
+	type: typeof CHANGE_BIRTHDAY_SUCCESS;
+	birthday: Date;
+}
+
+export interface ChangeBirthdayFailure {
+	type: typeof CHANGE_BIRTHDAY_FAILURE;
+}
+
 export type UserActionTypes =
 	| SetUser
 	| GetUserRequest
@@ -172,4 +254,16 @@ export type UserActionTypes =
 	| ChangeEmailAbortFailure
 	| DeleteAccountRequest
 	| DeleteAccountSuccess
-	| DeleteAccountFailure;
+	| DeleteAccountFailure
+	| ChangePasswordRequest
+	| ChangePasswordSuccess
+	| ChangePasswordFailure
+	| ChangeAvatarRequest
+	| ChangeAvatarSuccess
+	| ChangeAvatarFailure
+	| ChangeBioRequest
+	| ChangeBioSuccess
+	| ChangeBioFailure
+	| ChangeBirthdayRequest
+	| ChangeBirthdaySuccess
+	| ChangeBirthdayFailure;

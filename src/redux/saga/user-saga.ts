@@ -16,6 +16,10 @@ import {
 	ChangeEmailReqRequest,
 	ChangeEmailRequest,
 	DeleteAccountRequest,
+	ChangePasswordRequest,
+	ChangeAvatarRequest,
+	ChangeBioRequest,
+	ChangeBirthdayRequest,
 } from "../actions/types/user-actions-types/user-actions-types";
 import { UserExtended } from "../actions/types/user-actions-types/user-common-types";
 
@@ -28,6 +32,11 @@ export function* userWatcher() {
 	yield takeEvery("CHANGE_EMAIL_REQ_REQUEST", changeEmailRequest);
 	yield takeEvery("CHANGE_EMAIL_REQUEST", changeEmail);
 	yield takeEvery("CHANGE_EMAIL_ABORT_REQUEST", changeEmailAbort);
+	yield takeEvery("CHANGE_PASSWORD_REQUEST", changePassword);
+	yield takeEvery("CHANGE_AVATAR_REQUEST", changeAvatar);
+	yield takeEvery("CHANGE_BIO_REQUEST", changeBio);
+	yield takeEvery("CHANGE_BIRTHDAY_REQUEST", changeBirthday);
+
 	yield takeEvery("DELETE_ACCOUNT_REQUEST", deleteAccount);
 }
 
@@ -37,6 +46,7 @@ function* currentUser() {
 			AxiosGetRequest("/authentication/current-user")
 		);
 		const { user, changingEmailProcess } = data.body;
+		
 		const payload: UserExtended = {
 			user: {
 				...user,
@@ -143,7 +153,9 @@ function* changeEmailAbort() {
 function* deleteAccount(action: DeleteAccountRequest) {
 	const payload = { password: action.password };
 	try {
-		const { data: { status } } = yield call(() => AxiosPostRequest("/settings/delete", payload));
+		const {
+			data: { status },
+		} = yield call(() => AxiosPostRequest("/settings/delete", payload));
 
 		yield put(logoutSuccess());
 		yield put(userActions.deleteAccountSuccess());
@@ -151,6 +163,72 @@ function* deleteAccount(action: DeleteAccountRequest) {
 	} catch (error) {
 		const { status } = error.response.data;
 		yield put(userActions.deleteAccountFailure());
-		yield put(addNotification(status));	
+		yield put(addNotification(status));
+	}
+}
+
+function* changePassword(action: ChangePasswordRequest) {
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/settings/change-password", action.payload)
+		);
+		const {
+			body: { lastTimeChanged },
+			status,
+		} = data;
+
+		yield put(userActions.changePasswordSuccess(lastTimeChanged));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.changePasswordFailure());
+		yield put(addNotification(status));
+	}
+}
+
+function* changeAvatar(action: ChangeAvatarRequest) {
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/settings/change-avatar", action.avatar)
+		);
+		const { body, status } = data;
+
+		yield put(userActions.changePhotoSuccess(body.avatar));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.changePhotoFailure());
+		yield put(addNotification(status));
+	}
+}
+
+function* changeBio(action: ChangeBioRequest) {
+	const payload = { bio: action.bio };
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/settings/change-bio", payload)
+		);
+		const { body, status } = data;
+
+		yield put(userActions.changeBioSuccess(body.bio));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.changeBioFailure());
+		yield put(addNotification(status));
+	}
+}
+
+function* changeBirthday(action: ChangeBirthdayRequest) {
+	try {
+		const { data } = yield call(() => AxiosPostRequest("/settings/change-birthday", action.payload));
+		const { body, status } = data;
+
+		yield put(userActions.changeBirthdaySuccess(body.birthday));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.changeBirthdayFailure());
+		yield put(addNotification(status));
 	}
 }
