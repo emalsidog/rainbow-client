@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { changeProfileIdRequest } from "../../../../../redux/actions/user-actions";
+import { changeProfileIdRequest } from "../../../../../redux/user/actions";
 
 // Utils
 import { profileIdOptions } from "../../../../utils/validation-options";

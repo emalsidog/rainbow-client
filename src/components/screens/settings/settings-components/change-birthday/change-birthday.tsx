@@ -3,10 +3,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { changeBirthdayRequest } from "../../../../../redux/actions/user-actions";
+import { changeBirthdayRequest } from "../../../../../redux/user/actions";
 
 // Utils
-import { formatBirthday } from "../../../../utils/format-date";
+import { formatDate } from "../../../../utils/format-date";
 
 // Types
 interface ChangeBirthdayProps {
@@ -131,7 +131,7 @@ const ChangeBirthday: React.FC<ChangeBirthdayProps> = (props) => {
 			<div className="settings-row-change">
 				{!changeBirthdayShow && (
 					<span>
-						{birthday ? formatBirthday(birthday) : "Not specified"}
+						{birthday ? formatDate(birthday, "BIRTHDAY") : "Not specified"}
 					</span>
 				)}
 				{changeBirthdayShow && (

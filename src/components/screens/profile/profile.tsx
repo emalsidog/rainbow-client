@@ -4,24 +4,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 
 // Actions
-import { getUserByIdRequest } from "../../../redux/actions/users-actions";
+import { getUserByIdRequest } from "../../../redux/users/actions";
 
 // Selectors
 import {
 	selectIsCurrentUser,
 	selectUser,
-	// selectIsLoading,
-} from "../../../redux/selectors/users-selectors";
+} from "../../../redux/users/selectors";
+import { selectIsLoading, selectUser as selectCurrentUser } from "../../../redux/user/selector"
 
 // Utils
-import { formatDate, formatBirthday } from "../../utils/format-date";
+import { formatDate } from "../../utils/format-date";
 
 // Styles
 import styles from "./profile.module.css";
 
 // Components
 import Layout from "../../common/layout";
-import Post from "./profile-components/post";
+
+import PostForm from "./profile-components/post-form";
+import DisplayPosts from "./profile-components/display-posts";
+import AdditionalInfo from "./profile-components/additional-info";
 
 const Profile: React.FC = () => {
 	const dispatch = useDispatch();
@@ -29,8 +32,9 @@ const Profile: React.FC = () => {
 	const history = useHistory();
 
 	const user = useSelector(selectUser);
+	const { posts: currentUserPosts } = useSelector(selectCurrentUser);
 	const isCurrentUser = useSelector(selectIsCurrentUser);
-	// const isLoading = useSelector(selectIsLoading);
+	const isLoading = useSelector(selectIsLoading);
 
 	const { profileId }: any = useParams();
 
@@ -42,10 +46,15 @@ const Profile: React.FC = () => {
 		history.push("/settings");
 	};
 
-	let postsToRender = user.posts;
-	if (!isCurrentUser) {
-		postsToRender = user.posts.filter((post) => post.isPublic !== false);
-	}
+	const {
+		givenName,
+		familyName,
+		bio,
+		avatar,
+		birthday,
+		registrationDate,
+		posts,
+	} = user;
 
 	return (
 		<Layout>
@@ -56,80 +65,48 @@ const Profile: React.FC = () => {
 					>
 						<div className={styles.nameAndSmallImageWrapper}>
 							<div className={styles.nameWrapper}>
-								<div
-									className={styles.name}
-								>{`${user.givenName} ${user.familyName}`}</div>
-								<div className={styles.bio}>{user.bio}</div>
+								<div className={styles.name}>
+									{`${givenName} ${familyName}`}
+								</div>
+								<div className={styles.bio}>{bio}</div>
 							</div>
 
 							<div className={styles.smallImageBlock}>
-								<img src={user.avatar} alt="" />
+								<img src={avatar} alt="" />
 							</div>
 						</div>
 
 						<hr />
 
-						<div className={styles.additionalInfo}>
-							<div>Birthday</div>
-							<div>{formatBirthday(user.birthday)}</div>
-						</div>
-						<div className={styles.additionalInfo}>
-							<div>Member since</div>
-							<div>{formatDate(user.registrationDate)}</div>
-						</div>
-					</div>
-
-					<div
-						className={`${styles.wrapper} ${styles.mediumImageBlock}`}
-					>
-						<img src={user.avatar} alt="" />
-					</div>
-				</div>
-
-				{isCurrentUser ? (
-					<div className={`${styles.wrapper}`}>
-						<textarea
-							rows={1}
-							placeholder="What's new?"
-							className="textarea"
-						></textarea>
-
-						<div className={styles.postControls}>
-							<button className="btn btn-primary">Post</button>
-							<select className="select">
-								<option>Public</option>
-								<option>Private</option>
-							</select>
-						</div>
-					</div>
-				) : null}
-
-				<div className={styles.wrapper}>
-					<div className={styles.sectionHeading}>
-						<span>Posts</span>
-						<hr />
-					</div>
-					{postsToRender.length <= 0 ? (
-						isCurrentUser ? (
-							"You do not have posts"
-						) : (
-							"User does not have posts"
-						)
-					) : (
-						<Post
-							authorName={`${user.givenName} ${user.familyName}`}
-							isCurrentUser={isCurrentUser}
-							avatar={user.avatar}
-							post={postsToRender[0]}
+						<AdditionalInfo
+							label="Birthday"
+							value={formatDate(birthday, "BIRTHDAY")}
 						/>
-					)}
+						<AdditionalInfo
+							label="Member since"
+							value={formatDate(registrationDate, "REGULAR")}
+						/>
+					</div>
+
+					<div className={`${styles.wrapper} ${styles.mediumImageBlock}`}>
+						<img src={avatar} alt="" />
+					</div>
 				</div>
-				{/* Posts */}
+
+				{isCurrentUser ? <PostForm isLoading={isLoading.addPost} /> : null}
+
+				<DisplayPosts
+					avatar={avatar}
+					givenName={givenName}
+					familyName={familyName}
+					isCurrentUser={isCurrentUser}
+					posts={isCurrentUser ? currentUserPosts : posts}
+				/>
 			</div>
 
 			<div className="col-3">
 				<div className={`${styles.wrapper} ${styles.bigImageBlock}`}>
-					<img src={user.avatar} alt="" />
+					<img src={avatar} alt="" />
 				</div>
 
 				<div className={`${styles.wrapper} ${styles.actionButtons}`}>

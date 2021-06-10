@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 // Acitions
-import { deleteAccountRequest } from "../../../../../redux/actions/user-actions";
+import { deleteAccountRequest } from "../../../../../redux/user/actions";
 
 // Utils
 import { passwordOptions } from "../../../../utils/validation-options";

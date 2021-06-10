@@ -4,10 +4,10 @@ import { Switch, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 // Actions
-import { getUserRequest } from "../../redux/actions/user-actions";
+import { getUserRequest } from "../../redux/user/actions";
 
 // Selectors
-import { selectIsAuthenticated } from "../../redux/selectors/auth-selector";
+import { selectIsAuthenticated } from "../../redux/auth/selector";
 
 // Components
 import Login from "../screens/auth/login";

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { changeBioRequest } from "../../../../../redux/actions/user-actions";
+import { changeBioRequest } from "../../../../../redux/user/actions";
 
 // Types
 interface ChangeBioProps {

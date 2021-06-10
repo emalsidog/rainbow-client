@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import { Redirect, Route, RouteProps } from "react-router-dom";
 
 // Selectors
-import { selectIsAuthenticated } from "../redux/selectors/auth-selector";
-import { selectIsFetching } from "../redux/selectors/user-selector";
+import { selectIsAuthenticated } from "../redux/auth/selector";
+import { selectIsFetching } from "../redux/user/selector";
 
 const ProtectedRoute: React.FC<RouteProps> = (props) => {
 	const { ...rest } = props;

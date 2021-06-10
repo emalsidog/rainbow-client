@@ -6,8 +6,8 @@ import { useSelector } from "react-redux";
 import {
 	selectEmailChangingProcess,
 	selectUser,
-} from "../../../redux/selectors/user-selector";
-import { selectIsLoading } from "../../../redux/selectors/user-selector";
+} from "../../../redux/user/selector";
+import { selectIsLoading } from "../../../redux/user/selector";
 
 // Styles
 import "./settings.css";

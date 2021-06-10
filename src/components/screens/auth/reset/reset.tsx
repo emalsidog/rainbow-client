@@ -5,13 +5,13 @@ import { useParams, useHistory } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 // Actions
-import { resetRequest } from "../../../../redux/actions/auth-actions";
+import { resetRequest } from "../../../../redux/auth/actions";
 
 // Selectors
 import {
 	selectIsLoading,
 	selectRedirect,
-} from "../../../../redux/selectors/auth-selector";
+} from "../../../../redux/auth/selector";
 
 // Utils
 import { passwordOptions } from "../../../utils/validation-options";

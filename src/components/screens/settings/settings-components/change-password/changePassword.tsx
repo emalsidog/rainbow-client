@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { passwordOptions } from "../../../../utils/validation-options";
 
 // Actions
-import { changePasswordRequest } from "../../../../../redux/actions/user-actions";
+import { changePasswordRequest } from "../../../../../redux/user/actions";
 
 // Utils
 import ShowFormError from "../../../../common/show-form-error";
@@ -57,7 +57,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = (props) => {
 			</div>
 
 			<div className="settings-row-change">
-				{!changePasswordShow && <span>Last changed: <b>{formatDate(lastTimeChanged)}</b></span>}
+				{!changePasswordShow && <span>Last changed: <b>{formatDate(lastTimeChanged, "REGULAR")}</b></span>}
 				{changePasswordShow && (
 					<form
 						className="form-block"

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { removeNotification } from "../../../../../redux/actions/notifications-actions";
+import { removeNotification } from "../../../../../redux/notifications/actions";
 
 // Styles
 import "./notify.css";

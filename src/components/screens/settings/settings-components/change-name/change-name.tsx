@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { changeNameRequest } from "../../../../../redux/actions/user-actions";
+import { changeNameRequest } from "../../../../../redux/user/actions";
 
 // Utils
 import {

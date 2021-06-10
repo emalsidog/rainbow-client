@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 // Selectors
-import { selectUser } from "../../../redux/selectors/user-selector";
+import { selectUser } from "../../../redux/user/selector";
 
 // Components
 import Navbar from "./navbar";

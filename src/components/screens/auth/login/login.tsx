@@ -8,15 +8,15 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import {
 	loginRequest,
 	forgotRequest,
-} from "../../../../redux/actions/auth-actions";
+} from "../../../../redux/auth/actions";
 
 // Selectors
 import {
 	selectIsLoading,
 	selectIsAuthenticated,
 	selectIsLoadingForgotPassword,
-} from "../../../../redux/selectors/auth-selector";
-import { selectUser } from "../../../../redux/selectors/user-selector";
+} from "../../../../redux/auth/selector";
+import { selectUser } from "../../../../redux/user/selector";
 
 // Utils
 import {

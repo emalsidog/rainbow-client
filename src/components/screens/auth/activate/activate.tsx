@@ -4,10 +4,10 @@ import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // Actions
-import { activateRequest } from "../../../../redux/actions/auth-actions";
+import { activateRequest } from "../../../../redux/auth/actions";
 
 // Selectors
-import { selectStatus } from "../../../../redux/selectors/auth-selector";
+import { selectStatus } from "../../../../redux/auth/selector";
 
 // Styles
 import "./activate.css";

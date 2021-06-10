@@ -4,10 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 // Actions
-import { logoutRequest } from "../../../../redux/actions/auth-actions";
+import { logoutRequest } from "../../../../redux/auth/actions";
 
 // Selectors
-import { selectUser } from "../../../../redux/selectors/user-selector";
+import { selectUser } from "../../../../redux/user/selector";
 
 // Assets
 import logo from "../../../../assets/images/logo.png";

@@ -5,14 +5,14 @@ import { Link, useHistory } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 // Actions
-import { registerRequest } from "../../../../redux/actions/auth-actions";
+import { registerRequest } from "../../../../redux/auth/actions";
 
 // Selectors
 import {
 	selectIsLoading,
 	selectIsAuthenticated,
-} from "../../../../redux/selectors/auth-selector";
-import { selectUser } from "../../../../redux/selectors/user-selector";
+} from "../../../../redux/auth/selector";
+import { selectUser } from "../../../../redux/user/selector";
 
 // Utils
 import {

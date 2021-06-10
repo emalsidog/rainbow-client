@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import Cropper from "react-cropper";
 
 // Actions
-import { changePhotoRequest } from "../../../../../redux/actions/user-actions";
+import { changePhotoRequest } from "../../../../../redux/user/actions";
 
 // Utils
 import { saveImageData } from "../../../../utils/avatar-uploading";

@@ -8,7 +8,7 @@ import {
 	changeEmailAbortRequest,
 	changeEmailReqRequest,
 	changeEmailRequest,
-} from "../../../../../redux/actions/user-actions";
+} from "../../../../../redux/user/actions";
 
 // Utils
 import { emailOptions } from "../../../../utils/validation-options";
@@ -20,7 +20,7 @@ import ShowFormError from "../../../../common/show-form-error";
 import OtpBox from "../../../../common/otp-box";
 
 // Types
-import { EmailChangingProcess } from "../../../../../redux/actions/types/user-actions-types/user-common-types";
+import { EmailChangingProcess } from "../../../../../redux/user/types";
 
 interface ChangeEmailProps {
 	email: string;

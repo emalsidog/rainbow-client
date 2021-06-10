@@ -6,7 +6,7 @@ import styles from "./post.module.css";
 
 // Components
 import Dropdown, { DropdownItem } from "../../../../common/dropdown";
-import { PostType } from "../../../../../redux/actions/types/user-actions-types/user-common-types";
+import { PostType } from "../../../../../redux/common-types";
 import { formatDate } from "../../../../utils/format-date";
 
 // Types
@@ -20,6 +20,7 @@ interface PostProps {
 
 const Post: React.FC<PostProps> = (props) => {
 	const { avatar, authorName, isCurrentUser, post } = props;
+	const { postId, postText, isPublic, timePosted } = post;
 
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -32,7 +33,7 @@ const Post: React.FC<PostProps> = (props) => {
 	};
 
 	return (
-		<div>
+		<React.Fragment>
 			<div className={styles.postHeader}>
 				<div className={styles.postWriter}>
 					<div>
@@ -40,7 +41,7 @@ const Post: React.FC<PostProps> = (props) => {
 					</div>
 					<div className={styles.postInfo}>
 						<div>{authorName}</div>
-						<div>{formatDate(post.timePosted)}</div>
+						<div>{formatDate(timePosted, "REGULAR")}</div>
 					</div>
 				</div>
 
@@ -51,7 +52,7 @@ const Post: React.FC<PostProps> = (props) => {
 							title={isEditing ? "Cancel editing" : "Edit"}
 						/>
 						<DropdownItem
-							onClick={() => console.log("Delete")}
+							onClick={() => console.log(postId)}
 							title="Delete"
 						/>
 					</Dropdown>
@@ -64,7 +65,7 @@ const Post: React.FC<PostProps> = (props) => {
 						<textarea className="textarea" value="Post text test" />
 					</div>
 				) : (
-					<div>{post.text}</div>
+					<div>{postText}</div>
 				)}
 			</div>
 
@@ -84,9 +85,9 @@ const Post: React.FC<PostProps> = (props) => {
 				) : (
 					<div>Rainbow</div>
 				)}
-				{isCurrentUser && <div>{post.isPublic ? "Public" : "Private"}</div>}
+				{isCurrentUser && <div>{isPublic ? "Public" : "Private"}</div>}
 			</div>
-		</div>
+		</React.Fragment>
 	);
 };
 

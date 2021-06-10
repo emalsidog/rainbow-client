@@ -1,3 +1,7 @@
+// Types
+type Style = "BIRTHDAY" | "REGULAR";
+type UnpdarsedDate = Date | undefined;
+
 export const formatToMinutesAndSeconds = (timeInMs: number): string => {
 	const date = new Date(timeInMs);
 
@@ -11,40 +15,30 @@ export const formatToMinutesAndSeconds = (timeInMs: number): string => {
 	return `${minutes}:${seconds}`;
 };
 
-export const formatDate = (unparsedDate: Date | undefined): string | undefined => {
+export const formatDate = (unparsedDate: UnpdarsedDate, style: Style): string | undefined => {
 	if (unparsedDate === undefined) {
 		return;
 	}
 
 	const date = new Date(unparsedDate);
 
-	const parsedWeekDay = date.getDay();
 	const parsedMonth = date.getMonth();
+	const parsedYear = date.getFullYear();
+	const parsedDay = date.getDate();
+	const parsedWeekDay = date.getDay();
 
-	const weekDay = formatDay(parsedWeekDay);
-	const month = formatMonth(parsedMonth);
-	const day = date.getDate();
-	const year = date.getFullYear();
-
-	const fullDate = `${weekDay}, ${month} ${day} ${
-		year === new Date().getFullYear() ? "" : year
-	}`;
-
-	return fullDate;
-};
-
-export const formatBirthday = (unparsedDate: Date | undefined): string | undefined => {
-	if (unparsedDate === undefined) {
-		return;
+	if (style === "BIRTHDAY") {
+		return `${formatMonth(parsedMonth)} ${parsedDay}, ${parsedYear}`;
 	}
 
-	const date = new Date(unparsedDate);
+	if (style === "REGULAR") {
+		const formattedWeekDay = formatDay(parsedWeekDay);
+		const formattedMonth = formatMonth(parsedMonth);
+		
+		const displayYear = parsedYear === new Date().getFullYear() ? "" : `, ${parsedYear}`;
 
-	const day = date.getDate();
-	const month = date.getMonth();
-	const year = date.getFullYear();
-
-	return `${formatMonth(month)} ${day}, ${year}`;
+		return `${formattedWeekDay}, ${formattedMonth} ${parsedDay}${displayYear}`;
+	}
 };
 
 const formatDay = (day: number): string => {
