@@ -6,6 +6,7 @@
 .sidebar-container {
 	display: flex;
 	flex-direction: column;
+	align-self: flex-start;	
 }
 
 .right-sidebar {
@@ -66,6 +67,8 @@
 		flex-direction: row;
 		justify-content: space-around;
 		width: 100%;
+
+		margin-bottom: 10px;
 
 		overflow-x: auto;
 	}

@@ -5,6 +5,8 @@
 
 	--main: #fafafa;
 	--accent: #ffffff;
+
+	--width: calc(100% / 12);
 }
 
 html * {
@@ -17,7 +19,6 @@ body {
 	padding: 0;
 
 	background: var(--main);
-
 }
 
 /* ============================ LAYOUT ============================ */
@@ -30,42 +31,76 @@ body {
 
 	margin: 0 auto;
 	padding: 0 15px;
-	box-sizing: border-box;	
+	box-sizing: border-box;
 }
+
 .col-1 {
-	width: 10%;
+	width: var(--width);
 }
 .col-2 {
-	width: 20%;
+	width: calc(var(--width) * 2);
 }
 .col-3 {
-	width: 30%;
+	width: calc(var(--width) * 3);
 }
 .col-4 {
-	width: 40%;
+	width: calc(var(--width) * 4);
 }
 .col-5 {
-	width: 50%;
+	width: calc(var(--width) * 5);
 }
 .col-6 {
-	width: 60%;
+	width: calc(var(--width) * 6);
 }
 .col-7 {
-	width: 70%;
+	width: calc(var(--width) * 7);
 }
 .col-8 {
-	width: 80%;
+	width: calc(var(--width) * 8);
 }
 .col-9 {
-	width: 90%;
+	width: calc(var(--width) * 9);
 }
 .col-10 {
-	width: 100%;
+	width: calc(var(--width) * 10);
+}
+.col-11 {
+	width: calc(var(--width) * 11);
+}
+.col-12 {
+	width: calc(var(--width) * 12);
 }
 
 @media (max-width: 850px) {
 	.container {
 		flex-direction: column;
+		width: 100%;
+	}
+	.col-1 {
+		width: 100%;
+	}
+	.col-2 {
+		width: 100%;
+	}
+	.col-3 {
+		width: 100%;
+	}
+	.col-4 {
+		width: 100%;
+	}
+	.col-5 {
+		width: 100%;
+	}
+	.col-6 {
+		width: 100%;
+	}
+	.col-7 {
+		width: 100%;
+	}
+	.col-8 {
+		width: 100%;
+	}
+	.col-9 {
 		width: 100%;
 	}
 }
@@ -203,6 +238,10 @@ body {
 	box-shadow: 0px 6px 7px -8px #17bcee;
 }
 
+.textarea:focus::-webkit-input-placeholder {
+	opacity: 0.7;
+}
+
 .textarea:disabled {
 	background: rgba(239, 245, 245, 0.612);
 	cursor: not-allowed;
@@ -215,6 +254,8 @@ body {
 	width: 100%;
 
 	padding: 3px 5px;
+
+	border-color: #d7d7d7;
 }
 
 .select:focus {

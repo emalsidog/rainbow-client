@@ -33,7 +33,7 @@ const Settings: React.FC = () => {
 
 	return (
 		<Layout>
-			<div className="settings-wrapper">
+			<div className="settings-wrapper col-10">
 				<SectionHeading
 					anchor="personal-info"
 					title="Personal info"

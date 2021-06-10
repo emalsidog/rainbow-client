@@ -1,10 +1,11 @@
 // Types
 import {
-	IsLoading,
 	User,
 	EmailChangingProcess,
 } from "../actions/types/user-actions-types/user-common-types";
+import { IsLoading } from "../actions/types/settings-actions-types/settings-common-types"
 import { UserActionTypes } from "../actions/types/user-actions-types/user-actions-types";
+
 
 interface InitialState {
 	user: User;
@@ -25,6 +26,7 @@ const initialState: InitialState = {
 		email: "",
 		profileId: "",
 		lastTimeChanged: undefined,
+		posts: [],
 	},
 	isFetching: true,
 
@@ -286,6 +288,7 @@ export const user = (
 					email: "",
 					profileId: "",
 					lastTimeChanged: undefined,
+					posts: [],
 				},
 			};
 		}
@@ -402,7 +405,7 @@ export const user = (
 		}
 
 		// CHANGE BIRTHDAY
-		
+
 		case "CHANGE_BIRTHDAY_REQUEST": {
 			return {
 				...state,

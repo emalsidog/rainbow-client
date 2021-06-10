@@ -16,6 +16,7 @@ const initialState: InitialState = {
 		familyName: "",
 		bio: "",
 		registrationDate: undefined,
+		posts: []
 	},
 
 	isCurrenUser: undefined,

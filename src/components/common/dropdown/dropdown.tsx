@@ -7,7 +7,7 @@ import "./dropdown.css";
 // Types
 interface DropdownProps {
 	children: React.ReactNode;
-	avatar: string;
+	avatar?: string;
 }
 
 interface DropdownItemProps {
@@ -46,9 +46,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 	return (
 		<div className="dd-wrapper" ref={ref}>
 			<div onClick={handleClick} className="dd-header">
-				<div className="dd-header-img">
+				{avatar ? (
 					<img src={avatar} alt="You" />
-				</div>
+				) : (
+					<i className="fas fa-chevron-down"></i>
+				)}
 			</div>
 			{isVisible ? <div className="dd-list">{children}</div> : null}
 		</div>

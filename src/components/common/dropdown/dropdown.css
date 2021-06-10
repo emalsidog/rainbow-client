@@ -8,11 +8,15 @@
 	cursor: pointer;
 }
 
-.dd-header-img img {
+.dd-header img {
 	max-width: 35px;
 	width: 100%;
 
 	border-radius: 50%;
+}
+
+.fa-chevron-down {
+	color: #979797;
 }
 
 /* LIST */

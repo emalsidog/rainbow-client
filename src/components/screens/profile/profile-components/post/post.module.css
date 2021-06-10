@@ -1,0 +1,44 @@
+/* POST HEADER */
+.postHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.postHeader img {
+    border-radius: 50%;
+    width: 55px;
+}
+
+.postWriter {
+    display: flex;
+    align-items: center;
+}
+
+.postInfo {
+    margin-left: 15px;
+}
+
+.postInfo div {
+    margin: 5px 0;
+}
+
+.postInfo div:last-child {
+    font-size: .8rem;
+}
+
+/* POST BODY */
+
+.postBody {
+    margin: 15px 0;
+}
+
+/* POST FOOTER */
+
+.postFooter {
+    display: flex;
+    justify-content: space-between;
+}
+
+.postControls button {
+    margin-right: 5px;
+}

@@ -1,32 +1,3 @@
-export interface User {
-	avatar: string;
-	bio: string;
-	birthday: Date | undefined;
-	givenName: string;
-	familyName: string;
-	email: string;
-	profileId: string;
-	lastTimeChanged: Date | undefined;
-	posts: PostType[]
-}
-
-export interface PostType {
-	text: string;
-	timePosted: Date;
-	isPublic: boolean;
-}
-
-export interface EmailChangingProcess {
-	timeToNextEmail: number | undefined;
-	isChangingProcess: boolean;
-	newEmail: string;
-}
-
-export interface UserExtended {
-	user: User;
-	emailChangingProcess: EmailChangingProcess;
-}
-
 export interface ChangeName {
 	givenName: string;
 	familyName: string;
@@ -58,4 +29,10 @@ export interface IsLoading {
 	changePhoto: boolean;
 	changeBio: boolean;
 	changeBirthday: boolean;
+}
+
+export interface EmailChangingProcess {
+	timeToNextEmail: number | undefined;
+	isChangingProcess: boolean;
+	newEmail: string;
 }
