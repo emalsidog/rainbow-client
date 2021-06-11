@@ -8,6 +8,9 @@ import { addPostRequest } from "../../../../../redux/posts/actions";
 // Styles
 import styles from "../../profile.module.css";
 
+// Components
+import SelectAccessRights from "../select-access-rights";
+
 // Types
 interface PostFormProps {
     isLoading: boolean;
@@ -23,14 +26,6 @@ const PostForm: React.FC<PostFormProps> = (props) => {
 
     const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setPostText(e.target.value);
-	};
-
-	const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		if (e.target.value === "PUBLIC") {
-			setIsPublic(true);
-		} else {
-			setIsPublic(false);
-		}
 	};
 
 	const handeFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,14 +57,9 @@ const PostForm: React.FC<PostFormProps> = (props) => {
 				>
 					{isLoading ? "Posting..." : "Post"}
 				</button>
-				<select
-					disabled={isLoading}
-					onChange={handleSelectChange}
-					className="select"
-				>
-					<option value="PUBLIC">Public</option>
-					<option value="PRIVATE">Private</option>
-				</select>
+
+				<SelectAccessRights isPublic={isPublic} isLoading={isLoading} setIsPublic={setIsPublic} />
+
 			</div>
 		</form>
 	);

@@ -15,6 +15,7 @@ interface ModalProps {
 	isLoading?: boolean;
 	isDisabled?: boolean;
 	footer?: JSX.Element;
+	okText?: string;
 
 	onClose: () => void;
 	onOk?: (e: any) => void;
@@ -28,6 +29,7 @@ const Modal: React.FC<ModalProps> = (props) => {
 		title,
 		isLoading,
 		isDisabled,
+		okText,
 
 		onClose,
 		onOk,
@@ -83,7 +85,7 @@ const Modal: React.FC<ModalProps> = (props) => {
 				className="btn btn-primary"
 				onClick={onOk}
 			>
-				{isLoading ? "Loading..." : "Save"}
+				{isLoading ? "Loading..." : okText ? okText : "Save"}
 			</button>
 		</div>
 	);

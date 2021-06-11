@@ -102,6 +102,8 @@ export interface IsLoading {
 	changeBirthday: boolean;
 
 	addPost: boolean;
+	deletePost: boolean;
+	editPost: boolean;
 }
 
 // SET USER

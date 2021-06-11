@@ -66,6 +66,16 @@
 	border-left: 3px solid #17beec;
 }
 
+.dd-list-item.disabled {
+	border-left: 3px solid transparent;
+}
+
+.dd-list-item.disabled:hover {
+	border-left: 3px solid transparent;
+	background: none;
+	cursor: default;
+}
+
 /* DIVIDER */
 
 .dd-divider {

@@ -30,8 +30,33 @@ function initWebsocket(): EventChannel<any> {
 		};
 
 		ws.onmessage = (e) => {
-			let response = JSON.parse(e.data);
-            console.log(response)
+			let response;
+			try {
+				response = JSON.parse(e.data);
+			} catch (error) {
+				throw error;
+			}
+
+			switch (response.type) {
+				case "NEW_POST_ADDED": {
+					return emitter({
+						type: "NEW_POST_ADDED",
+						payload: response.payload,
+					});
+				}
+				case "DELETE_POST": {
+					return emitter({
+						type: "DELETE_POST",
+						postId: response.payload,
+					});
+				}
+				case "POST_UPDATED": {
+					return emitter({
+						type: "POST_UPDATED",
+						payload: response.payload,
+					});
+				}
+			}
 		};
 
 		return () => {

@@ -42,3 +42,7 @@
 .postControls button {
     margin-right: 5px;
 }
+
+.postFooter select {
+    width: 30%;
+}

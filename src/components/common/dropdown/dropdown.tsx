@@ -12,6 +12,7 @@ interface DropdownProps {
 
 interface DropdownItemProps {
 	title: string;
+	isLoading?: boolean;
 	onClick: () => void;
 }
 
@@ -58,9 +59,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 };
 
 export const DropdownItem: React.FC<DropdownItemProps> = (props) => {
-	const { title, onClick } = props;
+	const { title, onClick, isLoading } = props;
+	let classNames = `dd-list-item ${isLoading ? "disabled" : ""}`
 	return (
-		<button onClick={onClick} className="dd-list-item">
+		<button disabled={isLoading} onClick={onClick} className={classNames}>
 			{title}
 		</button>
 	);

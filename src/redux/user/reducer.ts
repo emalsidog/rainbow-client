@@ -1,4 +1,5 @@
 // Types
+import { PostType } from "../common-types";
 import { PostActionTypes } from "../posts";
 import { User, EmailChangingProcess } from "./types";
 import { IsLoading } from "./types";
@@ -44,6 +45,8 @@ const initialState: InitialState = {
 		changeBirthday: false,
 
 		addPost: false,
+		deletePost: false,
+		editPost: false,
 	},
 };
 
@@ -467,6 +470,90 @@ export const user = (
 				isLoading: {
 					...state.isLoading,
 					addPost: false,
+				},
+			};
+		}
+
+		// DELETE POST
+
+		case "DELETE_POST_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					deletePost: true,
+				},
+			};
+		}
+		case "DELETE_POST_SUCCESS": {
+			const newPosts = state.user.posts.filter(
+				(post: PostType) => post.postId !== action.postId
+			);
+
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					deletePost: false,
+				},
+				user: {
+					...state.user,
+					posts: newPosts,
+				},
+			};
+		}
+		case "DELETE_POST_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					deletePost: false,
+				},
+			};
+		}
+
+		// EDIT POST
+
+		case "EDIT_POST_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					editPost: true,
+				},
+			};
+		}
+		case "EDIT_POST_SUCCESS": {
+			console.log(action.payload)
+			const { postText, isPublic, postId } = action.payload;
+			const newPosts = state.user.posts.map((post) => {
+				if (post.postId === postId) {
+					return {
+						...post,
+						postText,
+						isPublic,
+					};
+				}
+				return post;
+			});
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					editPost: false,
+				},
+				user: {
+					...state.user,
+					posts: newPosts,
+				},
+			};
+		}
+		case "EDIT_POST_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					editPost: false,
 				},
 			};
 		}
