@@ -1,29 +1,28 @@
 // Dependencies
 import React from "react";
-import { useSelector } from "react-redux";
-
-// Selectors
-import { selectUser } from "../../../../../redux/user/selector";
 
 // Styles
 import styles from "./friend-card.module.css";
 
 // Types
 interface FriendCardProps {
-	openInfoPanel: () => void;
+	openInfoPanel: (id: string) => void;
+
+	_id: string;
+	givenName: string;
+	familyName: string;
+	avatar: string;
 }
 
 const FriendCard: React.FC<FriendCardProps> = (props) => {
-	const { openInfoPanel } = props;
-
-	const user = useSelector(selectUser);
+	const { openInfoPanel, givenName, familyName, avatar, _id } = props;
 
 	return (
-		<article onClick={openInfoPanel} className={styles.card}>
+		<article onClick={() => openInfoPanel(_id)} className={styles.card}>
 			<div className={styles.header}>
-				<img src={user.avatar} />
+				<img src={avatar} alt="" />
 			</div>
-			<div className={styles.name}>Valeriia Sushchenko</div>
+			<div className={styles.name}>{`${givenName} ${familyName}`}</div>
 		</article>
 	);
 };

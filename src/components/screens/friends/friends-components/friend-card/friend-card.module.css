@@ -15,7 +15,6 @@
 }
 
 .card:hover {
-    border: 1px solid #17beec;
     opacity: 0.9;
     cursor: pointer;
 }

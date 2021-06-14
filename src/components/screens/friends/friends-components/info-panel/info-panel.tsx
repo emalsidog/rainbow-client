@@ -1,9 +1,8 @@
 // Dependencies
 import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
 
 // Selectors
-import { selectUser } from "../../../../../redux/users/selectors";
+import { User } from "../../../../../redux/users/types";
 
 // Utils
 import { formatDate } from "../../../../utils/format-date";
@@ -13,14 +12,15 @@ import styles from "./info-panel.module.css";
 
 // Types
 interface InfoPanelProps {
+	user: User;
+
 	isVisible: boolean | null;
 	onClose: () => void;
 }
 
 const InfoPanel: React.FC<InfoPanelProps> = (props) => {
-	const { isVisible, onClose } = props;
-
-	const user = useSelector(selectUser);
+	const { user, isVisible, onClose } = props;
+	const { avatar, givenName, familyName, bio, profileId, birthday, registrationDate } = user;
 
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -52,9 +52,9 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 			className={`${styles.infoPanel} ${isVisible ? "" : styles.exit}`}
 		>
 			<div className={`${styles.header} ${styles.wrapper}`}>
-				<img src={user.avatar} />
-				<div className={styles.name}>Valeriia Sushchenko</div>
-				<div className={styles.bio}>Graphic Designer</div>
+				<img src={avatar} alt="" />
+				<div className={styles.name}>{`${givenName} ${familyName}`}</div>
+				<div className={styles.bio}>{bio}</div>
 
 				<button onClick={onClose} className="btn-transperent">
 					<i style={{ color: "white" }} className="fas fa-times"></i>
@@ -65,15 +65,15 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 
 			<div className={styles.wrapper}>
 				<div className={styles.infoItem}>
-					<div>prolohcka</div>
+					<div>{profileId}</div>
 					<div className={styles.infoItemLabel}>Profile ID</div>
 				</div>
 				<div className={styles.infoItem}>
-					<div>{formatDate(user.birthday, "BIRTHDAY")}</div>
+					<div>{formatDate(birthday, "BIRTHDAY") || "Not specified"}</div>
 					<div className={styles.infoItemLabel}>Birthday</div>
 				</div>
 				<div className={styles.infoItem}>
-					<div>{formatDate(user.registrationDate, "REGULAR")}</div>
+					<div>{formatDate(registrationDate, "REGULAR") || "Not specified"}</div>
 					<div className={styles.infoItemLabel}>Member since</div>
 				</div>
 			</div>

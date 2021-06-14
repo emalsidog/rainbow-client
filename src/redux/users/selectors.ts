@@ -10,3 +10,6 @@ export const selectIsCurrentUser = (state: RootState): boolean | undefined => st
 
 // USER
 export const selectUser = (state: RootState): User => state.users.user;
+
+// USERS
+export const selectUsers = (state: RootState): User[] => state.users.users;

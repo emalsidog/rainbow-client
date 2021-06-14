@@ -5,20 +5,25 @@ import { User } from "./types";
 
 interface InitialState {
 	user: User;
+	users: User[];
 	isCurrenUser: boolean | undefined;
 	isLoading: boolean;
 }
 
 const initialState: InitialState = {
 	user: {
+		_id: "",
+		profileId: "",
 		avatar: "",
 		birthday: undefined,
 		givenName: "",
 		familyName: "",
 		bio: "",
 		registrationDate: undefined,
-		posts: []
+		posts: [],
 	},
+
+	users: [],
 
 	isCurrenUser: undefined,
 	isLoading: false,
@@ -26,6 +31,9 @@ const initialState: InitialState = {
 
 export const users = (state = initialState, action: UsersActionTypes): InitialState => {
 	switch (action.type) {
+
+		// GET USER
+
 		case "GET_USER_BY_ID_REQUEST": {
 			return {
 				...state,
@@ -49,14 +57,37 @@ export const users = (state = initialState, action: UsersActionTypes): InitialSt
 			};
 		}
 
+		// SEARCH USER
+
+		case "SEARCH_USER_REQUEST": {
+			return {
+				...state,
+				isLoading: true
+			}
+		}
+		case "SEARCH_USER_SUCCESS": {
+			console.log([...action.payload])
+			return {
+				...state,
+				isLoading: false,
+				users: [...action.payload]
+			}
+		}
+		case "SEARCH_USER_FAILURE": {
+			return {
+				...state,
+				isLoading: false
+			}
+		}
+
 		case "NEW_POST_ADDED": {
 			return {
 				...state,
 				user: {
 					...state.user,
-					posts: [...state.user.posts, action.payload]
-				}
-			}
+					posts: [...state.user.posts, action.payload],
+				},
+			};
 		}
 		case "DELETE_POST": {
 			const newPosts = state.user.posts.filter(
@@ -66,13 +97,13 @@ export const users = (state = initialState, action: UsersActionTypes): InitialSt
 				...state,
 				user: {
 					...state.user,
-					posts: newPosts
-				}
-			}
+					posts: newPosts,
+				},
+			};
 		}
 		case "POST_UPDATED": {
 			const { postText, isPublic, postId } = action.payload;
-			
+
 			const newPosts = state.user.posts.map((post) => {
 				if (post.postId === postId) {
 					return {
