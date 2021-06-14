@@ -17,47 +17,58 @@ function* wsConnectionWorker() {
 
 function initWebsocket(): EventChannel<any> {
 	return eventChannel((emitter) => {
-		let ws = new WebSocket("ws://localhost:4000");
+		const initConnection = () => {
+			let ws = new WebSocket("ws://localhost:4000");
 
-		ws.onopen = () => {
-			console.log("opening...");
-			ws.send("hello server");
+			ws.onopen = () => {
+				console.log("opening...");
+				ws.send("hello server");
+			};
+
+			ws.onerror = (error) => {
+				console.log("WebSocket error " + error);
+				console.dir(error);
+			};
+
+			ws.onmessage = (e) => {
+				let response;
+				try {
+					response = JSON.parse(e.data);
+				} catch (error) {
+					throw error;
+				}
+
+				console.log(response);
+
+				switch (response.type) {
+					case "NEW_POST_ADDED": {
+						return emitter({
+							type: "NEW_POST_ADDED",
+							payload: response.payload,
+						});
+					}
+					case "DELETE_POST": {
+						return emitter({
+							type: "DELETE_POST",
+							postId: response.payload,
+						});
+					}
+					case "POST_UPDATED": {
+						return emitter({
+							type: "POST_UPDATED",
+							payload: response.payload,
+						});
+					}
+				}
+			};
+
+			ws.onclose = (e) => {
+				console.log("Reconnect in 4s");
+				setTimeout(initConnection, 4000);
+			};
 		};
 
-		ws.onerror = (error) => {
-			console.log("WebSocket error " + error);
-			console.dir(error);
-		};
-
-		ws.onmessage = (e) => {
-			let response;
-			try {
-				response = JSON.parse(e.data);
-			} catch (error) {
-				throw error;
-			}
-
-			switch (response.type) {
-				case "NEW_POST_ADDED": {
-					return emitter({
-						type: "NEW_POST_ADDED",
-						payload: response.payload,
-					});
-				}
-				case "DELETE_POST": {
-					return emitter({
-						type: "DELETE_POST",
-						postId: response.payload,
-					});
-				}
-				case "POST_UPDATED": {
-					return emitter({
-						type: "POST_UPDATED",
-						payload: response.payload,
-					});
-				}
-			}
-		};
+		initConnection();
 
 		return () => {
 			console.log("Socket off");

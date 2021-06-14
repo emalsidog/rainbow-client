@@ -1,0 +1,21 @@
+.card {
+    display: flex;
+    flex-direction: column;
+	border: 1px solid #d7d7d7;
+    transition: .3s;
+}
+
+.header img {
+    width: 100%;
+}
+
+.name {
+    text-align: center;
+    margin: 15px 0;
+}
+
+.card:hover {
+    border: 1px solid #17beec;
+    opacity: 0.9;
+    cursor: pointer;
+}

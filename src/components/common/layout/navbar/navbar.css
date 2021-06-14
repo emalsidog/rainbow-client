@@ -6,6 +6,8 @@
 
     background-color: #fafafa;
     transition: .3s;
+
+	z-index: 1000;
 }
 
 .navbar-container {

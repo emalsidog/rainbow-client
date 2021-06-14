@@ -15,6 +15,8 @@ interface LayoutProps {
 
 	secondSidebar?: boolean;
 	secondSidebarOptions?: Options[];
+
+	overlay?: boolean | null;
 }
 
 interface Options {
@@ -29,6 +31,8 @@ const Layout: React.FC<LayoutProps> = (props) => {
 		children,
 		secondSidebar = false,
 		secondSidebarOptions = undefined,
+
+		overlay = null,
 	} = props;
 
 	const user = useSelector(selectUser);
@@ -47,6 +51,8 @@ const Layout: React.FC<LayoutProps> = (props) => {
 
 	return (
 		<React.Fragment>
+			{overlay && <div className="overlay"></div>}
+
 			<Navbar />
 			<main className="container">
 				<Sidebar>

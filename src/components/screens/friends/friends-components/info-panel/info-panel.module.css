@@ -1,0 +1,94 @@
+.infoPanel {
+	position: fixed;
+	top: 0;
+	left: 0;
+
+	width: 320px;
+	height: 100vh;
+	background: #ffffff;
+    box-sizing: border-box;
+
+	animation: SlideRight 0.2s forwards;
+
+	z-index: 10000;
+}
+
+.infoPanel.exit {
+	animation: SlideLeft 0.2s forwards;
+}
+
+@keyframes SlideRight {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(0%);
+	}
+}
+
+@keyframes SlideLeft {
+	0% {
+		transform: translateX(0%);
+	}
+	100% {
+		transform: translateX(-100%);
+	}
+}
+
+.wrapper {
+	margin-bottom: 10px;
+}
+
+.wrapper:last-child {
+	margin: 0;
+}
+
+.header {
+	word-break: break-all;
+}
+
+.header img {
+	width: 100%;
+}
+
+.header button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+.name {
+	font-size: 1.3rem;
+	margin: 5px 10px;
+}
+
+.bio {
+	font-size: 0.9rem;
+	margin: 7px 10px;
+	color: rgb(148, 148, 148);
+}
+
+.infoItem {
+	padding: 5px 10px;
+}
+.infoItem div {
+	margin-bottom: 5px;
+}
+
+.infoItemLabel {
+	font-size: 0.8rem;
+	color: rgb(148, 148, 148);
+}
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer button {
+    margin: 0 10px 5px;
+}
+
