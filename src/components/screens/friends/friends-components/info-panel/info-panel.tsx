@@ -1,5 +1,6 @@
 // Dependencies
 import React, { useEffect, useRef } from "react";
+import { useHistory } from "react-router";
 
 // Selectors
 import { User } from "../../../../../redux/users/types";
@@ -23,6 +24,7 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 	const { avatar, givenName, familyName, bio, profileId, birthday, registrationDate } = user;
 
 	const ref = useRef<HTMLDivElement>(null);
+	const history = useHistory();
 
 	useEffect(() => {
 		document.addEventListener("mousedown", handleClickOutside);
@@ -33,17 +35,21 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 		};
 	});
 
-	const handleClickOutside = (e: any) => {
+	const handleClickOutside = (e: any): void => {
 		if (ref.current && !ref.current.contains(e.target)) {
 			onClose();
 		}
 	};
 
-	const handleEscQuit = (e: any) => {
+	const handleEscQuit = (e: any): void => {
 		if (e.key === "Escape") {
 			onClose();
 		}
 	};
+
+	const handleViewProfile = (): void => {
+		history.push(`/${profileId}`);
+	}
 
 	if (isVisible === null) return null;
 	return (
@@ -63,7 +69,7 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 
 			<hr />
 
-			<div className={styles.wrapper}>
+			<div className={`${styles.wrapper} ${styles.mainBlock}`}>
 				<div className={styles.infoItem}>
 					<div>{profileId}</div>
 					<div className={styles.infoItemLabel}>Profile ID</div>
@@ -80,7 +86,7 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 
 			<div className={`${styles.footer} ${styles.wrapper}`}>
 				<button className="btn btn-primary">Add to friends</button>
-				<button className="btn btn-primary">View profile</button>
+				<button onClick={handleViewProfile} className="btn btn-primary">View profile</button>
 			</div>
 		</div>
 	);

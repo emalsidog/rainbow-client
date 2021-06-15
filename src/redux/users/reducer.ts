@@ -6,6 +6,7 @@ import { User } from "./types";
 interface InitialState {
 	user: User;
 	users: User[];
+	totalUsers: number | undefined;
 	isCurrenUser: boolean | undefined;
 	isLoading: boolean;
 }
@@ -24,14 +25,17 @@ const initialState: InitialState = {
 	},
 
 	users: [],
+	totalUsers: undefined,
 
 	isCurrenUser: undefined,
 	isLoading: false,
 };
 
-export const users = (state = initialState, action: UsersActionTypes): InitialState => {
+export const users = (
+	state = initialState,
+	action: UsersActionTypes
+): InitialState => {
 	switch (action.type) {
-
 		// GET USER
 
 		case "GET_USER_BY_ID_REQUEST": {
@@ -62,22 +66,22 @@ export const users = (state = initialState, action: UsersActionTypes): InitialSt
 		case "SEARCH_USER_REQUEST": {
 			return {
 				...state,
-				isLoading: true
-			}
+				isLoading: true,
+			};
 		}
 		case "SEARCH_USER_SUCCESS": {
-			console.log([...action.payload])
 			return {
 				...state,
 				isLoading: false,
-				users: [...action.payload]
-			}
+				users: [...state.users, ...action.payload.users],
+				totalUsers: action.payload.totalUsers,
+			};
 		}
 		case "SEARCH_USER_FAILURE": {
 			return {
 				...state,
-				isLoading: false
-			}
+				isLoading: false,
+			};
 		}
 
 		case "NEW_POST_ADDED": {

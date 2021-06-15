@@ -1,6 +1,6 @@
 // Types
 import { AppActionTypes } from "../common-types";
-import { GetUserPayload, SearchOptions, User } from "./types";
+import { GetUserPayload, SearchPayload, SearchSuccessPayload } from "./types";
 
 // GET USER BY ID
 
@@ -22,12 +22,12 @@ export const getUserByIdFailure = (): AppActionTypes => ({
 
 // SEARCH USER BY NAME
 
-export const searchUserRequest = (payload: SearchOptions): AppActionTypes => ({
+export const searchUserRequest = (payload: SearchPayload): AppActionTypes => ({
 	type: "SEARCH_USER_REQUEST",
 	payload,
 });
 
-export const searchUserSuccess = (payload: User[]): AppActionTypes => ({
+export const searchUserSuccess = (payload: SearchSuccessPayload): AppActionTypes => ({
 	type: "SEARCH_USER_SUCCESS",
 	payload,
 });

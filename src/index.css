@@ -370,14 +370,14 @@ hr {
 
 /* ============================ OVERLAY ============================ */
 .overlay {
-	position: absolute;
+	position: fixed;
 	width: 100%;
 	height: 100%;
+
 	background: #000;
 	opacity: 0.3;
-	overflow: hidden;
-	z-index: 7000;
 
+	z-index: 7000;
 	animation: OverlayOpacityAppear 0.5s;
 }
 

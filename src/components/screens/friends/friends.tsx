@@ -1,12 +1,15 @@
 // Dependencies
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // Actions
 import { searchUserRequest } from "../../../redux/users/actions";
 
 // Selectors
-import { selectUsers } from "../../../redux/users/selectors";
+import {
+	selectTotalUsers,
+	selectUsers,
+} from "../../../redux/users/selectors";
 import { User } from "../../../redux/users/types";
 
 // Hooks
@@ -22,7 +25,8 @@ import InfoPanel from "./friends-components/info-panel";
 import styles from "./friends.module.css";
 
 const Friends: React.FC = () => {
-	const [isInfoPanelVisible, setIsInfoPanelVisible] =	useState<boolean | null>(null);
+	const [isInfoPanelVisible, setIsInfoPanelVisible] =
+		useState<boolean | null>(null);
 
 	const [userToDisplay, setUserToDisplay] = useState<User>({
 		givenName: "",
@@ -37,15 +41,33 @@ const Friends: React.FC = () => {
 	});
 
 	const [searchValue, setSearchValue] = useState<string>("");
+	const [pageNumber, setPageNumber] = useState<number>(1);
+
 	const debouncedValue = useDebounce<string>(searchValue, 300);
 
 	const dispatch = useDispatch();
 	const users = useSelector(selectUsers);
+	const totalUsers = useSelector(selectTotalUsers);
 
-	useEffect(() => {
-		if (!debouncedValue) return;
-		dispatch(searchUserRequest({ displayName: debouncedValue }));
-	}, [debouncedValue, dispatch]);
+	useEffect(() => {	
+		if (users.length !== totalUsers) {
+			dispatch(searchUserRequest({ requestOptions: { page: pageNumber } }));
+		}
+	}, [pageNumber, dispatch]);
+
+	const callback = useCallback((entries) => {
+		if (entries[0].isIntersecting) {
+			setPageNumber(prev => prev + 1);
+		}
+	}, []);
+
+	const ref = useCallback((node) => {
+			if (!node) return;
+			const obsrver = new IntersectionObserver(callback);
+			obsrver.observe(node);
+		},
+		[callback]
+	);
 
 	const onCloseInfoPanel = (): void => {
 		setIsInfoPanelVisible(false);
@@ -65,7 +87,9 @@ const Friends: React.FC = () => {
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
 				<div className={`input-group ${styles.searchBox}`}>
-					<span><i className="fas fa-search"></i></span>
+					<span>
+						<i className="fas fa-search"></i>
+					</span>
 					<input
 						value={searchValue}
 						onChange={handleSearchChange}
@@ -74,14 +98,28 @@ const Friends: React.FC = () => {
 				</div>
 
 				<section className={styles.cards}>
-					{users.map((user) => {
+					{users.map((user, index) => {
+						const { _id, givenName, familyName, avatar } = user;
+						if (users.length === index + 1) {
+							return (
+								<FriendCard
+									ref={ref}
+									key={_id}
+									_id={_id}
+									givenName={givenName}
+									familyName={familyName}
+									avatar={avatar}
+									openInfoPanel={onOpenInfoPanel}
+								/>
+							);
+						}
 						return (
 							<FriendCard
-								key={user._id}
-								_id={user._id}
-								givenName={user.givenName}
-								familyName={user.familyName}
-								avatar={user.avatar}
+								key={_id}
+								_id={_id}
+								givenName={givenName}
+								familyName={familyName}
+								avatar={avatar}
 								openInfoPanel={onOpenInfoPanel}
 							/>
 						);

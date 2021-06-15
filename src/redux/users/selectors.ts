@@ -13,3 +13,6 @@ export const selectUser = (state: RootState): User => state.users.user;
 
 // USERS
 export const selectUsers = (state: RootState): User[] => state.users.users;
+
+// TOTAL USERS
+export const selectTotalUsers = (state: RootState): number | undefined => state.users.totalUsers;

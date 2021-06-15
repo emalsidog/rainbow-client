@@ -34,7 +34,7 @@ function* getUser(action: GetUseByIdRequest) {
 function* searchUser(action: SearchUserRequest) {
 	try {
 		const { data } = yield AxiosPostRequest("/users/search", action.payload);
-		yield put(usersActions.searchUserSuccess(data.body.users));
+		yield put(usersActions.searchUserSuccess(data.body));
 	} catch (error) {
 		yield put(usersActions.searchUserFailure());
 	}

@@ -29,8 +29,22 @@ export interface GetUserPayload {
 	isCurrentUser: boolean;
 }
 
+export interface SearchPayload {
+	options?: SearchOptions;
+	requestOptions: RequestOptions;
+}
+
 export interface SearchOptions {
-	displayName: string;
+	displayName?: string;
+}
+
+export interface RequestOptions {
+	page: number;
+}
+
+export interface SearchSuccessPayload {
+	users: User[],
+	totalUsers: number;
 }
 
 // GET USER
@@ -49,16 +63,16 @@ export interface GetUseByIdFailure {
 	type: typeof GET_USER_BY_ID_FAILURE;
 }
 
-// SEARCH BY NAME
+// SEARCH USERS
 
 export interface SearchUserRequest {
 	type: typeof SEARCH_USER_REQUEST;
-	payload: SearchOptions;
+	payload: SearchPayload;
 }
 
 export interface SearchUserSuccess {
 	type: typeof SEARCH_USER_SUCCESS;
-	payload: User[];
+	payload: SearchSuccessPayload;
 }
 
 export interface SearchUserFailure {
