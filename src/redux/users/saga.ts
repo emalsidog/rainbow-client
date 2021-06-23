@@ -13,9 +13,7 @@ import { AxiosGetRequest, AxiosPostRequest } from "../utils/server-request";
 import {
 	AcceptFriendReqRequest,
 	CancelFriendReqRequest,
-	DeclineFriendReqRequest,
 	GetUserByIdRequest,
-	RemoveFromFriendsRequest,
 	SearchUsersRequest,
 	SendFriendReqRequest,
 } from "./types";
@@ -27,9 +25,7 @@ export function* usersWatcher() {
 
 	yield takeEvery("SEND_FRIEND_REQ_REQUEST", sendFriendRequest);
 	yield takeEvery("ACCEPT_FRIEND_REQ_REQUEST", acceptFriendRequest);
-	yield takeEvery("DECLINE_FRIEND_REQ_REQUEST", declineFriendRequest);
 	yield takeEvery("CANCEL_FRIEND_REQ_REQUEST", cancelFriendRequest);
-	yield takeEvery("REMOVE_FROM_FRIENDS_REQUEST", removeFromFriends);
 }
 
 function* getUser(action: GetUserByIdRequest) {
@@ -94,55 +90,19 @@ function* acceptFriendRequest(action: AcceptFriendReqRequest) {
 	}
 }
 
-// decline remove cancel
-
-function* declineFriendRequest(action: DeclineFriendReqRequest) {
-	const payload = { id: action.id };
-	try {
-		const { data } = yield call(() =>
-			AxiosPostRequest("/friends/decline-friend-request", payload)
-		);
-		const { status } = data;
-
-		yield put(usersActions.declineFriendReqSuccess());
-		yield put(addNotification(status));
-	} catch (error) {
-		const { status } = error.response.data;
-		yield put(usersActions.declineFriendReqFailure());
-		yield put(addNotification(status));
-	}
-}
-
 function* cancelFriendRequest(action: CancelFriendReqRequest) {
 	const payload = { id: action.id };
 	try {
 		const { data } = yield call(() =>
 			AxiosPostRequest("/friends/cancel-friend-request", payload)
 		);
-		const { status } = data;
+		const { body, status } = data;
 
-		yield put(usersActions.cancelFriendReqSuccess());
+		yield put(usersActions.cancelFriendReqSuccess(body));
 		yield put(addNotification(status));
 	} catch (error) {
 		const { status } = error.response.data;
 		yield put(usersActions.cancelFriendReqFailure());
-		yield put(addNotification(status));
-	}
-}
-
-function* removeFromFriends(action: RemoveFromFriendsRequest) {
-	const payload = { id: action.id };
-	try {
-		const { data } = yield call(() =>
-			AxiosPostRequest("/friends/remove-friend", payload)
-		);
-		const { status } = data;
-
-		yield put(usersActions.removeFromFriendsSuccess());
-		yield put(addNotification(status));
-	} catch (error) {
-		const { status } = error.response.data;
-		yield put(usersActions.removeFromFriendsFailure());
 		yield put(addNotification(status));
 	}
 }

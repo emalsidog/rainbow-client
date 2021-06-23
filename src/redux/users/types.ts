@@ -16,23 +16,17 @@ const ACCEPT_FRIEND_REQ_REQUEST = "ACCEPT_FRIEND_REQ_REQUEST";
 const ACCEPT_FRIEND_REQ_SUCCESS = "ACCEPT_FRIEND_REQ_SUCCESS";
 const ACCEPT_FRIEND_REQ_FAILURE = "ACCEPT_FRIEND_REQ_FAILURE";
 
-const DECLINE_FRIEND_REQ_REQUEST = "DECLINE_FRIEND_REQ_REQUEST";
-const DECLINE_FRIEND_REQ_SUCCESS = "DECLINE_FRIEND_REQ_SUCCESS";
-const DECLINE_FRIEND_REQ_FAILURE = "DECLINE_FRIEND_REQ_FAILURE";
-
 const CANCEL_FRIEND_REQ_REQUEST = "CANCEL_FRIEND_REQ_REQUEST";
 const CANCEL_FRIEND_REQ_SUCCESS = "CANCEL_FRIEND_REQ_SUCCESS";
 const CANCEL_FRIEND_REQ_FAILURE = "CANCEL_FRIEND_REQ_FAILURE";
-
-const REMOVE_FROM_FRIENDS_REQUEST = "REMOVE_FROM_FRIENDS_REQUEST";
-const REMOVE_FROM_FRIENDS_SUCCESS = "REMOVE_FROM_FRIENDS_SUCCESS";
-const REMOVE_FROM_FRIENDS_FAILURE = "REMOVE_FROM_FRIENDS_FAILURE";
 
 const NEW_POST_ADDED = "NEW_POST_ADDED";
 const DELETE_POST = "DELETE_POST";
 const POST_UPDATED = "POST_UPDATED";
 
-
+const UPDATE_USER_WHO_ACCEPTED = "UPDATE_USER_WHO_ACCEPTED";
+const FRIEND_REQUEST_DECLINED = "FRIEND_REQUEST_DECLINED";
+const REMOVE_FROM_FRIENDS = "REMOVE_FROM_FRIENDS";
 
 // GET USER PAYLOAD TYPES
 
@@ -127,21 +121,6 @@ export interface AcceptFriendReqFailure {
 	type: typeof ACCEPT_FRIEND_REQ_FAILURE;
 }
 
-// DECLINE FREIND REQUEST
-
-export interface DeclineFriendReqRequest {
-	type: typeof DECLINE_FRIEND_REQ_REQUEST;
-	id: string;
-}
-
-export interface DeclineFriendReqSuccess {
-	type: typeof DECLINE_FRIEND_REQ_SUCCESS;
-}
-
-export interface DeclineFriendReqFailure {
-	type: typeof DECLINE_FRIEND_REQ_FAILURE;
-}
-
 // CANCEL FRIEND REQUEST
 
 export interface CancelFriendReqRequest {
@@ -151,25 +130,14 @@ export interface CancelFriendReqRequest {
 
 export interface CancelFriendReqSuccess {
 	type: typeof CANCEL_FRIEND_REQ_SUCCESS;
+	payload: {
+		idOfUserWhoCancelled: string;
+		userWhoHasRequest: string;
+	};
 }
 
 export interface CancelFriendReqFailure {
 	type: typeof CANCEL_FRIEND_REQ_FAILURE;
-}
-
-// REMOVE FROM FRIENDS
-
-export interface RemoveFromFriendsRequest {
-	type: typeof REMOVE_FROM_FRIENDS_REQUEST;
-	id: string;
-}
-
-export interface RemoveFromFriendsSuccess {
-	type: typeof REMOVE_FROM_FRIENDS_SUCCESS;
-}
-
-export interface RemoveFromFriendsFailure {
-	type: typeof REMOVE_FROM_FRIENDS_FAILURE;
 }
 
 // NEW POST ADDED (BY SOMEONE)
@@ -193,31 +161,29 @@ export interface PostUpdated {
 	payload: PostType;
 }
 
-
-
-
-
-
-
-const UPDATE_USER_WHO_ACCEPTED = "UPDATE_USER_WHO_ACCEPTED";
-// update user, who accepted friend request of current user
 export interface UpdateUserWhoAccepted {
-	type: typeof UPDATE_USER_WHO_ACCEPTED,
+	type: typeof UPDATE_USER_WHO_ACCEPTED;
 	payload: {
 		idOfUserWhoAccepted: string;
 		acceptedUserId: string;
-	}
+	};
 }
 
+export interface FriendRequestDeclined {
+	type: typeof FRIEND_REQUEST_DECLINED;
+	payload: {
+		declinedRequestId: string;
+		idOfUserWhoDeclined: string;
+	};
+}
 
-
-
-
-
-
-
-
-
+export interface FriendRemoved {
+	type: typeof REMOVE_FROM_FRIENDS;
+	payload: {
+		idOfUserWhoHasFriend: string;
+		idOfUserToRemove: string;
+	};
+}
 
 export type UsersActionTypes =
 	| GetUserByIdRequest
@@ -232,15 +198,12 @@ export type UsersActionTypes =
 	| AcceptFriendReqRequest
 	| AcceptFriendReqSuccess
 	| AcceptFriendReqFailure
-	| DeclineFriendReqRequest
-	| DeclineFriendReqSuccess
-	| DeclineFriendReqFailure
 	| CancelFriendReqRequest
 	| CancelFriendReqSuccess
 	| CancelFriendReqFailure
-	| RemoveFromFriendsRequest
-	| RemoveFromFriendsSuccess
-	| RemoveFromFriendsFailure
 	| NewPostAdded
 	| DeletePost
-	| PostUpdated | UpdateUserWhoAccepted
+	| PostUpdated
+	| UpdateUserWhoAccepted
+	| FriendRequestDeclined
+	| FriendRemoved;

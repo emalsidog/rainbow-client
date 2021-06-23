@@ -537,7 +537,56 @@ export const user = (
 			};
 		}
 
-		
+		// DECLINE FRIEND REQUEST
+
+		case "DECLINE_FRIEND_REQ_REQUEST": {
+			return {
+				...state,
+			};
+		}
+		case "DECLINE_FRIEND_REQ_SUCCESS": {
+			const { declinedRequestId } = action;
+			const newRequests = state.user.friendRequests.filter(requestId => requestId !== declinedRequestId);
+			return {
+				...state,
+				user: {
+					...state.user,
+					friendRequests: newRequests
+				}
+			}
+		}
+		case "DECLINE_FRIEND_REQ_FAILURE": {
+			return {
+				...state,
+			};
+		}
+
+		// REMOVE FROM FRIENDS
+
+		case "REMOVE_FROM_FRIENDS_REQUEST": {
+			return {
+				...state,
+			};
+		}
+
+		case "REMOVE_FROM_FRIENDS_SUCCESS": {
+			const { idOfUserToRemove } = action;
+			const newFriends = state.user.friends.filter(friendId => friendId !== idOfUserToRemove);
+			return {
+				...state,
+				user: {
+					...state.user,
+					friends: newFriends
+				}
+			};
+		}
+
+		case "REMOVE_FROM_FRIENDS_FAILURE": {
+			return {
+				...state,
+			};
+		}
+
 		/* 
 			"NEW_FRIEND_REQUEST" - responsible for updating client,
 			which have got a notification (add currentUserId to friendRequests)
@@ -574,7 +623,23 @@ export const user = (
 				},
 			};
 		}
-
+		/*
+			FRIEND_REQUEST_CANCELLED - after some client has cancelled its request - update client (user.user)
+			who	had this request by removing idOfUserWhoCancelled from the friendRequests
+		*/
+		case "FRIEND_REQUEST_CANCELLED": {
+			const { idOfUserWhoCancelled } = action;
+			console.log(idOfUserWhoCancelled)
+			const newRequests = state.user.friendRequests.filter(requestId => requestId !== idOfUserWhoCancelled);
+			return {
+				...state,
+				user: {
+					...state.user,
+					friendRequests: newRequests
+				}
+			}
+		}
+		
 		default: {
 			return {
 				...state,

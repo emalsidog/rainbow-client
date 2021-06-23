@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { removeFromFriendsRequest } from "../../../redux/users/actions";
+import { removeFromFriendsRequest } from "../../../redux/user/actions";
 
 // Types
 interface RemoveFromFriendsProps {

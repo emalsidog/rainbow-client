@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { declineFriendReqRequest } from "../../../redux/users/actions";
+import { declineFriendReqRequest } from "../../../redux/user/actions";
 
 // Types
 interface DeclineRequestProps {

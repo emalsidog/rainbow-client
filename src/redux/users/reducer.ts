@@ -132,26 +132,6 @@ export const users = (
 			};
 		}
 
-		// DECLINE FRIEND REQUEST
-
-		case "DECLINE_FRIEND_REQ_REQUEST": {
-			return {
-				...state,
-			};
-		}
-
-		case "DECLINE_FRIEND_REQ_SUCCESS": {
-			return {
-				...state,
-			};
-		}
-
-		case "DECLINE_FRIEND_REQ_FAILURE": {
-			return {
-				...state,
-			};
-		}
-
 		// CANCEL FRIEND REQUEST
 
 		case "CANCEL_FRIEND_REQ_REQUEST": {
@@ -161,32 +141,24 @@ export const users = (
 		}
 
 		case "CANCEL_FRIEND_REQ_SUCCESS": {
+			const { idOfUserWhoCancelled, userWhoHasRequest } = action.payload;
+			const newUsers = state.users.map(user => {
+				if (user._id === userWhoHasRequest) {
+					const newRequests = user.friendRequests.filter(requestId => requestId !== idOfUserWhoCancelled);
+					return {
+						...user,
+						friendRequests: newRequests
+					}
+				}
+				return user;
+			});
 			return {
 				...state,
+				users: newUsers
 			};
 		}
 
 		case "CANCEL_FRIEND_REQ_FAILURE": {
-			return {
-				...state,
-			};
-		}
-
-		// REMOVE FROM FRIENDS
-
-		case "REMOVE_FROM_FRIENDS_REQUEST": {
-			return {
-				...state,
-			};
-		}
-
-		case "REMOVE_FROM_FRIENDS_SUCCESS": {
-			return {
-				...state,
-			};
-		}
-
-		case "REMOVE_FROM_FRIENDS_FAILURE": {
 			return {
 				...state,
 			};
@@ -263,7 +235,52 @@ export const users = (
 				users: newUsers
 			}
 		}
-		
+		/*
+			FRIEND_REQUEST_DECLINED - after some client have declined request, update array of users
+			in client, whis has been rejected. 
+		*/
+		case "FRIEND_REQUEST_DECLINED": {
+			const { declinedRequestId, idOfUserWhoDeclined } = action.payload
+			const newUsers = state.users.map(user => {
+				if (user._id === idOfUserWhoDeclined) {
+					const newRequests = user.friendRequests.filter(requestId => requestId !== declinedRequestId);
+					return {
+						...user,
+						friendRequests: newRequests
+					}
+				}
+				return user;
+			});
+
+			return {
+				...state,
+				users: newUsers
+			}
+		}
+		/* 
+			REMOVE_FROM_FRIENDS - Clear friends array in users.users 
+		*/
+		case "REMOVE_FROM_FRIENDS": {
+			const { idOfUserToRemove, idOfUserWhoHasFriend } = action.payload;
+
+			const newUsers = state.users.map(user => {
+				if (user._id === idOfUserToRemove) {
+					const newFriends = user.friends.filter(friendId => friendId !== idOfUserWhoHasFriend);
+					return {
+						...user,
+						friends: newFriends
+					}
+				}
+				return user;
+			});
+
+			return {
+				...state,
+				users: newUsers
+			}
+		}
+
+
 		default: {
 			return {
 				...state,

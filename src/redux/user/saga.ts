@@ -20,6 +20,8 @@ import {
 	ChangeAvatarRequest,
 	ChangeBioRequest,
 	ChangeBirthdayRequest,
+	DeclineFriendReqRequest,
+	RemoveFromFriendsRequest,
 } from "./types";
 import { UserExtended } from "./types";
 
@@ -38,6 +40,9 @@ export function* userWatcher() {
 	yield takeEvery("CHANGE_BIRTHDAY_REQUEST", changeBirthday);
 
 	yield takeEvery("DELETE_ACCOUNT_REQUEST", deleteAccount);
+
+	yield takeEvery("DECLINE_FRIEND_REQ_REQUEST", declineFriendRequest);
+	yield takeEvery("REMOVE_FROM_FRIENDS_REQUEST", removeFromFriends);
 }
 
 function* currentUser() {
@@ -230,6 +235,42 @@ function* changeBirthday(action: ChangeBirthdayRequest) {
 	} catch (error) {
 		const { status } = error.response.data;
 		yield put(userActions.changeBirthdayFailure());
+		yield put(addNotification(status));
+	}
+}
+
+function* declineFriendRequest(action: DeclineFriendReqRequest) {
+	const payload = { id: action.id };
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/friends/decline-friend-request", payload)
+		);
+		const { body, status } = data;
+
+		yield put(userActions.declineFriendReqSuccess(body.declinedRequestId));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.declineFriendReqFailure());
+		yield put(addNotification(status));
+	}
+}
+
+
+function* removeFromFriends(action: RemoveFromFriendsRequest) {
+	const payload = { id: action.id };
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/friends/remove-friend", payload)
+		);
+		const { body, status } = data;
+
+		yield put(userActions.removeFromFriendsSuccess(body.idOfUserToRemove));
+		yield put({ type: "REMOVE_FROM_FRIENDS", payload: body })
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.removeFromFriendsFailure());
 		yield put(addNotification(status));
 	}
 }

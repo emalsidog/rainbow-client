@@ -58,7 +58,7 @@ function initWebsocket(): EventChannel<any> {
 						});
 					}
 					/* 
-						"NEW_FRIEND_REQUEST" - responsible for updating client,
+						NEW_FRIEND_REQUEST - responsible for updating client,
 						which have got a notification (add currentUserId to friendRequests)
 					*/
 					case "FRIEND_REQUEST": {
@@ -104,6 +104,55 @@ function initWebsocket(): EventChannel<any> {
 							type: "ADD_USER_NOTIFICATION",
 							payload: notification
 						})
+					}
+					/* 
+						FRIEND_REQUEST_DECLINED - after some client have declined request, update array of users
+						in client, whis has been rejected. 
+					*/
+					case "FRIEND_REQUEST_DECLINED": {
+						/*
+							serverData: {
+								declinedRequestId: string;
+							}
+						*/
+						const { serverData } = response.payload;
+						return emitter({
+							type: "FRIEND_REQUEST_DECLINED",
+							payload: serverData
+						})
+					}
+					/*
+						FRIEND_REQUEST_CANCELLED - after some client has cancelled its request - update client (user.user)
+						who	had this request by removing idOfUserWhoCancelled from the friendRequests
+					*/
+					case "FRIEND_REQUEST_CANCELLED": {
+						/*
+							serverData: {
+								idOfUserWhoCancelled: string;
+							}
+						*/
+						const { serverData } = response.payload;
+						return emitter({
+							type: "FRIEND_REQUEST_CANCELLED",
+							idOfUserWhoCancelled: serverData.idOfUserWhoCancelled
+						});
+					}
+					/*
+						FRIEND_REMOVED - When one client removed another one - on the deleted user remove 
+						id of user who have deleted this client
+						============================================================================
+						REMOVE_FROM_FRIENDS - Clear friends array in users.users
+					*/
+					case "FRIEND_REMOVED": {
+						const { serverData } = response.payload;
+						emitter({
+							type: "REMOVE_FROM_FRIENDS",
+							payload: serverData
+						});
+						return emitter({
+							type: "REMOVE_FROM_FRIENDS_SUCCESS",
+							idOfUserToRemove: serverData.idOfUserToRemove
+						});
 					}
 				}
 			};

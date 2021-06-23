@@ -46,7 +46,17 @@ const CHANGE_BIRTHDAY_REQUEST = "CHANGE_BIRTHDAY_REQUEST";
 const CHANGE_BIRTHDAY_SUCCESS = "CHANGE_BIRTHDAY_SUCCESS";
 const CHANGE_BIRTHDAY_FAILURE = "CHANGE_BIRTHDAY_FAILURE";
 
+const DECLINE_FRIEND_REQ_REQUEST = "DECLINE_FRIEND_REQ_REQUEST";
+const DECLINE_FRIEND_REQ_SUCCESS = "DECLINE_FRIEND_REQ_SUCCESS";
+const DECLINE_FRIEND_REQ_FAILURE = "DECLINE_FRIEND_REQ_FAILURE";
+
+const REMOVE_FROM_FRIENDS_REQUEST = "REMOVE_FROM_FRIENDS_REQUEST";
+const REMOVE_FROM_FRIENDS_SUCCESS = "REMOVE_FROM_FRIENDS_SUCCESS";
+const REMOVE_FROM_FRIENDS_FAILURE = "REMOVE_FROM_FRIENDS_FAILURE";
+
 const NEW_FRIEND_REQUEST = "NEW_FRIEND_REQUEST";
+const UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST = "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST";
+const FRIEND_REQUEST_CANCELLED = "FRIEND_REQUEST_CANCELLED";
 
 export interface EmailChangingProcess {
 	timeToNextEmail: number | undefined;
@@ -275,63 +285,56 @@ export interface ChangeBirthdayFailure {
 	type: typeof CHANGE_BIRTHDAY_FAILURE;
 }
 
+// DECLINE FRIEND REQUEST
+
+export interface DeclineFriendReqRequest {
+	type: typeof DECLINE_FRIEND_REQ_REQUEST;
+	id: string;
+}
+
+export interface DeclineFriendReqSuccess {
+	type: typeof DECLINE_FRIEND_REQ_SUCCESS;
+	declinedRequestId: string;
+}
+
+export interface DeclineFriendReqFailure {
+	type: typeof DECLINE_FRIEND_REQ_FAILURE;
+}
+
+// REMOVE FROM FRIENDS
+
+export interface RemoveFromFriendsRequest {
+	type: typeof REMOVE_FROM_FRIENDS_REQUEST;
+	id: string;
+}
+
+export interface RemoveFromFriendsSuccess {
+	type: typeof REMOVE_FROM_FRIENDS_SUCCESS;
+	idOfUserToRemove: string;
+}
+
+export interface RemoveFromFriendsFailure {
+	type: typeof REMOVE_FROM_FRIENDS_FAILURE;
+}
+
 // UPDATE FRIEND REQUESTS
 
 export interface NewFriendRequest {
-	type: typeof NEW_FRIEND_REQUEST,
+	type: typeof NEW_FRIEND_REQUEST;
 	payload: {
 		currentUserId: string;
-	}
+	};
 }
 
-// ============================= WHEN ACCEPTED ============================= */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST = "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST";
-
 export interface UpdateFriendsWhenAcceptedRequest {
-	type: typeof UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST,
+	type: typeof UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST;
 	newFriendId: string;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export interface FriendRequestCancelled {
+	type: typeof FRIEND_REQUEST_CANCELLED;
+	idOfUserWhoCancelled: string;
+}
 
 export type UserActionTypes =
 	| SetUser
@@ -368,5 +371,12 @@ export type UserActionTypes =
 	| ChangeBirthdayRequest
 	| ChangeBirthdaySuccess
 	| ChangeBirthdayFailure
+	| DeclineFriendReqRequest
+	| DeclineFriendReqSuccess
+	| DeclineFriendReqFailure
+	| RemoveFromFriendsRequest
+	| RemoveFromFriendsSuccess
+	| RemoveFromFriendsFailure
 	| NewFriendRequest
 	| UpdateFriendsWhenAcceptedRequest
+	| FriendRequestCancelled;

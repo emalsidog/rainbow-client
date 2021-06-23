@@ -188,6 +188,38 @@ export const changeBirthdayFailure = (): AppActionTypes => ({
 	type: "CHANGE_BIRTHDAY_FAILURE",
 });
 
+// DECLINE FRIEND REQUEST
+
+export const declineFriendReqRequest = (id: string): AppActionTypes => ({
+	type: "DECLINE_FRIEND_REQ_REQUEST",
+	id,
+});
+
+export const declineFriendReqSuccess = (declinedRequestId: string): AppActionTypes => ({
+	type: "DECLINE_FRIEND_REQ_SUCCESS",
+	declinedRequestId
+});
+
+export const declineFriendReqFailure = (): AppActionTypes => ({
+	type: "DECLINE_FRIEND_REQ_FAILURE",
+});
+
+// REMOVE FROM FRIENDS
+
+export const removeFromFriendsRequest = (id: string): AppActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_REQUEST",
+	id,
+});
+
+export const removeFromFriendsSuccess = (idOfUserToRemove: string): AppActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_SUCCESS",
+	idOfUserToRemove
+});
+
+export const removeFromFriendsFailure = (): AppActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_FAILURE",
+});
+
 // WS action
 
 export const updateFriendsWhenAcceptedRequest = (newFriendId: string) => ({
