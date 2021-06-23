@@ -197,6 +197,7 @@ body {
 
 	border: none;
 	border-bottom: 1px solid #d7d7d7;
+	background: var(--main);
 }
 
 .input:focus {
@@ -228,7 +229,7 @@ body {
 
 .input-group input {
 	border: 1px solid #d7d7d7;
-	background: var(--main);
+	background: var(--accent);
 	padding: 0 10px;
 }
 
@@ -244,6 +245,10 @@ body {
 
 .input-group i {
 	color: #929292;
+}
+
+.input-group textarea {
+	background: var(--accent);
 }
 
 /* ============================ TEXTAREA ============================ */
@@ -262,6 +267,8 @@ body {
 	height: auto;
 
 	padding: 7px 5px;
+
+	background: var(--main);
 }
 
 .textarea:focus {
@@ -288,6 +295,7 @@ body {
 	padding: 3px 5px;
 
 	border-color: #d7d7d7;
+	background: var(--main);
 }
 
 .select:focus {

@@ -25,6 +25,7 @@ const SelectAccessRights: React.FC<SelectAccessRightsProps> = (props) => {
 			onChange={handleSelectChange}
 			disabled={isLoading}
 			className="select"
+			style={{ background: "#ffffff" }}
 		>
 			<option value="PUBLIC">Public</option>
 			<option value="PRIVATE">Private</option>
