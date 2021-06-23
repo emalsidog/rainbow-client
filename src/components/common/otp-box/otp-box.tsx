@@ -14,17 +14,15 @@ interface OtpBoxProps {
 const OtpBox: React.FC<OtpBoxProps> = (props) => {
 	const { otp, setOtp } = props;
 
+	// Create array of refs (for each input)
 	let refs = useRef<Array<HTMLInputElement | null>>([]);
 	useEffect(() => {
 		refs.current = refs.current.slice(0, otp.length);
 	}, [otp]);
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement>,
-		index: number
-	) => {
-		if (!e.target.value.match(/[0-9]/g) || e.target.value === "")
-			return false;
+	// Handle change
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+		if (!e.target.value.match(/[0-9]/g) || e.target.value === "") return false;
 
 		setOtp([
 			...otp.map((value, idx) =>
@@ -37,8 +35,10 @@ const OtpBox: React.FC<OtpBoxProps> = (props) => {
 		}
 	};
 
+	// Handle keydown
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
 		switch (e.key) {
+			// Clear current and jump on previous
 			case "Backspace": {
 				setOtp([
 					...otp.map((value, idx) => (idx === index ? "" : value)),
@@ -47,6 +47,8 @@ const OtpBox: React.FC<OtpBoxProps> = (props) => {
 					refs.current[index - 1] && refs.current[index - 1]?.focus()
 				);
 			}
+
+			// Submit
 			case "Enter": {
 				const { onSubmit } = props;
 				return onSubmit && onSubmit();

@@ -21,8 +21,6 @@
 	background: linear-gradient(to left, rgba(0, 0, 0, 0), rgb(192, 192, 192));
 }
 
-
-
 .section-heading span {
 	font-weight: 600;
 	font-size: 1.6rem;
@@ -48,4 +46,10 @@
 
 .section-heading.danger p {
 	color: #ea4335;
+}
+
+@media screen and (max-width: 600px) {
+	.section-heading .border {
+		padding: 5px 0;
+	}
 }

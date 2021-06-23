@@ -69,9 +69,7 @@ export const changeEmailReqRequest = (email: string): AppActionTypes => ({
 	email,
 });
 
-export const changeEmailReqSuccess = (
-	payload: EmailChangingProcess
-): AppActionTypes => ({
+export const changeEmailReqSuccess = (payload: EmailChangingProcess): AppActionTypes => ({
 	type: "CHANGE_EMAIL_REQ_SUCCESS",
 	payload,
 });
@@ -102,9 +100,7 @@ export const changeEmailAbortRequest = (): AppActionTypes => ({
 	type: "CHANGE_EMAIL_ABORT_REQUEST",
 });
 
-export const changeEmailAbortSuccess = (
-	payload: EmailChangingProcess
-): AppActionTypes => ({
+export const changeEmailAbortSuccess = (payload: EmailChangingProcess): AppActionTypes => ({
 	type: "CHANGE_EMAIL_ABORT_SUCCESS",
 	payload,
 });
@@ -130,16 +126,12 @@ export const deleteAccountFailure = (): AppActionTypes => ({
 
 // CHANGE PASSWORD
 
-export const changePasswordRequest = (
-	payload: ChangePassword
-): AppActionTypes => ({
+export const changePasswordRequest = (payload: ChangePassword): AppActionTypes => ({
 	type: "CHANGE_PASSWORD_REQUEST",
 	payload,
 });
 
-export const changePasswordSuccess = (
-	lastTimeChanged: Date
-): AppActionTypes => ({
+export const changePasswordSuccess = (lastTimeChanged: Date): AppActionTypes => ({
 	type: "CHANGE_PASSWORD_SUCCESS",
 	lastTimeChanged,
 });
@@ -182,9 +174,7 @@ export const changeBioFailure = (): AppActionTypes => ({
 
 // CHANGE BIRTHDAY
 
-export const changeBirthdayRequest = (
-	payload: ChangeBirthday
-): AppActionTypes => ({
+export const changeBirthdayRequest = (payload: ChangeBirthday): AppActionTypes => ({
 	type: "CHANGE_BIRTHDAY_REQUEST",
 	payload,
 });
@@ -197,3 +187,11 @@ export const changeBirthdaySuccess = (birthday: Date): AppActionTypes => ({
 export const changeBirthdayFailure = (): AppActionTypes => ({
 	type: "CHANGE_BIRTHDAY_FAILURE",
 });
+
+// WS action
+
+export const updateFriendsWhenAcceptedRequest = (newFriendId: string) => ({
+	type: "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST",
+	newFriendId
+})
+

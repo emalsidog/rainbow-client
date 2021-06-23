@@ -45,6 +45,7 @@ function* currentUser() {
 		const { data } = yield call(() =>
 			AxiosGetRequest("/authentication/current-user")
 		);
+		
 		const { user, changingEmailProcess } = data.body;
 		
 		const payload: UserExtended = {

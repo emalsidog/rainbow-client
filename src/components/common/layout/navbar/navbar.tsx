@@ -9,9 +9,6 @@ import { logoutRequest } from "../../../../redux/auth/actions";
 // Selectors
 import { selectUser } from "../../../../redux/user/selector";
 
-// Assets
-import logo from "../../../../assets/images/logo.png";
-
 // Styles
 import "./navbar.css";
 
@@ -26,23 +23,28 @@ const Navbar = () => {
 
 	const history = useHistory();
 
+	// Listen to scroll event
 	useEffect(() => {
 		window.addEventListener("scroll", updateScroll);
 		return () => window.removeEventListener("scroll", updateScroll);
 	}, []);
 
+	// Handle scroll event
 	const updateScroll = () => {
 		setScrollPos(document.documentElement.scrollTop);
 	};
 
+	// Handle logount action
 	const handleLogout = () => {
 		dispatch(logoutRequest());
 	};
 
+	// Handle settings action
 	const handleSettings = () => {
 		history.push("/settings");
 	};
 
+	// Handle profile action
 	const handleProfile = () => {
 		history.push(`/${user.profileId}`);
 	};
@@ -56,7 +58,7 @@ const Navbar = () => {
 		<header className={classNames}>
 			<div className="navbar-container">
 				<div className="navbar-logo">
-					<img src={logo} alt="Rainbow" />
+					<img src="/assets/images/logo.png" alt="Rainbow" />
 				</div>
 				<Dropdown avatar={user.avatar}>
 					<DropdownItem

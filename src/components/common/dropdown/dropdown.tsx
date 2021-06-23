@@ -16,21 +16,25 @@ interface DropdownItemProps {
 	onClick: () => void;
 }
 
+// Dropdown
 const Dropdown: React.FC<DropdownProps> = (props) => {
 	const { children, avatar } = props;
 
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const ref = useRef<HTMLDivElement>(null);
 
+	// Handle click
 	const handleClick = () => {
 		setIsVisible((prev) => !prev);
 	};
 
+	// Subscribing to events
 	useEffect(() => {
 		const unsubscribe = eventListenters();
 		return unsubscribe;
 	});
 
+	// Events
 	const eventListenters = () => {
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
@@ -38,6 +42,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 		};
 	};
 
+	// Handle click outside
 	const handleClickOutside = (event: any): void => {
 		if (ref.current && !ref.current.contains(event.target)) {
 			setIsVisible(false);
@@ -58,6 +63,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 	);
 };
 
+// Item
 export const DropdownItem: React.FC<DropdownItemProps> = (props) => {
 	const { title, onClick, isLoading } = props;
 	let classNames = `dd-list-item ${isLoading ? "disabled" : ""}`
@@ -68,6 +74,7 @@ export const DropdownItem: React.FC<DropdownItemProps> = (props) => {
 	);
 };
 
+// Divider
 export const DropdownDivider: React.FC = () => {
 	return <div className="dd-divider"></div>;
 };

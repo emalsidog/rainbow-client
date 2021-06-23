@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { removeNotification } from "../../../../../redux/notifications/actions";
 
 // Styles
-import "./notify.css";
+import "./system-notify.css";
 
 // Types
 interface NotifyProps {
@@ -15,7 +15,7 @@ interface NotifyProps {
 	isError: boolean;
 }
 
-const Notify: React.FC<NotifyProps> = (props) => {
+const SystemNotify: React.FC<NotifyProps> = (props) => {
 	const { id, message, isError } = props;
 
 	const dispatch = useDispatch();
@@ -92,20 +92,7 @@ const Notify: React.FC<NotifyProps> = (props) => {
 				style={{ width: `${width}%` }}
 			></div>
 		</div>
-
-		// <div
-		// 	onClick={handleCloseNotification}
-		// 	onMouseEnter={handlePauseTimer}
-		// 	onMouseLeave={handleStartTimer}
-		// 	className={`notification-item ${
-		// 		isError ? "notification-error" : "notification-success"
-		// 	} ${exit ? "exit" : ""}`}
-		// >
-		// 	<p>{message}</p>
-
-		// 	<div className="notification-bar" style={{ width: `${width}%` }} />
-		// </div>
 	);
 };
 
-export default Notify;
+export default SystemNotify;

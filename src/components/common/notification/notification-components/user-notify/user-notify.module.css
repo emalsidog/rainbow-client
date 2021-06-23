@@ -1,0 +1,72 @@
+.wrapper {
+	margin-bottom: 15px;
+	padding: 0 7px;
+
+	background-color: #ffffff;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+	animation: SlideLeft 0.4s forwards;
+}
+
+.wrapper.exit {
+	animation: SlideTop 0.2s forwards;
+}
+
+.wrapper > div {
+	margin: 5px 0;
+}
+
+.wrapper > div:first-child {
+	margin: 0;
+}
+
+.wrapper > div:last-child {
+	margin: 0;
+}
+
+.wrapper button {
+	font-size: 0.8rem;
+	margin-right: 5px;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+
+	padding: 7px 0;
+
+	border-bottom: 1px solid #d7d7d7;
+}
+
+.body {
+	font-size: 0.8rem;
+	line-height: 1.4rem;
+}
+
+.footer {
+	padding-bottom: 7px;
+}
+
+@keyframes SlideLeft {
+	0% {
+		transform: translateX(100%);
+	}
+	30% {
+		transform: translateX(-10%);
+	}
+	50% {
+		transform: translateX(-5%);
+	}
+	100% {
+		transform: translateX(-7%);
+	}
+}
+
+@keyframes SlideTop {
+    0% {
+		transform: translateX(-7%);
+	}
+    100% {
+        transform: translate(-7%, -140%);
+    }
+}

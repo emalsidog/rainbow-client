@@ -83,7 +83,7 @@ const Settings: React.FC = () => {
 
 				<ChangeEmail
 					isLoading={isLoading.changeEmail}
-					email={user.email}
+					email={user.email ? user.email : ""}
 					emailChangingProcess={emailChangingProcess}
 				/>
 

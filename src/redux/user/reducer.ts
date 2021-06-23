@@ -1,9 +1,9 @@
 // Types
-import { PostType } from "../common-types";
+import { PostType, User } from "../common-types";
 import { PostActionTypes } from "../posts";
-import { User, EmailChangingProcess } from "./types";
-import { IsLoading } from "./types";
-import { UserActionTypes } from "./types";
+import { EmailChangingProcess, IsLoading, UserActionTypes } from "./types";
+
+import { initialUser } from "../common-types";
 
 interface InitialState {
 	user: User;
@@ -15,17 +15,7 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
-	user: {
-		avatar: "",
-		bio: "",
-		birthday: undefined,
-		givenName: "",
-		familyName: "",
-		email: "",
-		profileId: "",
-		lastTimeChanged: undefined,
-		posts: [],
-	},
+	user: initialUser,
 	isFetching: true,
 
 	emailChangingProcess: {
@@ -281,17 +271,7 @@ export const user = (
 					...state.isLoading,
 					deleteAccount: false,
 				},
-				user: {
-					avatar: "",
-					bio: "",
-					birthday: undefined,
-					givenName: "",
-					familyName: "",
-					email: "",
-					profileId: "",
-					lastTimeChanged: undefined,
-					posts: [],
-				},
+				user: initialUser,
 			};
 		}
 		case "DELETE_ACCOUNT_FAILURE": {
@@ -460,7 +440,7 @@ export const user = (
 				},
 				user: {
 					...state.user,
-					posts: [...state.user.posts, action.payload],
+					posts: [...state.user!.posts, action.payload],
 				},
 			};
 		}
@@ -486,7 +466,7 @@ export const user = (
 			};
 		}
 		case "DELETE_POST_SUCCESS": {
-			const newPosts = state.user.posts.filter(
+			const newPosts = state.user!.posts.filter(
 				(post: PostType) => post.postId !== action.postId
 			);
 
@@ -524,9 +504,8 @@ export const user = (
 			};
 		}
 		case "EDIT_POST_SUCCESS": {
-			console.log(action.payload)
 			const { postText, isPublic, postId } = action.payload;
-			const newPosts = state.user.posts.map((post) => {
+			const newPosts = state.user!.posts.map((post) => {
 				if (post.postId === postId) {
 					return {
 						...post,
@@ -554,6 +533,44 @@ export const user = (
 				isLoading: {
 					...state.isLoading,
 					editPost: false,
+				},
+			};
+		}
+
+		
+		/* 
+			"NEW_FRIEND_REQUEST" - responsible for updating client,
+			which have got a notification (add currentUserId to friendRequests)
+		*/
+		case "NEW_FRIEND_REQUEST": {
+			return {
+				...state,
+				user: {
+					...state.user,
+					friendRequests: [
+						...state.user.friendRequests,
+						action.payload.currentUserId,
+					],
+				},
+			};
+		}
+
+		/*
+			UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST - update current user of client which was accepted
+			(update user.user of client which was accepted) with new friends (add idOfUserWhoAccepted) and
+			new requests (remove idOfUserWhoAccepted)
+		*/
+		case "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST": {
+			const { newFriendId } = action;
+			const newRequests = state.user.friendRequests.filter(
+				(requestId) => requestId.toString() !== newFriendId.toString()
+			);
+			return {
+				...state,
+				user: {
+					...state.user,
+					friendRequests: newRequests,
+					friends: [...state.user.friends, newFriendId],
 				},
 			};
 		}

@@ -38,9 +38,22 @@
 @media screen and (max-width: 600px) {
 	.settings-row {
 		flex-direction: column;
+		padding: 10px 0;
 	}
-	.settings-row-action {
-		margin-right: auto;
+	.settings-row div {
 		width: 100%;
+	}
+	.settings-row-action button {
+		min-width: 0;
+	}
+	.settings-row > div {
+		margin: 5px 0;
+	}
+
+	.settings-row-title div {
+		font-size: 1.2rem;
+	}
+	.settings-row-change span {
+		font-size: .9rem;
 	}
 }

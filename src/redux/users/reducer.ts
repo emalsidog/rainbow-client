@@ -1,31 +1,22 @@
 // Types
-import { PostType } from "../common-types";
+import { PostType, initialUser, User } from "../common-types";
 import { UsersActionTypes } from "./types";
-import { User } from "./types";
 
 interface InitialState {
 	user: User;
 	users: User[];
-	totalUsers: number | undefined;
+
+	hasMoreData: boolean;
+
 	isCurrenUser: boolean | undefined;
 	isLoading: boolean;
 }
 
 const initialState: InitialState = {
-	user: {
-		_id: "",
-		profileId: "",
-		avatar: "",
-		birthday: undefined,
-		givenName: "",
-		familyName: "",
-		bio: "",
-		registrationDate: undefined,
-		posts: [],
-	},
-
+	user: initialUser,
 	users: [],
-	totalUsers: undefined,
+
+	hasMoreData: true,
 
 	isCurrenUser: undefined,
 	isLoading: false,
@@ -61,28 +52,147 @@ export const users = (
 			};
 		}
 
-		// SEARCH USER
+		// SEARCH USERS
 
-		case "SEARCH_USER_REQUEST": {
+		case "SEARCH_USERS_REQUEST": {
+			if (action.payload.needsToBeCleared) {
+				return {
+					...state,
+					isLoading: true,
+					users: [],
+				};
+			}
 			return {
 				...state,
 				isLoading: true,
 			};
 		}
-		case "SEARCH_USER_SUCCESS": {
+		case "SEARCH_USERS_SUCCESS": {
+			const { meta, users } = action.payload;
+
 			return {
 				...state,
 				isLoading: false,
-				users: [...state.users, ...action.payload.users],
-				totalUsers: action.payload.totalUsers,
+				users: [...state.users, ...users],
+				hasMoreData: meta.hasMoreData,
 			};
 		}
-		case "SEARCH_USER_FAILURE": {
+		case "SEARCH_USERS_FAILURE": {
 			return {
 				...state,
 				isLoading: false,
 			};
 		}
+
+		// SEND FRIEND REQUEST
+
+		case "SEND_FRIEND_REQ_REQUEST": {
+			return {
+				...state,
+			};
+		}
+		case "SEND_FRIEND_REQ_SUCCESS": {
+			const { idOfUserToUpdate, newRequestId } = action.payload;
+			const newUsers = state.users.map((user) => {
+				if (user._id === idOfUserToUpdate) {
+					return {
+						...user,
+						friendRequests: [...user.friendRequests, newRequestId],
+					};
+				}
+				return user;
+			});
+
+			return {
+				...state,
+				users: newUsers,
+			};
+		}
+		case "SEND_FRIEND_REQ_FAILURE": {
+			return {
+				...state,
+			};
+		}
+
+		// ACCEPT FRIEND REQUEST
+
+		case "ACCEPT_FRIEND_REQ_REQUEST": {
+			return {
+				...state,
+			};
+		}
+		case "ACCEPT_FRIEND_REQ_SUCCESS": {
+			return {
+				...state,
+			};
+		}
+		case "ACCEPT_FRIEND_REQ_FAILURE": {
+			return {
+				...state,
+			};
+		}
+
+		// DECLINE FRIEND REQUEST
+
+		case "DECLINE_FRIEND_REQ_REQUEST": {
+			return {
+				...state,
+			};
+		}
+
+		case "DECLINE_FRIEND_REQ_SUCCESS": {
+			return {
+				...state,
+			};
+		}
+
+		case "DECLINE_FRIEND_REQ_FAILURE": {
+			return {
+				...state,
+			};
+		}
+
+		// CANCEL FRIEND REQUEST
+
+		case "CANCEL_FRIEND_REQ_REQUEST": {
+			return {
+				...state,
+			};
+		}
+
+		case "CANCEL_FRIEND_REQ_SUCCESS": {
+			return {
+				...state,
+			};
+		}
+
+		case "CANCEL_FRIEND_REQ_FAILURE": {
+			return {
+				...state,
+			};
+		}
+
+		// REMOVE FROM FRIENDS
+
+		case "REMOVE_FROM_FRIENDS_REQUEST": {
+			return {
+				...state,
+			};
+		}
+
+		case "REMOVE_FROM_FRIENDS_SUCCESS": {
+			return {
+				...state,
+			};
+		}
+
+		case "REMOVE_FROM_FRIENDS_FAILURE": {
+			return {
+				...state,
+			};
+		}
+
+		// WEB SOCKET ACTIONS
 
 		case "NEW_POST_ADDED": {
 			return {
@@ -127,6 +237,33 @@ export const users = (
 			};
 		}
 
+		/*
+			UPDATE_USER_WHO_ACCEPTED - update client, which has been accepted by current user
+			(find current user (who accepted) in users array and update it (add acceptedUserId to friends and
+			remove it from requests)).
+		*/
+		case "UPDATE_USER_WHO_ACCEPTED": {
+			const { acceptedUserId, idOfUserWhoAccepted } = action.payload;
+
+			const newUsers = state.users.map(user => {
+				if (user._id === idOfUserWhoAccepted) {
+					const newRequests = user.friendRequests.filter(requestId => requestId !== acceptedUserId);
+
+					return {
+						...user,
+						friendRequests: newRequests,
+						friends: [...user.friends, acceptedUserId]
+					};
+				}
+				return user;
+			})
+
+			return {
+				...state,
+				users: newUsers
+			}
+		}
+		
 		default: {
 			return {
 				...state,

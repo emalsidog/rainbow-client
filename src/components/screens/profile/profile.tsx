@@ -25,16 +25,16 @@ import Layout from "../../common/layout";
 import PostForm from "./profile-components/post-form";
 import DisplayPosts from "./profile-components/display-posts";
 import AdditionalInfo from "./profile-components/additional-info";
+import AddToFriends from "../../common-actions/add-friend";
 
 const Profile: React.FC = () => {
 	const dispatch = useDispatch();
-
-	const history = useHistory();
-
 	const user = useSelector(selectUser);
 	const { posts: currentUserPosts } = useSelector(selectCurrentUser);
 	const isCurrentUser = useSelector(selectIsCurrentUser);
 	const isLoading = useSelector(selectIsLoading);
+
+	const history = useHistory();
 
 	const { profileId }: any = useParams();
 
@@ -119,12 +119,7 @@ const Profile: React.FC = () => {
 							Edit
 						</button>
 					) : (
-						<button
-							style={{ width: "100%" }}
-							className="btn btn-primary"
-						>
-							Add to friends
-						</button>
+						<AddToFriends profileId={profileId} />
 					)}
 				</div>
 			</div>

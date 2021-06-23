@@ -1,6 +1,10 @@
 // Types
 import { AppActionTypes } from "../common-types";
-import { GetUserPayload, SearchPayload, SearchSuccessPayload } from "./types";
+import {
+	GetUserPayload,
+	SearchUsersRequestPayload,
+	SearchUsersSuccessPayload,
+} from "./types";
 
 // GET USER BY ID
 
@@ -20,18 +24,101 @@ export const getUserByIdFailure = (): AppActionTypes => ({
 	type: "GET_USER_BY_ID_FAILURE",
 });
 
-// SEARCH USER BY NAME
+// SEARCH USERS
 
-export const searchUserRequest = (payload: SearchPayload): AppActionTypes => ({
-	type: "SEARCH_USER_REQUEST",
+export const searchUsersRequest = (
+	payload: SearchUsersRequestPayload
+): AppActionTypes => ({
+	type: "SEARCH_USERS_REQUEST",
 	payload,
 });
 
-export const searchUserSuccess = (payload: SearchSuccessPayload): AppActionTypes => ({
-	type: "SEARCH_USER_SUCCESS",
+export const searchUsersSuccess = (
+	payload: SearchUsersSuccessPayload
+): AppActionTypes => ({
+	type: "SEARCH_USERS_SUCCESS",
 	payload,
 });
 
-export const searchUserFailure = (): AppActionTypes => ({
-	type: "SEARCH_USER_FAILURE",
+export const searchUsersFailure = (): AppActionTypes => ({
+	type: "SEARCH_USERS_FAILURE",
+});
+
+// SEND FRIEND REQUEST
+
+export const sendFriendReqRequest = (profileId: string): AppActionTypes => ({
+	type: "SEND_FRIEND_REQ_REQUEST",
+	profileId,
+});
+
+export const sendFriendReqSuccess = (payload: {
+	newRequestId: string;
+	idOfUserToUpdate: string;
+}): AppActionTypes => ({
+	type: "SEND_FRIEND_REQ_SUCCESS",
+	payload,
+});
+
+export const sendFriendReqFailure = (): AppActionTypes => ({
+	type: "SEND_FRIEND_REQ_FAILURE",
+});
+
+// ACCEPT FRIEND REQUEST
+
+export const acceptFriendReqRequest = (id: string): AppActionTypes => ({
+	type: "ACCEPT_FRIEND_REQ_REQUEST",
+	id,
+});
+
+export const acceptFriendReqSuccess = (): AppActionTypes => ({
+	type: "ACCEPT_FRIEND_REQ_SUCCESS",
+});
+
+export const acceptFriendReqFailure = (): AppActionTypes => ({
+	type: "ACCEPT_FRIEND_REQ_FAILURE",
+});
+
+// DECLINE FRIEND REQUEST
+
+export const declineFriendReqRequest = (id: string): AppActionTypes => ({
+	type: "DECLINE_FRIEND_REQ_REQUEST",
+	id,
+});
+
+export const declineFriendReqSuccess = (): AppActionTypes => ({
+	type: "DECLINE_FRIEND_REQ_SUCCESS",
+});
+
+export const declineFriendReqFailure = (): AppActionTypes => ({
+	type: "DECLINE_FRIEND_REQ_FAILURE",
+});
+
+// CANCEL FRIEND REQUEST
+
+export const cancelFriendReqRequest = (id: string): AppActionTypes => ({
+	type: "CANCEL_FRIEND_REQ_REQUEST",
+	id,
+});
+
+export const cancelFriendReqSuccess = (): AppActionTypes => ({
+	type: "CANCEL_FRIEND_REQ_SUCCESS",
+});
+
+export const cancelFriendReqFailure = (): AppActionTypes => ({
+	type: "CANCEL_FRIEND_REQ_FAILURE",
+});
+
+// REMOVE FROM FRIENDS
+
+export const removeFromFriendsRequest = (id: string): AppActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_REQUEST",
+	id,
+});
+
+export const removeFromFriendsSuccess = (): AppActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_SUCCESS",
+});
+
+export const removeFromFriendsFailure = (): AppActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_FAILURE",
 });

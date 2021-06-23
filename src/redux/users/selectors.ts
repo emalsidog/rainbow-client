@@ -1,5 +1,5 @@
 // Types
-import { User } from "./types";
+import { User } from "../common-types";
 import { RootState } from "../store";
 
 // IS LAODING
@@ -15,4 +15,4 @@ export const selectUser = (state: RootState): User => state.users.user;
 export const selectUsers = (state: RootState): User[] => state.users.users;
 
 // TOTAL USERS
-export const selectTotalUsers = (state: RootState): number | undefined => state.users.totalUsers;
+export const selectHasMoreData = (state: RootState) => state.users.hasMoreData;

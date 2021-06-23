@@ -1,4 +1,4 @@
-import { PostType } from "../common-types";
+import { User } from "../common-types";
 
 const SET_USER = "SET_USER";
 
@@ -46,17 +46,7 @@ const CHANGE_BIRTHDAY_REQUEST = "CHANGE_BIRTHDAY_REQUEST";
 const CHANGE_BIRTHDAY_SUCCESS = "CHANGE_BIRTHDAY_SUCCESS";
 const CHANGE_BIRTHDAY_FAILURE = "CHANGE_BIRTHDAY_FAILURE";
 
-export interface User {
-	avatar: string;
-	bio: string;
-	birthday: Date | undefined;
-	givenName: string;
-	familyName: string;
-	email: string;
-	profileId: string;
-	lastTimeChanged: Date | undefined;
-	posts: PostType[]
-}
+const NEW_FRIEND_REQUEST = "NEW_FRIEND_REQUEST";
 
 export interface EmailChangingProcess {
 	timeToNextEmail: number | undefined;
@@ -285,6 +275,64 @@ export interface ChangeBirthdayFailure {
 	type: typeof CHANGE_BIRTHDAY_FAILURE;
 }
 
+// UPDATE FRIEND REQUESTS
+
+export interface NewFriendRequest {
+	type: typeof NEW_FRIEND_REQUEST,
+	payload: {
+		currentUserId: string;
+	}
+}
+
+// ============================= WHEN ACCEPTED ============================= */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST = "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST";
+
+export interface UpdateFriendsWhenAcceptedRequest {
+	type: typeof UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST,
+	newFriendId: string;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export type UserActionTypes =
 	| SetUser
 	| GetUserRequest
@@ -319,4 +367,6 @@ export type UserActionTypes =
 	| ChangeBioFailure
 	| ChangeBirthdayRequest
 	| ChangeBirthdaySuccess
-	| ChangeBirthdayFailure;
+	| ChangeBirthdayFailure
+	| NewFriendRequest
+	| UpdateFriendsWhenAcceptedRequest

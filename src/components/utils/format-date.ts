@@ -2,6 +2,7 @@
 type Style = "BIRTHDAY" | "REGULAR";
 type UnpdarsedDate = Date | undefined;
 
+// Minutes and Seconds (1:53)
 export const formatToMinutesAndSeconds = (timeInMs: number): string => {
 	const date = new Date(timeInMs);
 
@@ -15,6 +16,7 @@ export const formatToMinutesAndSeconds = (timeInMs: number): string => {
 	return `${minutes}:${seconds}`;
 };
 
+// REGULAR (Thu, June 17) || BIRTHDAY (April 10, 2001)
 export const formatDate = (unparsedDate: UnpdarsedDate, style: Style): string | undefined => {
 	if (unparsedDate === undefined) {
 		return;

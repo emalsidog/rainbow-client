@@ -13,41 +13,16 @@ import Sidebar, { SidebarItem } from "./sidebar";
 interface LayoutProps {
 	children: React.ReactNode;
 
-	secondSidebar?: boolean;
-	secondSidebarOptions?: Options[];
-
 	overlay?: boolean | null;
-}
-
-interface Options {
-	title: string;
-
-	linkTo: string;
-	hashLink: boolean;
 }
 
 const Layout: React.FC<LayoutProps> = (props) => {
 	const {
 		children,
-		secondSidebar = false,
-		secondSidebarOptions = undefined,
-
 		overlay = null,
 	} = props;
 
 	const user = useSelector(selectUser);
-
-	const secondSidebarRender = secondSidebarOptions?.map((options) => {
-		return (
-			<SidebarItem
-				key={options.title}
-				hashLink={options.hashLink}
-				linkTo={options.linkTo}
-			>
-				<span>{options.title}</span>
-			</SidebarItem>
-		);
-	});
 
 	return (
 		<React.Fragment>
@@ -76,9 +51,6 @@ const Layout: React.FC<LayoutProps> = (props) => {
 
 				{children}
 
-				{secondSidebar && (
-					<Sidebar secondSidebar>{secondSidebarRender}</Sidebar>
-				)}
 			</main>
 		</React.Fragment>
 	);

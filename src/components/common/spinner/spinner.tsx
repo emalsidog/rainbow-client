@@ -5,7 +5,18 @@ import React from "react";
 import styles from "./spinner.module.css";
 
 const Spinner: React.FC = () => {
-    return <div className={styles.loader}>Loading...</div>
-}
+	return (
+		<div className={styles.loader}>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	);
+};
 
 export default Spinner;

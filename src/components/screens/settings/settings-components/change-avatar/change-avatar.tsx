@@ -82,7 +82,9 @@ const ChangeAvatar: React.FC<ChangeAvatarProps> = ({ isLoading }) => {
 				<div className="settings-row-title">
 					<div>Change profile photo</div>
 				</div>
-				<div>A photo helps personalize your account</div>
+				<div className="settings-row-change">
+					<span>A photo helps personalize your account</span>
+				</div>
 				<div className="settings-row-action">
 					<button onClick={openModal} className="btn-transperent">
 						Change

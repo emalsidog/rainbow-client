@@ -1,8 +1,18 @@
-.notification-wrapper {
+.system-notifications-wrapper {
 	position: fixed;
 	right: 0;
 	bottom: 50px;
 	width: 350px;
 
 	z-index: 10;
+}
+
+.user-notifications-wrapper {
+	position: fixed;
+
+	right: 0;
+	top: 25px;
+	width: 350px;
+
+	z-index: 12000;
 }

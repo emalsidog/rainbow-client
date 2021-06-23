@@ -38,8 +38,6 @@ function initWebsocket(): EventChannel<any> {
 					throw error;
 				}
 
-				console.log(response);
-
 				switch (response.type) {
 					case "NEW_POST_ADDED": {
 						return emitter({
@@ -58,6 +56,54 @@ function initWebsocket(): EventChannel<any> {
 							type: "POST_UPDATED",
 							payload: response.payload,
 						});
+					}
+					/* 
+						"NEW_FRIEND_REQUEST" - responsible for updating client,
+						which have got a notification (add currentUserId to friendRequests)
+					*/
+					case "FRIEND_REQUEST": {
+						/* serverData: {
+							currentUserId: string
+						} */
+						const { serverData, notification } = response.payload;
+						emitter({
+							type: "NEW_FRIEND_REQUEST",
+							payload: serverData
+						})
+						return emitter({
+							type: "ADD_USER_NOTIFICATION",
+							payload: notification
+						});
+					}
+					/* 
+						UPDATE_USER_WHO_ACCEPTED - update client, which has been accepted by current user
+						(find current user (who accepted) in users array and update it (add acceptedUserId to friends and
+						remove it from requests)).
+						===========================================================================
+						UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST - update current user of client which was accepted
+						(update user.user of client which was accepted) with new friends (add idOfUserWhoAccepted) and
+						new requests (remove idOfUserWhoAccepted)
+					*/
+					case "FRIEND_REQUEST_ACCEPTED": {
+						/*
+							serverData: {
+								idOfUserWhoAccepted: string,
+								acceptedUserId: string
+							}
+						*/
+						const { serverData, notification } = response.payload;
+						emitter({ 
+							type: "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST",
+							newFriendId: serverData.idOfUserWhoAccepted
+						});
+						emitter({
+							type: "UPDATE_USER_WHO_ACCEPTED",
+							payload: serverData
+						})
+						return emitter({
+							type: "ADD_USER_NOTIFICATION",
+							payload: notification
+						})
 					}
 				}
 			};

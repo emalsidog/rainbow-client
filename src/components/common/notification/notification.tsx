@@ -5,24 +5,30 @@ import { useSelector } from "react-redux";
 // Styles
 import "./notification.css";
 
-// Styles
-import "./notification.css";
-
 // Components
-import Notify from "./notification-components/notify";
+import SystemNotify from "./notification-components/system-notify";
+import UserNotify from "./notification-components/user-notify";
 
 // Types
 import { RootState } from "../../../redux/store";
 
 const Notification = () => {
-	const { notifications } = useSelector((state: RootState) => state.notifications);
+	const { notifications, userNotifications } = useSelector((state: RootState) => state.notifications);
 
 	return (
-		<div className="notification-wrapper">
-			{notifications.map((notify) => {
-				return <Notify key={notify.id} {...notify} />;
-			})}
-		</div>
+		<React.Fragment>
+			<div className="system-notifications-wrapper">
+				{notifications.map((notify) => {
+					return <SystemNotify key={notify.id} {...notify} />;
+				})}
+			</div>
+
+			<div className="user-notifications-wrapper">
+				{userNotifications.map((notify) => {
+					return <UserNotify key={notify.id} {...notify} />
+				})}
+			</div>
+		</React.Fragment>
 	);
 };
 
