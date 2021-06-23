@@ -70,3 +70,29 @@
         transform: translate(-7%, -140%);
     }
 }
+
+@keyframes SlideBottom {
+	0% {
+		transform: translateY(-140%);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+
+@media screen and (max-width: 400px) {
+	.wrapper {
+		animation: SlideBottom 0.1s forwards;
+		margin-bottom: 5px;
+	}
+
+	@keyframes SlideTop {
+		0% {
+			transform: translateY(0);
+		}
+		100% {
+			transform: translateY(-140%);
+		}
+	}
+	
+}

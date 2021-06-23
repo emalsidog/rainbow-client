@@ -1,6 +1,6 @@
 .notification-item {
 	animation: SlideLeft 0.4s forwards;
-	margin-bottom: 5px;
+	margin-top: 5px;
 }
 
 .notification-content {
@@ -77,5 +77,33 @@
 	}
 	100% {
 		transform: translateX(100%);
+	}
+}
+
+
+@media screen and (max-width: 400px) {
+	.notification-item {
+		animation: SlideLeft 0.1s forwards;
+	}
+	.notification-item.exit {
+		animation: SlideRight 0.1s forwards;
+	}
+
+	@keyframes SlideLeft {
+		0% {
+			transform: translateX(100%);
+		}
+		100% {
+			transform: translateX(0%);
+		}
+	}
+
+	@keyframes SlideRight {
+		0% {
+			transform: translateX(0%);
+		}
+		100% {
+			transform: translateX(100%);
+		}
 	}
 }

@@ -16,3 +16,14 @@
 
 	z-index: 12000;
 }
+
+@media screen and (max-width: 400px) {
+	.system-notifications-wrapper {
+		width: 100%;
+		bottom: 0;
+	}
+	.user-notifications-wrapper {
+		width: 100%;
+		top: 0;
+	}
+}
