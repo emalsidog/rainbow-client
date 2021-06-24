@@ -231,6 +231,12 @@ export const users = (
 		*/
 		case "UPDATE_USER_WHO_ACCEPTED": {
 			const { acceptedUserId, idOfUserWhoAccepted } = action.payload;
+			
+			let newUser = { ...state.user };
+			if (state.user._id === idOfUserWhoAccepted) {
+				const newRequests = newUser.friendRequests.filter(requestId => requestId !== acceptedUserId);
+				newUser.friendRequests = newRequests
+			}
 
 			const newUsers = state.users.map(user => {
 				if (user._id === idOfUserWhoAccepted) {
@@ -247,7 +253,8 @@ export const users = (
 
 			return {
 				...state,
-				users: newUsers
+				users: newUsers,
+				user: newUser
 			}
 		}
 		/*
@@ -256,6 +263,13 @@ export const users = (
 		*/
 		case "FRIEND_REQUEST_DECLINED": {
 			const { declinedRequestId, idOfUserWhoDeclined } = action.payload
+
+			let newUser = { ...state.user };
+			if (state.user._id === idOfUserWhoDeclined) {
+				const newRequests = newUser.friendRequests.filter(requestId => requestId !== declinedRequestId);
+				newUser.friendRequests = newRequests
+			}
+
 			const newUsers = state.users.map(user => {
 				if (user._id === idOfUserWhoDeclined) {
 					const newRequests = user.friendRequests.filter(requestId => requestId !== declinedRequestId);
@@ -269,7 +283,8 @@ export const users = (
 
 			return {
 				...state,
-				users: newUsers
+				users: newUsers,
+				user: newUser
 			}
 		}
 		/* 
