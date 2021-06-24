@@ -93,6 +93,12 @@ export const users = (
 		}
 		case "SEND_FRIEND_REQ_SUCCESS": {
 			const { idOfUserToUpdate, newRequestId } = action.payload;
+
+			let newUser = { ...state.user };
+			if (state.user._id === idOfUserToUpdate) {
+				newUser.friendRequests = [...state.user.friendRequests, newRequestId]
+			}
+
 			const newUsers = state.users.map((user) => {
 				if (user._id === idOfUserToUpdate) {
 					return {
@@ -106,6 +112,7 @@ export const users = (
 			return {
 				...state,
 				users: newUsers,
+				user: newUser
 			};
 		}
 		case "SEND_FRIEND_REQ_FAILURE": {
@@ -142,6 +149,13 @@ export const users = (
 
 		case "CANCEL_FRIEND_REQ_SUCCESS": {
 			const { idOfUserWhoCancelled, userWhoHasRequest } = action.payload;
+
+			let newUser = { ...state.user };
+			if (state.user._id === userWhoHasRequest) {
+				const newRequests = newUser.friendRequests.filter(requestId => requestId !== idOfUserWhoCancelled);
+				newUser.friendRequests = newRequests
+			}
+
 			const newUsers = state.users.map(user => {
 				if (user._id === userWhoHasRequest) {
 					const newRequests = user.friendRequests.filter(requestId => requestId !== idOfUserWhoCancelled);
@@ -154,7 +168,8 @@ export const users = (
 			});
 			return {
 				...state,
-				users: newUsers
+				users: newUsers,
+				user: newUser
 			};
 		}
 

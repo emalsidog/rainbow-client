@@ -20,7 +20,7 @@ interface DisplayActionsProps {
 
 const DisplayActions: React.FC<DisplayActionsProps> = (props) => {
     const { friendshipStatus, userId, userProfileId } = props;
-    
+
 	switch (friendshipStatus) {
 		case "FRIENDS": {
 			return (

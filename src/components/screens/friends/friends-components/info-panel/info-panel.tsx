@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 // Selectors
 import { selectUsers } from "../../../../../redux/users/selectors";
+import { selectUser } from "../../../../../redux/user/selector";
 
 // Utils
 import { formatDate } from "../../../../utils/format-date";
@@ -33,9 +34,10 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 	const [user, setUser] = useState<User>(initialUser);
 
 	const users = useSelector(selectUsers);
+	const currentUser = useSelector(selectUser);
 
 	const ref = useRef<HTMLDivElement>(null);
-	const friendshipStatus = useFriendshipStatus(user);
+	const friendshipStatus = useFriendshipStatus(currentUser, user);
 
 	useEffect(() => {
 		const foundedUser = users.find(({ _id }) => _id === idToDisplay);
@@ -69,16 +71,7 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 		}
 	};
 
-	const {
-		_id,
-		avatar,
-		bio,
-		birthday,
-		familyName,
-		givenName,
-		profileId,
-		registrationDate,
-	} = user;
+	const { _id, avatar, bio, birthday,	familyName, givenName, profileId, registrationDate } = user;
 
 	if (isVisible === null) return null;
 	return (

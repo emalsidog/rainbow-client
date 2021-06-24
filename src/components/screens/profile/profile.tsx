@@ -16,6 +16,9 @@ import { selectIsLoading, selectUser as selectCurrentUser } from "../../../redux
 // Utils
 import { formatDate } from "../../utils/format-date";
 
+// Hooks
+import { useFriendshipStatus } from "../../../hocs/useFriendshipStatus";
+
 // Styles
 import styles from "./profile.module.css";
 
@@ -25,17 +28,27 @@ import Layout from "../../common/layout";
 import PostForm from "./profile-components/post-form";
 import DisplayPosts from "./profile-components/display-posts";
 import AdditionalInfo from "./profile-components/additional-info";
-import AddToFriends from "../../common-actions/add-friend";
+import DisplayActions from "../../common-actions/display-actions";
 
 const Profile: React.FC = () => {
 	const dispatch = useDispatch();
-	const user = useSelector(selectUser);
-	const { posts: currentUserPosts } = useSelector(selectCurrentUser);
+	const displayedUser = useSelector(selectUser);
+	const currentUser = useSelector(selectCurrentUser);
 	const isCurrentUser = useSelector(selectIsCurrentUser);
 	const isLoading = useSelector(selectIsLoading);
 
 	const history = useHistory();
 
+	const friendshipStatus = useFriendshipStatus(currentUser, displayedUser);
+	
+	useEffect(() => {
+		console.log(currentUser);
+
+		console.log(displayedUser);
+		
+		
+	}, [currentUser, displayedUser]);
+	
 	const { profileId }: any = useParams();
 
 	useEffect(() => {
@@ -46,15 +59,7 @@ const Profile: React.FC = () => {
 		history.push("/settings");
 	};
 
-	const {
-		givenName,
-		familyName,
-		bio,
-		avatar,
-		birthday,
-		registrationDate,
-		posts,
-	} = user;
+	const {	_id, givenName, familyName, bio, avatar, birthday, registrationDate, posts } = displayedUser;
 
 	return (
 		<Layout>
@@ -100,7 +105,7 @@ const Profile: React.FC = () => {
 					givenName={givenName}
 					familyName={familyName}
 					isCurrentUser={isCurrentUser}
-					posts={isCurrentUser ? currentUserPosts : posts}
+					posts={isCurrentUser ? currentUser.posts : posts}
 				/>
 			</div>
 
@@ -112,14 +117,17 @@ const Profile: React.FC = () => {
 				<div className={`${styles.wrapper} ${styles.actionButtons}`}>
 					{isCurrentUser ? (
 						<button
-							style={{ width: "100%" }}
 							className="btn btn-primary"
 							onClick={handleEdit}
 						>
 							Edit
 						</button>
 					) : (
-						<AddToFriends profileId={profileId} />
+						<DisplayActions 
+							friendshipStatus={friendshipStatus} 
+							userId={_id} 
+							userProfileId={profileId} 
+						/>
 					)}
 				</div>
 			</div>

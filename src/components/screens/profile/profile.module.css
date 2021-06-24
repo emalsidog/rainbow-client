@@ -62,6 +62,15 @@
     font-size: 1.2rem;
 }
 
+.actionButtons button {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.actionButtons button:last-child {
+    margin-bottom: 0;
+}
+
 /* CREATE POST */
 .postControls {
     display: flex;
