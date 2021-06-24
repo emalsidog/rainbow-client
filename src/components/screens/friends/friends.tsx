@@ -1,11 +1,9 @@
 // Dependencies
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // Actions
-import {
-	searchUsersRequest,
-} from "../../../redux/users/actions";
+import { searchUsersRequest } from "../../../redux/users/actions";
 
 // Selectors
 import {
@@ -15,7 +13,7 @@ import {
 } from "../../../redux/users/selectors";
 
 // Hooks
-// import useDebounce from "../../../hocs/useDebounce";
+import useDebounce from "../../../hocs/useDebounce";
 
 // Components
 import Layout from "../../common/layout";
@@ -28,37 +26,61 @@ import InfoPanel from "./friends-components/info-panel";
 import styles from "./friends.module.css";
 
 const Friends: React.FC = () => {
-	const [isInfoPanelVisible, setIsInfoPanelVisible] =	useState<boolean | null>(null);
-	// const [searchValue, setSearchValue] = useState<string>("");
+	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<boolean | null>(null);
 	const [pageNumber, setPageNumber] = useState<number>(1);
 
 	const [idToDisplay, setIdToDisplay] = useState<string>();
+	const [searchValue, setSearchValue] = useState<string>("");
 
+	
 	const dispatch = useDispatch();
 	const users = useSelector(selectUsers);
-	const hasMoreData = useSelector(selectHasMoreData);
+	const [hasMoreData, hasMoreSearchedData] = useSelector(selectHasMoreData);
 	const isLoading = useSelector(selectIsLoading);
 
-	// const debouncedSearchedName = useDebounce<string>(searchValue, 300);
-		
+	const debouncedSearchedName = useDebounce<string>(searchValue, 300);
+	const oldSearchedValue = useRef<string>("");
+
+	// Handle users fetching without search values
 	useEffect(() => {
-		if (hasMoreData)
+		if (debouncedSearchedName) return;
+
+		if (hasMoreData) {
 			dispatch(
 				searchUsersRequest({
-					requestOptions: { page: pageNumber },
-					needsToBeCleared: pageNumber === 1,
+					requestOptions: { 
+						page: pageNumber 
+					},
 				})
 			);
-	}, [dispatch, pageNumber, hasMoreData]);
-	
-	const callback = useCallback(
-		(entries) => {
-			if (entries[0].isIntersecting) {
-				setPageNumber((prev) => prev + 1);
-			}
-		},
-		[]
-	);
+		}
+	}, [dispatch, pageNumber, hasMoreData, debouncedSearchedName]);
+
+	// Handle users fetching with search values
+	useEffect(() => {
+		if (!debouncedSearchedName) return;
+
+		if (debouncedSearchedName !== oldSearchedValue.current || hasMoreSearchedData) {
+			dispatch(
+				searchUsersRequest({
+					requestOptions: { 
+						page: pageNumber 
+					},
+					options: {
+						displayName: debouncedSearchedName,
+					},
+				})
+			);
+
+			oldSearchedValue.current = debouncedSearchedName;
+		}
+	}, [dispatch, pageNumber, debouncedSearchedName, hasMoreSearchedData]);
+
+	const callback = useCallback((entries) => {
+		if (entries[0].isIntersecting) {
+			setPageNumber((prev) => prev + 1);
+		}
+	}, []);
 
 	const ref = useCallback(
 		(node) => {
@@ -79,10 +101,10 @@ const Friends: React.FC = () => {
 		setIsInfoPanelVisible(true);
 	};
 
-	// const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-	// 	setPageNumber(1);
-	// 	setSearchValue(e.target.value);
-	// };
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchValue(e.target.value);
+		setPageNumber(1);
+	};
 
 	/* RENDER CARDS */
 
@@ -116,16 +138,21 @@ const Friends: React.FC = () => {
 	return (
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
-				{/* <div className={`input-group ${styles.searchBox}`}>
+				<div className={`input-group ${styles.searchBox}`}>
 					<span>
-						<i className="fas fa-search"></i>
+						{isLoading ? (
+							<Spinner />
+						) : (
+							<i className="fas fa-search"></i>
+						)}
 					</span>
 					<input
 						value={searchValue}
-						onChange={handleSearchChange}
+						onChange={handleChange}
 						placeholder="Search by name..."
+						autoFocus
 					/>
-				</div> */}
+				</div>
 
 				<section className={styles.cards}>{usersCards}</section>
 

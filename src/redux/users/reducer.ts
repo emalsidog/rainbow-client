@@ -7,6 +7,7 @@ interface InitialState {
 	users: User[];
 
 	hasMoreData: boolean;
+	hasMoreSearchedData: boolean;
 
 	isCurrenUser: boolean | undefined;
 	isLoading: boolean;
@@ -17,6 +18,7 @@ const initialState: InitialState = {
 	users: [],
 
 	hasMoreData: true,
+	hasMoreSearchedData: true,
 
 	isCurrenUser: undefined,
 	isLoading: false,
@@ -55,13 +57,6 @@ export const users = (
 		// SEARCH USERS
 
 		case "SEARCH_USERS_REQUEST": {
-			if (action.payload.needsToBeCleared) {
-				return {
-					...state,
-					isLoading: true,
-					users: [],
-				};
-			}
 			return {
 				...state,
 				isLoading: true,
@@ -70,11 +65,19 @@ export const users = (
 		case "SEARCH_USERS_SUCCESS": {
 			const { meta, users } = action.payload;
 
+			let newUsers;
+			if (meta.usersNeedToBeCleared) {
+				newUsers = [...users];
+			} else {
+				newUsers = [...state.users, ...users]
+			}
+
 			return {
 				...state,
 				isLoading: false,
-				users: [...state.users, ...users],
+				users: newUsers,
 				hasMoreData: meta.hasMoreData,
+				hasMoreSearchedData: meta.hasMoreSearchedData
 			};
 		}
 		case "SEARCH_USERS_FAILURE": {

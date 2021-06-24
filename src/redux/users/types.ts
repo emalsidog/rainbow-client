@@ -44,7 +44,6 @@ export interface SearchUsersRequestPayload {
 	options?: {
 		displayName: string;
 	};
-	needsToBeCleared?: boolean;
 }
 
 export interface SearchUsersSuccessPayload {
@@ -52,6 +51,7 @@ export interface SearchUsersSuccessPayload {
 	meta: {
 		hasMoreData: boolean;
 		hasMoreSearchedData: boolean;
+		usersNeedToBeCleared: boolean;
 	};
 }
 
