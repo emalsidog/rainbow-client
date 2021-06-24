@@ -8,20 +8,17 @@ import { selectUsers } from "../../../../../redux/users/selectors";
 // Utils
 import { formatDate } from "../../../../utils/format-date";
 
+// Hooks
+import { useFriendshipStatus } from "../../../../../hocs/useFriendshipStatus";
+
 // Styles
 import styles from "./info-panel.module.css";
 
 // Components
-import AddToFriends from "../../../../common-actions/add-friend";
-import ViewProfile from "../../../../common-actions/view-profile";
-import AcceptRequest from "../../../../common-actions/accept-request";
-import DeclineRequest from "../../../../common-actions/decline-request";
-import RemoveFromFriends from "../../../../common-actions/remove-from-friends";
-import CancelRequest from "../../../../common-actions/cancel-request";
+import DisplayActions from "../../../../common-actions/display-actions";
 
 // Types
 import { initialUser, User } from "../../../../../redux/common-types";
-import { selectUser } from "../../../../../redux/user/selector";
 
 interface InfoPanelProps {
 	idToDisplay: string;
@@ -30,44 +27,24 @@ interface InfoPanelProps {
 	onClose: () => void;
 }
 
-type FriendshipStatus = "FRIENDS" | "PENDING_FOR_USER_RESPONSE" | "PENDING_FOR_YOUR_RESPONSE" | "NONE";
-
 const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 	const { idToDisplay, isVisible, onClose } = props;
-	
-	const [user, setUser] = useState<User>(initialUser);
-	const [friendshipStatus, setFriendshipStatus] = useState<FriendshipStatus>("NONE");
 
-	const currentUser = useSelector(selectUser);
+	const [user, setUser] = useState<User>(initialUser);
+
 	const users = useSelector(selectUsers);
 
 	const ref = useRef<HTMLDivElement>(null);
+	const friendshipStatus = useFriendshipStatus(user);
 
 	useEffect(() => {
 		const foundedUser = users.find(({ _id }) => _id === idToDisplay);
-		const { _id, friendRequests, friends } = currentUser;
 
 		if (foundedUser) {
 			setUser(foundedUser);
-
-			if (friendRequests.includes(foundedUser._id)) {
-				setFriendshipStatus("PENDING_FOR_YOUR_RESPONSE")
-				return;
-			}
-			
-			if (foundedUser.friendRequests.includes(_id)) {
-				setFriendshipStatus("PENDING_FOR_USER_RESPONSE")
-				return;
-			}
-
-			if (friends.includes(foundedUser._id)) {
-				setFriendshipStatus("FRIENDS")
-				return;
-			}
-			setFriendshipStatus("NONE")
 		}
-	}, [users, idToDisplay, currentUser])
-	
+	}, [users, idToDisplay]);
+
 	// Listen for events to close panel
 	useEffect(() => {
 		document.addEventListener("mousedown", handleClickOutside);
@@ -92,44 +69,16 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 		}
 	};
 
-	const { _id, avatar, bio, birthday, familyName, givenName, profileId, registrationDate } = user
-
-	let actions: JSX.Element[] = [];
-	
-	switch (friendshipStatus) {
-		case "FRIENDS": {
-			actions = [
-				<button key={0} className="btn btn-primary">
-					Write a message
-				</button>,
-				<ViewProfile key={1} profileId={profileId} />,
-				<RemoveFromFriends key={2} id={_id} />,
-			];
-			break;
-		}
-		case "PENDING_FOR_USER_RESPONSE": {
-			actions = [
-				<ViewProfile key={0} profileId={profileId} />,
-				<CancelRequest key={1} id={_id} />,
-			];
-			break;
-		}
-		case "PENDING_FOR_YOUR_RESPONSE": {
-			actions = [
-				<ViewProfile key={0} profileId={profileId} />,
-				<AcceptRequest key={1} id={_id} />,
-				<DeclineRequest key={2} id={_id} />
-			];
-			break;
-		}
-		case "NONE": {
-			actions = [
-				<AddToFriends key={0} profileId={profileId} />,
-				<ViewProfile key={1} profileId={profileId}/>
-			];
-			break;
-		}
-	}
+	const {
+		_id,
+		avatar,
+		bio,
+		birthday,
+		familyName,
+		givenName,
+		profileId,
+		registrationDate,
+	} = user;
 
 	if (isVisible === null) return null;
 	return (
@@ -172,7 +121,11 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 			</div>
 
 			<div className={`${styles.footer} ${styles.wrapper}`}>
-				{actions}
+				<DisplayActions
+					friendshipStatus={friendshipStatus}
+					userId={_id}
+					userProfileId={profileId}
+				/>
 			</div>
 		</div>
 	);

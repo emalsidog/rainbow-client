@@ -57,3 +57,6 @@ export interface PostType {
 	isPublic: boolean;
 	postId?: string;
 }
+
+// Friendship status
+export type FriendshipStatus = "FRIENDS" | "PENDING_FOR_USER_RESPONSE" | "PENDING_FOR_YOUR_RESPONSE" | "NONE";
