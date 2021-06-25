@@ -50,7 +50,7 @@ const App: React.FC = () => {
 			/>
 			<Switch>
 				<ProtectedRoute exact path="/settings" component={Settings} />
-				<ProtectedRoute exact path="/friends" component={Friends} />
+				<ProtectedRoute exact path="/people/search" component={Friends} />
 				<ProtectedRoute exact path="/messenger" component={Messenger} />
 				<ProtectedRoute exact path="/music" component={Music} />
 				<ProtectedRoute exact path="/:profileId" component={Profile} />

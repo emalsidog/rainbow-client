@@ -35,9 +35,9 @@ const Layout: React.FC<LayoutProps> = (props) => {
 						<i className="fas fa-home fa-fw" />
 						<span>Home</span>
 					</SidebarItem>
-					<SidebarItem linkTo="/friends">
+					<SidebarItem linkTo="/people/search">
 						<i className="fas fa-user-friends fa-fw" />
-						<span>Friends</span>
+						<span>People</span>
 					</SidebarItem>
 					<SidebarItem linkTo="/messenger">
 						<i className="fas fa-envelope fa-fw" />

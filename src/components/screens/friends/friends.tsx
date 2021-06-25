@@ -21,6 +21,7 @@ import Spinner from "../../common/spinner";
 
 import FriendCard from "./friends-components/friend-card";
 import InfoPanel from "./friends-components/info-panel";
+import ActionsPanel from "./friends-components/actions-panel";
 
 // Styles
 import styles from "./friends.module.css";
@@ -31,7 +32,8 @@ const Friends: React.FC = () => {
 
 	const [idToDisplay, setIdToDisplay] = useState<string>();
 	const [searchValue, setSearchValue] = useState<string>("");
-
+	const [isActionsVisible, setIsActionsVisible] = useState<boolean>(true);
+	
 	
 	const dispatch = useDispatch();
 	const users = useSelector(selectUsers);
@@ -40,6 +42,12 @@ const Friends: React.FC = () => {
 
 	const debouncedSearchedName = useDebounce<string>(searchValue, 300);
 	const oldSearchedValue = useRef<string>("");
+	const oldScrollValue = useRef<number>(0);
+
+	useEffect(() => {
+        document.addEventListener("scroll", handleScroll);
+        return () => document.removeEventListener("scroll", handleScroll)
+    }, []);
 
 	// Handle users fetching without search values
 	useEffect(() => {
@@ -106,6 +114,17 @@ const Friends: React.FC = () => {
 		setPageNumber(1);
 	};
 
+    const handleScroll = (e: Event) => {
+		const scroll = document.documentElement.scrollTop;
+
+		if (scroll > oldScrollValue.current) {
+			setIsActionsVisible(false);
+		} else {
+			setIsActionsVisible(true);
+		}
+		oldScrollValue.current = scroll;
+    }
+
 	/* RENDER CARDS */
 
 	const usersCards = users.map((user, index) => {
@@ -159,6 +178,8 @@ const Friends: React.FC = () => {
 				<div className={styles.spinnerBlock}>
 					{isLoading && <Spinner />}
 				</div>
+
+				<ActionsPanel isVisible={isActionsVisible} />
 			</div>
 			<InfoPanel
 				idToDisplay={idToDisplay ? idToDisplay : ""}
