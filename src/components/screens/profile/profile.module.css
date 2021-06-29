@@ -141,4 +141,9 @@
     .bio {
         font-size: .9rem;
     }
+
+    .postControls select {
+        max-width: 40%;
+        width: 40%;
+    }
 }

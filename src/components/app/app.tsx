@@ -27,18 +27,26 @@ import Settings from "../screens/settings";
 
 import Notification from "../common/notification";
 import BgAnimation from "../common/bg-animation";
+import MainLoader from "../common/main-loader";
 
 import ProtectedRoute from "../../hocs/protected-route";
+
+import { RootState } from "../../redux/store";
 
 const App: React.FC = () => {
 	const dispatch = useDispatch();
 	const isAuthenticated = useSelector(selectIsAuthenticated);
+	const isFetching = useSelector((state: RootState) => state.user.isFetching);
 
 	useEffect(() => {	
 		if (!isAuthenticated) {
 			dispatch(getUserRequest());
 		}
 	}, [dispatch, isAuthenticated]);
+
+	if (isFetching) {
+		return <MainLoader />
+	}
 
 	return (
 		<React.Fragment>
