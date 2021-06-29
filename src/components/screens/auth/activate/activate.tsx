@@ -26,15 +26,17 @@ const Activate: React.FC = () => {
 
 	return (
 		<div className="activation-container">
-			<div className="activation-wrapper">
-				<div className="activation-status">{message}</div>
-				<Link
-					className="activation-link link"
-					to={isError ? "/users/register" : "/users/login"}
-				>
-					{ isError ? "Back to registration process" : "Login" }
-				</Link>
-			</div>
+			{message && (
+				<div className="activation-wrapper">
+					<div className="activation-status">{message}</div>
+					<Link
+						className="activation-link link"
+						to={isError ? "/users/register" : "/users/login"}
+					>
+						{isError ? "Back to registration process" : "Login"}
+					</Link>
+				</div>
+			)}
 		</div>
 	);
 };

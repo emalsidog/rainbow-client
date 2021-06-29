@@ -271,6 +271,10 @@ body {
 	background: var(--main);
 }
 
+.textarea.accent {
+	background: var(--accent);
+}
+
 .textarea:focus {
 	outline: none;
 	border-color: #17bcee;
@@ -296,6 +300,8 @@ body {
 
 	border-color: #d7d7d7;
 	background: var(--main);
+
+	border-radius: 2px;
 }
 
 .select:focus {
@@ -311,6 +317,7 @@ body {
 
 .form-group .input {
 	margin-bottom: 5px;
+	background: var(--accent);
 }
 
 .form-error {

@@ -17,10 +17,11 @@ import { useIntersectionObserver } from "../../../../hocs/useIntersectionObserve
 import Layout from "../../../common/layout";
 import Spinner from "../../../common/spinner";
 
-import FriendCard from "../people-components/friend-card";
+import FriendCard from "../people-components/people-card";
 import InfoPanel from "../people-components/info-panel";
 import ActionsPanel from "../people-components/actions-panel";
 import SearchPanel from "../people-components/search-panel";
+import EmptyListIndicator from "../people-components/empty-list-indicator";
 
 // Styles
 import styles from "../people.module.css";
@@ -111,12 +112,21 @@ const FriendsScreen: React.FC = () => {
 	return (
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
-				<SearchPanel
-					isLoading={isLoading.loadingUsers}
-					value={searchValue}
-					handleChange={handleChange}
-				/>
+				{
+					usersCards.length > 0 && (
+						<SearchPanel
+							isLoading={isLoading.loadingUsers}
+							value={searchValue}
+							handleChange={handleChange}
+						/>
+					)
+				}
 
+				{
+					usersCards.length > 0 
+						? <section className={styles.cards}>{usersCards}</section> 
+						: <EmptyListIndicator message="Don't worry. You will find someone..." />
+				}
 				<section className={styles.cards}>{usersCards}</section>
 
 				<div className={styles.spinnerBlock}>

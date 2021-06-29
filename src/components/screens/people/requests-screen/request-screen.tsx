@@ -16,9 +16,10 @@ import { useIntersectionObserver } from "../../../../hocs/useIntersectionObserve
 import Layout from "../../../common/layout";
 import Spinner from "../../../common/spinner";
 
-import FriendCard from "../people-components/friend-card";
+import FriendCard from "../people-components/people-card";
 import InfoPanel from "../people-components/info-panel";
 import ActionsPanel from "../people-components/actions-panel";
+import EmptyListIndicator from "../people-components/empty-list-indicator";
 
 // Styles
 import styles from "../people.module.css";
@@ -76,7 +77,12 @@ const RequestScreen: React.FC = () => {
 	return (
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
-				<section className={styles.cards}>{usersCards}</section>
+
+				{
+					usersCards.length > 0 
+						? <section className={styles.cards}>{usersCards}</section> 
+						: <EmptyListIndicator message="Oh... Nobody wants to be friends with you..." />
+				}
 
 				<div className={styles.spinnerBlock}>
 					{isLoading.loadingUsers && <Spinner />}

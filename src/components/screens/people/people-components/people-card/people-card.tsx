@@ -2,10 +2,10 @@
 import React, { forwardRef } from "react";
 
 // Styles
-import styles from "./friend-card.module.css";
+import styles from "./people-card.module.css";
 
 // Types
-interface FriendCardProps {
+interface PeopleCardProps {
 	openInfoPanel: (id: string) => void;
 
 	_id: string;
@@ -14,7 +14,7 @@ interface FriendCardProps {
 	avatar: string;
 }
 
-const FriendCard = forwardRef<HTMLDivElement, FriendCardProps>(
+const PeopleCard = forwardRef<HTMLDivElement, PeopleCardProps>(
 	(props, ref) => {
 	const { openInfoPanel, givenName, familyName, avatar, _id } = props;
 		
@@ -28,4 +28,4 @@ const FriendCard = forwardRef<HTMLDivElement, FriendCardProps>(
 	);
 });
 
-export default FriendCard;
+export default PeopleCard;

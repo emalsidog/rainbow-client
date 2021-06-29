@@ -44,7 +44,7 @@ const PostForm: React.FC<PostFormProps> = (props) => {
 			<textarea
 				rows={1}
 				placeholder="What's new?"
-				className="textarea"
+				className="textarea accent"
 				onChange={handleTextareaChange}
 				value={postText}
 				disabled={isLoading}

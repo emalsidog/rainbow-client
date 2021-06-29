@@ -20,7 +20,7 @@ import { useIntersectionObserver } from "../../../../hocs/useIntersectionObserve
 import Layout from "../../../common/layout";
 import Spinner from "../../../common/spinner";
 
-import FriendCard from "../people-components/friend-card";
+import FriendCard from "../people-components/people-card";
 import InfoPanel from "../people-components/info-panel";
 import ActionsPanel from "../people-components/actions-panel";
 import SearchPanel from "../people-components/search-panel";

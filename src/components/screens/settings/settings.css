@@ -9,6 +9,10 @@
 	border-bottom: 1px solid #d7d7d7;
 }
 
+.settings-row .input {
+    background: #fafafa;
+}
+
 .settings-row-title {
 	width: 30%;
 }

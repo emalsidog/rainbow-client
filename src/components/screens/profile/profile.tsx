@@ -40,15 +40,7 @@ const Profile: React.FC = () => {
 	const history = useHistory();
 
 	const friendshipStatus = useFriendshipStatus(currentUser, displayedUser);
-	
-	useEffect(() => {
-		console.log(currentUser);
-
-		console.log(displayedUser);
 		
-		
-	}, [currentUser, displayedUser]);
-	
 	const { profileId }: any = useParams();
 
 	useEffect(() => {
