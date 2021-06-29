@@ -81,7 +81,7 @@
 }
 
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
 	.notification-item {
 		animation: SlideLeft 0.1s forwards;
 	}

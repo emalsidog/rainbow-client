@@ -80,7 +80,7 @@
 	}
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 500px) {
 	.wrapper {
 		animation: SlideBottom 0.1s forwards;
 		margin-bottom: 5px;
