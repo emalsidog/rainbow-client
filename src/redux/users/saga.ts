@@ -3,7 +3,7 @@ import { takeEvery, call, put } from "redux-saga/effects";
 
 // Actions
 import * as usersActions from "./actions";
-import { updateFriendsWhenAcceptedRequest } from "../user/actions";
+import { updateFriendsWhenAcceptedRequest, updateRequestsCounter } from "../user/actions";
 import { addNotification } from "../notifications/actions";
 
 // Utils
@@ -81,6 +81,7 @@ function* acceptFriendRequest(action: AcceptFriendReqRequest) {
 		const { body, status } = data;
 
 		yield put(usersActions.acceptFriendReqSuccess());
+		yield put(updateRequestsCounter(body.requestsCount))
 		yield put(updateFriendsWhenAcceptedRequest(body.newFriendId));
 		yield put(addNotification(status));
 	} catch (error) {

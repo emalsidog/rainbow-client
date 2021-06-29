@@ -63,12 +63,17 @@ function initWebsocket(): EventChannel<any> {
 					*/
 					case "FRIEND_REQUEST": {
 						/* serverData: {
-							currentUserId: string
+							currentUserId: string,
+							requestsCount: number
 						} */
 						const { serverData, notification } = response.payload;
 						emitter({
 							type: "NEW_FRIEND_REQUEST",
 							payload: serverData
+						});
+						emitter({
+							type: "UPDATE_REQUEST_COUNTER",
+							count: serverData.requestsCount
 						})
 						return emitter({
 							type: "ADD_USER_NOTIFICATION",
@@ -132,6 +137,10 @@ function initWebsocket(): EventChannel<any> {
 							}
 						*/
 						const { serverData } = response.payload;
+						emitter({
+							type: "UPDATE_REQUEST_COUNTER",
+							count: serverData.requestsCount
+						})
 						return emitter({
 							type: "FRIEND_REQUEST_CANCELLED",
 							idOfUserWhoCancelled: serverData.idOfUserWhoCancelled

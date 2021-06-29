@@ -255,6 +255,7 @@ function* declineFriendRequest(action: DeclineFriendReqRequest) {
 		const { body, status } = data;
 
 		yield put(userActions.declineFriendReqSuccess(body.declinedRequestId));
+		yield put(userActions.updateRequestsCounter(body.requestsCount))
 		yield put(addNotification(status));
 	} catch (error) {
 		const { status } = error.response.data;
