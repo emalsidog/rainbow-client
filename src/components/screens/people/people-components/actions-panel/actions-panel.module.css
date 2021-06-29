@@ -1,3 +1,9 @@
+.requestsCounter {
+    margin-left: 5px;
+    padding-left: 5px;
+    border-left: 2px solid black;
+}
+
 .wrapper {
     display: flex;
     background: rgb(255, 255, 255);
@@ -39,11 +45,19 @@
 }
 
 .link:hover {
-    color: #949494
+    color: #727272
 }
 
 .activeLink {
-    color: red
+    color: #17beec;
+}
+
+.activeLink:hover {
+    color: #17beec;
+}
+
+.activeLink .requestsCounter {
+    border-left: 2px solid #17beec;
 }
 
 @keyframes AppearBottom {
@@ -68,8 +82,14 @@
     }
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1250px) {
     .actionText {
         display: none;
+    }
+    .requestsCounter {
+        border: none;
+    }
+    .activeLink .requestsCounter {
+        border: none;
     }
 }

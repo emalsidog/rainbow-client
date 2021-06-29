@@ -22,6 +22,8 @@ import {
 	ChangeBirthdayRequest,
 	DeclineFriendReqRequest,
 	RemoveFromFriendsRequest,
+	GetPopulatedFriendRequestsRequest,
+	GetPopulatedFriendsRequest,
 } from "./types";
 import { UserExtended } from "./types";
 
@@ -41,6 +43,10 @@ export function* userWatcher() {
 
 	yield takeEvery("DELETE_ACCOUNT_REQUEST", deleteAccount);
 
+	yield takeEvery("GET_POPULATED_FRIENDS_REQUEST", getPopulatedFriends);
+	yield takeEvery("GET_POPULATED_FRIEND_REQUESTS_REQUEST", getPopulatedFriendRequests);
+	
+
 	yield takeEvery("DECLINE_FRIEND_REQ_REQUEST", declineFriendRequest);
 	yield takeEvery("REMOVE_FROM_FRIENDS_REQUEST", removeFromFriends);
 }
@@ -51,7 +57,7 @@ function* currentUser() {
 			AxiosGetRequest("/authentication/current-user")
 		);
 		
-		const { user, changingEmailProcess } = data.body;
+		const { user, changingEmailProcess, requestsCounter } = data.body;
 		
 		const payload: UserExtended = {
 			user: {
@@ -63,6 +69,7 @@ function* currentUser() {
 		};
 
 		yield put(userActions.setUser(payload));
+		yield put(userActions.updateRequestsCounter(requestsCounter));
 		yield put(loginSuccess());
 		yield put(userActions.getUserSuccess());
 	} catch (error) {
@@ -256,7 +263,6 @@ function* declineFriendRequest(action: DeclineFriendReqRequest) {
 	}
 }
 
-
 function* removeFromFriends(action: RemoveFromFriendsRequest) {
 	const payload = { id: action.id };
 	try {
@@ -271,6 +277,33 @@ function* removeFromFriends(action: RemoveFromFriendsRequest) {
 	} catch (error) {
 		const { status } = error.response.data;
 		yield put(userActions.removeFromFriendsFailure());
+		yield put(addNotification(status));
+	}
+}
+
+function* getPopulatedFriends(action: GetPopulatedFriendsRequest) {
+	try {
+		const { data } = yield call(() => AxiosPostRequest("/friends", action.payload));
+		const { body } = data;
+		
+		yield put(userActions.getPopulatedFriendsSuccess(body));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.getPopulatedFriendsFailure());
+		yield put(addNotification(status));
+	}
+}
+
+function* getPopulatedFriendRequests(action: GetPopulatedFriendRequestsRequest) {
+	const { requestOptions } = action;
+	try {
+		const { data } = yield call(() => AxiosPostRequest("/friends/requests", { requestOptions }));
+		const { body } = data;
+
+		yield put(userActions.getPopulatedFriendRequestsSuccess(body));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(userActions.getPopulatedFriendRequestsFailure());
 		yield put(addNotification(status));
 	}
 }

@@ -1,0 +1,26 @@
+.blinker {
+	margin-left: auto;
+	animation-name: blinker;
+	animation-iteration-count: infinite;
+	animation-timing-function: cubic-bezier(1, 0, 0, 1);
+	animation-duration: 2s;
+}
+
+.blinker i {
+    color: #17beec;
+}
+
+@keyframes blinker {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@media (max-width: 850px) {
+	.blinker {
+		margin-left: 10px;
+	}
+}

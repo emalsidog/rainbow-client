@@ -17,7 +17,7 @@ interface FriendCardProps {
 const FriendCard = forwardRef<HTMLDivElement, FriendCardProps>(
 	(props, ref) => {
 	const { openInfoPanel, givenName, familyName, avatar, _id } = props;
-
+		
 	return (
 		<article ref={ref} onClick={() => openInfoPanel(_id)} className={styles.card}>
 			<div className={styles.header}>

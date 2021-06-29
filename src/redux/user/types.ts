@@ -54,9 +54,18 @@ const REMOVE_FROM_FRIENDS_REQUEST = "REMOVE_FROM_FRIENDS_REQUEST";
 const REMOVE_FROM_FRIENDS_SUCCESS = "REMOVE_FROM_FRIENDS_SUCCESS";
 const REMOVE_FROM_FRIENDS_FAILURE = "REMOVE_FROM_FRIENDS_FAILURE";
 
+const GET_POPULATED_FRIENDS_REQUEST = "GET_POPULATED_FRIENDS_REQUEST";
+const GET_POPULATED_FRIENDS_SUCCESS = "GET_POPULATED_FRIENDS_SUCCESS";
+const GET_POPULATED_FRIENDS_FAILURE = "GET_POPULATED_FRIENDS_FAILURE";
+
+const GET_POPULATED_FRIEND_REQUESTS_REQUEST = "GET_POPULATED_FRIEND_REQUESTS_REQUEST";
+const GET_POPULATED_FRIEND_REQUESTS_SUCCESS = "GET_POPULATED_FRIEND_REQUESTS_SUCCESS";
+const GET_POPULATED_FRIEND_REQUESTS_FAILURE = "GET_POPULATED_FRIEND_REQUESTS_FAILURE";
+
 const NEW_FRIEND_REQUEST = "NEW_FRIEND_REQUEST";
 const UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST = "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST";
 const FRIEND_REQUEST_CANCELLED = "FRIEND_REQUEST_CANCELLED";
+const UPDATE_REQUEST_COUNTER = "UPDATE_REQUEST_COUNTER";
 
 export interface EmailChangingProcess {
 	timeToNextEmail: number | undefined;
@@ -104,6 +113,8 @@ export interface IsLoading {
 	addPost: boolean;
 	deletePost: boolean;
 	editPost: boolean;
+
+	loadingUsers: boolean;
 }
 
 // SET USER
@@ -317,6 +328,57 @@ export interface RemoveFromFriendsFailure {
 	type: typeof REMOVE_FROM_FRIENDS_FAILURE;
 }
 
+// GET POPULATED FRIENDS
+
+export interface GetPopulatedFriendsRequest {
+	type: typeof GET_POPULATED_FRIENDS_REQUEST;
+	payload: {
+		requestOptions: {
+			page: number;
+		}
+		options?: {
+			displayName: string;
+		}
+	}
+}
+
+export interface GetPopulatedFriendsSuccess {
+	type: typeof GET_POPULATED_FRIENDS_SUCCESS;
+	payload: {
+		friends: User[];
+		meta: {
+			hasMoreData: boolean;
+			hasMoreSearchedData: boolean;
+			usersNeedToBeCleared: boolean;
+		};
+	}
+}
+
+export interface GetPopulatedFriendsFailure {
+	type: typeof GET_POPULATED_FRIENDS_FAILURE;
+}
+
+// GET POPULATED FRIEND REQUESTS
+
+export interface GetPopulatedFriendRequestsRequest {
+	type: typeof GET_POPULATED_FRIEND_REQUESTS_REQUEST;
+	requestOptions: {
+		page: number;
+	}
+}
+
+export interface GetPopulatedFriendRequestsSuccess {
+	type: typeof GET_POPULATED_FRIEND_REQUESTS_SUCCESS;
+	payload: {
+		friendRequests: User[],
+		hasMoreData: boolean
+	}
+}
+
+export interface GetPopulatedFriendRequestsFailure {
+	type: typeof GET_POPULATED_FRIEND_REQUESTS_FAILURE;
+}
+
 // UPDATE FRIEND REQUESTS
 
 export interface NewFriendRequest {
@@ -334,6 +396,11 @@ export interface UpdateFriendsWhenAcceptedRequest {
 export interface FriendRequestCancelled {
 	type: typeof FRIEND_REQUEST_CANCELLED;
 	idOfUserWhoCancelled: string;
+}
+
+export interface UpdateRequestsCounter {
+	type: typeof UPDATE_REQUEST_COUNTER;
+	count: number;
 }
 
 export type UserActionTypes =
@@ -377,6 +444,13 @@ export type UserActionTypes =
 	| RemoveFromFriendsRequest
 	| RemoveFromFriendsSuccess
 	| RemoveFromFriendsFailure
+	| GetPopulatedFriendsRequest
+	| GetPopulatedFriendsSuccess
+	| GetPopulatedFriendsFailure
+	| GetPopulatedFriendRequestsRequest
+	| GetPopulatedFriendRequestsSuccess
+	| GetPopulatedFriendRequestsFailure
 	| NewFriendRequest
 	| UpdateFriendsWhenAcceptedRequest
-	| FriendRequestCancelled;
+	| FriendRequestCancelled
+	| UpdateRequestsCounter;

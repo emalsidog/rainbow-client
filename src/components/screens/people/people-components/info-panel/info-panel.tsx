@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 
 // Selectors
-import { selectUsers } from "../../../../../redux/users/selectors";
 import { selectUser } from "../../../../../redux/user/selector";
 
 // Utils
@@ -23,17 +22,17 @@ import { initialUser, User } from "../../../../../redux/common-types";
 
 interface InfoPanelProps {
 	idToDisplay: string;
+	users: User[];
 
 	isVisible: boolean | null;
 	onClose: () => void;
 }
 
 const InfoPanel: React.FC<InfoPanelProps> = (props) => {
-	const { idToDisplay, isVisible, onClose } = props;
+	const { idToDisplay, users, isVisible, onClose } = props;
 
 	const [user, setUser] = useState<User>(initialUser);
 
-	const users = useSelector(selectUsers);
 	const currentUser = useSelector(selectUser);
 
 	const ref = useRef<HTMLDivElement>(null);

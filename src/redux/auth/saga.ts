@@ -3,7 +3,7 @@ import { takeEvery, call, put } from "redux-saga/effects";
 
 // Actions
 import * as authActions from "./actions";
-import { setUser } from "../user/actions";
+import { setUser, updateRequestsCounter } from "../user/actions";
 import { addNotification } from "../notifications/actions";
 
 // Utils
@@ -49,6 +49,7 @@ function* login(action: LoginRequest) {
 		);
 
 		yield put(setUser(body));
+		yield put(updateRequestsCounter(body.requestsCounter));
 		yield put(authActions.loginSuccess());
 	} catch (error) {
 		yield put(authActions.loginFailure());

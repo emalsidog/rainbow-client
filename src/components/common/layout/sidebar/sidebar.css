@@ -16,6 +16,9 @@
 	color: black;
 
 	border-left: 3px solid transparent;
+
+	display: flex;
+	align-items: center;
 }
 
 .sidebar-item .fas {

@@ -1,40 +1,42 @@
 // Dependencies
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // Actions
-import { searchUsersRequest } from "../../../redux/users/actions";
+import { searchUsersRequest } from "../../../../redux/users/actions";
 
 // Selectors
 import {
 	selectHasMoreData,
 	selectUsers,
 	selectIsLoading,
-} from "../../../redux/users/selectors";
+} from "../../../../redux/users/selectors";
 
 // Hooks
-import useDebounce from "../../../hocs/useDebounce";
+import useDebounce from "../../../../hocs/useDebounce";
+import { useIntersectionObserver } from "../../../../hocs/useIntersectionObserver";
 
 // Components
-import Layout from "../../common/layout";
-import Spinner from "../../common/spinner";
+import Layout from "../../../common/layout";
+import Spinner from "../../../common/spinner";
 
-import FriendCard from "./friends-components/friend-card";
-import InfoPanel from "./friends-components/info-panel";
-import ActionsPanel from "./friends-components/actions-panel";
+import FriendCard from "../people-components/friend-card";
+import InfoPanel from "../people-components/info-panel";
+import ActionsPanel from "../people-components/actions-panel";
+import SearchPanel from "../people-components/search-panel";
 
 // Styles
-import styles from "./friends.module.css";
+import styles from "../people.module.css";
 
-const Friends: React.FC = () => {
+const SearchScreen: React.FC = () => {
 	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<boolean | null>(null);
 	const [pageNumber, setPageNumber] = useState<number>(1);
 
 	const [idToDisplay, setIdToDisplay] = useState<string>();
 	const [searchValue, setSearchValue] = useState<string>("");
-	const [isActionsVisible, setIsActionsVisible] = useState<boolean>(true);
-	
-	
+
+	const { isIntersecting, ref } = useIntersectionObserver();
+
 	const dispatch = useDispatch();
 	const users = useSelector(selectUsers);
 	const [hasMoreData, hasMoreSearchedData] = useSelector(selectHasMoreData);
@@ -42,12 +44,6 @@ const Friends: React.FC = () => {
 
 	const debouncedSearchedName = useDebounce<string>(searchValue, 300);
 	const oldSearchedValue = useRef<string>("");
-	const oldScrollValue = useRef<number>(0);
-
-	useEffect(() => {
-        document.addEventListener("scroll", handleScroll);
-        return () => document.removeEventListener("scroll", handleScroll)
-    }, []);
 
 	// Handle users fetching without search values
 	useEffect(() => {
@@ -56,8 +52,8 @@ const Friends: React.FC = () => {
 		if (hasMoreData) {
 			dispatch(
 				searchUsersRequest({
-					requestOptions: { 
-						page: pageNumber 
+					requestOptions: {
+						page: pageNumber,
 					},
 				})
 			);
@@ -68,11 +64,14 @@ const Friends: React.FC = () => {
 	useEffect(() => {
 		if (!debouncedSearchedName) return;
 
-		if (debouncedSearchedName !== oldSearchedValue.current || hasMoreSearchedData) {
+		if (
+			debouncedSearchedName !== oldSearchedValue.current ||
+			hasMoreSearchedData
+		) {
 			dispatch(
 				searchUsersRequest({
-					requestOptions: { 
-						page: pageNumber 
+					requestOptions: {
+						page: pageNumber,
 					},
 					options: {
 						displayName: debouncedSearchedName,
@@ -84,20 +83,11 @@ const Friends: React.FC = () => {
 		}
 	}, [dispatch, pageNumber, debouncedSearchedName, hasMoreSearchedData]);
 
-	const callback = useCallback((entries) => {
-		if (entries[0].isIntersecting) {
+	useEffect(() => {
+		if (isIntersecting) {
 			setPageNumber((prev) => prev + 1);
 		}
-	}, []);
-
-	const ref = useCallback(
-		(node) => {
-			if (!node) return;
-			const obsrver = new IntersectionObserver(callback);
-			obsrver.observe(node);
-		},
-		[callback]
-	);
+	}, [isIntersecting]);
 
 	/* EVENT HANDLERS */
 	const onCloseInfoPanel = (): void => {
@@ -114,64 +104,26 @@ const Friends: React.FC = () => {
 		setPageNumber(1);
 	};
 
-    const handleScroll = (e: Event) => {
-		const scroll = document.documentElement.scrollTop;
-
-		if (scroll > oldScrollValue.current) {
-			setIsActionsVisible(false);
-		} else {
-			setIsActionsVisible(true);
-		}
-		oldScrollValue.current = scroll;
-    }
-
 	/* RENDER CARDS */
 
 	const usersCards = users.map((user, index) => {
 		const { _id, givenName, familyName, avatar } = user;
+		const payload = { _id, givenName, familyName, avatar };
+
 		if (users.length === index + 1) {
-			return (
-				<FriendCard
-					ref={ref}
-					key={_id}
-					_id={_id}
-					givenName={givenName}
-					familyName={familyName}
-					avatar={avatar}
-					openInfoPanel={onOpenInfoPanel}
-				/>
-			);
+			return <FriendCard ref={ref} key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
 		}
-		return (
-			<FriendCard
-				key={_id}
-				_id={_id}
-				givenName={givenName}
-				familyName={familyName}
-				avatar={avatar}
-				openInfoPanel={onOpenInfoPanel}
-			/>
-		);
+		return <FriendCard key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
 	});
 
 	return (
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
-				<div className={`input-group ${styles.searchBox}`}>
-					<span>
-						{isLoading ? (
-							<Spinner />
-						) : (
-							<i className="fas fa-search"></i>
-						)}
-					</span>
-					<input
-						value={searchValue}
-						onChange={handleChange}
-						placeholder="Search by name..."
-						autoFocus
-					/>
-				</div>
+				<SearchPanel
+					isLoading={isLoading}
+					value={searchValue}
+					handleChange={handleChange}
+				/>
 
 				<section className={styles.cards}>{usersCards}</section>
 
@@ -179,10 +131,11 @@ const Friends: React.FC = () => {
 					{isLoading && <Spinner />}
 				</div>
 
-				<ActionsPanel isVisible={isActionsVisible} />
+				<ActionsPanel />
 			</div>
 			<InfoPanel
 				idToDisplay={idToDisplay ? idToDisplay : ""}
+				users={users}
 				isVisible={isInfoPanelVisible}
 				onClose={onCloseInfoPanel}
 			/>
@@ -190,4 +143,4 @@ const Friends: React.FC = () => {
 	);
 };
 
-export default Friends;
+export default SearchScreen;

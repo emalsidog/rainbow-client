@@ -7,6 +7,20 @@ import { initialUser } from "../common-types";
 
 interface InitialState {
 	user: User;
+	populatedFields: {
+		populatedFriends: {
+			friends: User[];
+			hasMoreData: boolean;
+			hasMoreSearchedData: boolean;
+		};
+		populatedFriendRequests: {
+			requests: User[];
+			hasMoreData: boolean;
+		};
+	};
+
+	requestsCounter: number;
+
 	isFetching: boolean;
 
 	emailChangingProcess: EmailChangingProcess;
@@ -16,6 +30,19 @@ interface InitialState {
 
 const initialState: InitialState = {
 	user: initialUser,
+	populatedFields: {
+		populatedFriends: {
+			friends: [],
+			hasMoreData: true,
+			hasMoreSearchedData: true,
+		},
+		populatedFriendRequests: {
+			requests: [],
+			hasMoreData: true,
+		},
+	},
+	requestsCounter: 0,
+
 	isFetching: true,
 
 	emailChangingProcess: {
@@ -37,6 +64,8 @@ const initialState: InitialState = {
 		addPost: false,
 		deletePost: false,
 		editPost: false,
+
+		loadingUsers: false
 	},
 };
 
@@ -546,18 +575,111 @@ export const user = (
 		}
 		case "DECLINE_FRIEND_REQ_SUCCESS": {
 			const { declinedRequestId } = action;
-			const newRequests = state.user.friendRequests.filter(requestId => requestId !== declinedRequestId);
+			const newRequests = state.user.friendRequests.filter(
+				(requestId) => requestId !== declinedRequestId
+			);
 			return {
 				...state,
 				user: {
 					...state.user,
-					friendRequests: newRequests
-				}
-			}
+					friendRequests: newRequests,
+				},
+			};
 		}
 		case "DECLINE_FRIEND_REQ_FAILURE": {
 			return {
 				...state,
+			};
+		}
+
+		// GET POPULATED FRIENDS
+
+		case "GET_POPULATED_FRIENDS_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: true
+				}
+			};
+		}
+
+		case "GET_POPULATED_FRIENDS_SUCCESS": {
+			const { friends, meta } = action.payload;
+
+			let newFriends;
+			if (meta.usersNeedToBeCleared) {
+				newFriends = [...friends];
+			} else {
+				newFriends = [...state.populatedFields.populatedFriends.friends, ...friends]
+			}
+
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: false
+				},
+				populatedFields: {
+					...state.populatedFields,
+					populatedFriends: {
+						...state.populatedFields.populatedFriends,
+						friends: newFriends,
+						hasMoreData: meta.hasMoreData,
+						hasMoreSearchedData: meta.hasMoreSearchedData
+					}
+				}
+			};
+		}
+
+		case "GET_POPULATED_FRIENDS_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: false
+				},
+			};
+		}
+
+		// GET POPULATED FRIEND REQUESTS
+
+		case "GET_POPULATED_FRIEND_REQUESTS_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: true
+				}
+			};
+		}
+
+		case "GET_POPULATED_FRIEND_REQUESTS_SUCCESS": {
+			const { friendRequests, hasMoreData } = action.payload;
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: false
+				},
+				populatedFields: {
+					...state.populatedFields,
+					populatedFriendRequests: {
+						...state.populatedFields.populatedFriendRequests,
+						requests: [...state.populatedFields.populatedFriendRequests.requests, ...friendRequests],
+						hasMoreData
+					}
+				}
+			};
+		}
+
+		case "GET_POPULATED_FRIEND_REQUESTS_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: false
+				},
 			};
 		}
 
@@ -571,13 +693,15 @@ export const user = (
 
 		case "REMOVE_FROM_FRIENDS_SUCCESS": {
 			const { idOfUserToRemove } = action;
-			const newFriends = state.user.friends.filter(friendId => friendId !== idOfUserToRemove);
+			const newFriends = state.user.friends.filter(
+				(friendId) => friendId !== idOfUserToRemove
+			);
 			return {
 				...state,
 				user: {
 					...state.user,
-					friends: newFriends
-				}
+					friends: newFriends,
+				},
 			};
 		}
 
@@ -629,17 +753,28 @@ export const user = (
 		*/
 		case "FRIEND_REQUEST_CANCELLED": {
 			const { idOfUserWhoCancelled } = action;
-			console.log(idOfUserWhoCancelled)
-			const newRequests = state.user.friendRequests.filter(requestId => requestId !== idOfUserWhoCancelled);
+			const newRequests = state.user.friendRequests.filter(
+				(requestId) => requestId !== idOfUserWhoCancelled
+			);
 			return {
 				...state,
 				user: {
 					...state.user,
-					friendRequests: newRequests
-				}
+					friendRequests: newRequests,
+				},
+			};
+		}
+		/*
+			UPDATE_REQUEST_COUNTER - update requests counter
+		*/
+		case "UPDATE_REQUEST_COUNTER": {
+			const { count } = action;
+			return {
+				...state,
+				requestsCounter: count
 			}
 		}
-		
+
 		default: {
 			return {
 				...state,
