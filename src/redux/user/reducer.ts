@@ -469,7 +469,7 @@ export const user = (
 				},
 				user: {
 					...state.user,
-					posts: [...state.user!.posts, action.payload],
+					posts: [action.payload, ...state.user.posts],
 				},
 			};
 		}
