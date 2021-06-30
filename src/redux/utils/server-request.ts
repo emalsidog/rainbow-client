@@ -2,8 +2,9 @@
 import axios from "axios";
 
 // Server url
-// const _url: string = "http://localhost:4000";
-const _url: string = "https://rainbow-server-api.herokuapp.com";
+const _url: string = process.env.NODE_ENV === "development"
+	? "http://localhost:4000" 
+	: "https://rainbow-server-api.herokuapp.com";
 
 export const AxiosGetRequest = async (url: string) => {
 	try {

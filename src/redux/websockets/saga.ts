@@ -18,7 +18,11 @@ function* wsConnectionWorker() {
 function initWebsocket(): EventChannel<any> {
 	return eventChannel((emitter) => {
 		const initConnection = () => {
-			let ws = new WebSocket("wss://rainbow-server-api.herokuapp.com");
+			const connectionUrl: string = process.env.NODE_ENV === "development" 
+				? "ws://localhost:3000" 
+				: "wss://rainbow-server-api.herokuapp.com"
+				
+			let ws = new WebSocket(connectionUrl);
 
 			ws.onopen = () => {
 				console.log("opening...");
