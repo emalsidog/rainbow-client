@@ -14,6 +14,7 @@ interface DropdownItemProps {
 	title: string;
 	isLoading?: boolean;
 	onClick: () => void;
+	setIsVisble?: (value: boolean) => void;
 }
 
 // Dropdown
@@ -36,15 +37,17 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 
 	// Events
 	const eventListenters = () => {
-		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener("click", handleClickOutside);
 		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener("click", handleClickOutside);
 		};
 	};
 
 	// Handle click outside
 	const handleClickOutside = (event: any): void => {
 		if (ref.current && !ref.current.contains(event.target)) {
+			setIsVisible(false);
+		} else if (ref.current && ref.current.contains(event.target) && event.target.nodeName === "BUTTON") {
 			setIsVisible(false);
 		}
 	};
@@ -58,17 +61,26 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 					<i className="fas fa-chevron-down"></i>
 				)}
 			</div>
-			{isVisible ? <div className="dd-list">{children}</div> : null}
+			{isVisible ? (
+				<div className="dd-list">
+					{children}
+				</div>
+			) : null}
 		</div>
 	);
 };
 
 // Item
 export const DropdownItem: React.FC<DropdownItemProps> = (props) => {
-	const { title, onClick, isLoading } = props;
-	let classNames = `dd-list-item ${isLoading ? "disabled" : ""}`
+	const { title, onClick, setIsVisble, isLoading } = props;
+
+	const handleClick = (): void => {
+		onClick();
+		setIsVisble && setIsVisble(false);
+	}
+	let classNames = `dd-list-item ${isLoading ? "disabled" : ""}`;
 	return (
-		<button disabled={isLoading} onClick={onClick} className={classNames}>
+		<button disabled={isLoading} onClick={handleClick} className={classNames}>
 			{title}
 		</button>
 	);

@@ -9,18 +9,6 @@
 	--width: calc(100% / 12);
 }
 
-html,
-body {
-	height: 100vh;
-}
-
-@media (max-width: 480px) {
-	html,
-	body {
-		height: calc(100vh - 56px);
-	}
-}
-
 html * {
 	font-family: "Montserrat", sans-serif;
 	font-size: 16px;
