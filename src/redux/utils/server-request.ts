@@ -6,6 +6,8 @@ const _url: string = process.env.NODE_ENV === "development"
 	? "http://localhost:4000" 
 	: "https://rainbow-server-api.herokuapp.com";
 
+console.log(process.env.NODE_ENV)
+
 export const AxiosGetRequest = async (url: string) => {
 	try {
 		const data = await axios.get(`${_url}${url}`, {
