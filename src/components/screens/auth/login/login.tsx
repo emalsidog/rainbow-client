@@ -18,6 +18,9 @@ import {
 } from "../../../../redux/auth/selector";
 import { selectUser } from "../../../../redux/user/selector";
 
+// Hooks
+import { useWindowSize } from "../../../../hocs/useWindowSize";
+
 // Utils
 import {
 	emailOptions,
@@ -53,6 +56,8 @@ const Login: React.FC = () => {
 	const isLoadingForgotPassword = useSelector(selectIsLoadingForgotPassword);
 	const isAuthenticated = useSelector(selectIsAuthenticated);
 	const user = useSelector(selectUser);
+
+	const [, windowHeight] = useWindowSize();
 
 	let timeToNextEmail: number = Number(
 		localStorage.getItem("timeToNextEmail")
@@ -119,7 +124,7 @@ const Login: React.FC = () => {
 
 	return (
 		<React.Fragment>
-			<div className={styles.container}>
+			<div style={{ height: windowHeight - 80 - 48 }} className={styles.container}>
 				<div className={styles.wrapper}>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.header}>Login</div>
