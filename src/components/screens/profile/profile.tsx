@@ -116,6 +116,7 @@ const Profile: React.FC = () => {
 						</button>
 					) : (
 						<DisplayActions 
+							displayViewProfileButton={false}
 							friendshipStatus={friendshipStatus} 
 							userId={_id} 
 							userProfileId={profileId} 

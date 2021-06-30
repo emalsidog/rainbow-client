@@ -1,7 +1,5 @@
 // Dependencies
-import React, { useState } from "react";
-import { useHistory } from "react-router";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 // Actions
@@ -9,6 +7,9 @@ import { removeUserNotification } from "../../../../../redux/notifications/actio
 
 // Styles
 import styles from "./user-notify.module.css";
+
+// Components
+import ViewProfile from "../../../../common-actions/view-profile";
 
 // Types
 import { UserNotificationTypes } from "../../../../../redux/notifications/types";
@@ -19,7 +20,6 @@ const UserNotify: React.FC<UserNotificationTypes> = (props) => {
 	const [exit, setExit] = useState<boolean>(false);
 	const [timeoutId, setTimeoutId] = useState<number>(0);
 
-	const history = useHistory();
 	const dispatch = useDispatch();
 
 	const handleCloseNotify = () => {
@@ -47,33 +47,11 @@ const UserNotify: React.FC<UserNotificationTypes> = (props) => {
 		case "FRIEND_REQUEST": {
 			const { displayName, profileId } = props.data;
 			
-			const handleViewProfile = () => {
-				handleCloseNotify();
-				history.push(`/${profileId}`);
-			}
-
-			const acceptRequest = () => {
-				handleCloseNotify();
-			}
-
 			title = "Friend request";
 			message = `A new friend request from ${displayName}`;
 
 			actions = [
-				<button 
-					key={0} 
-					className="btn btn-primary"
-					onClick={acceptRequest} 
-				>
-					Accept
-				</button>,
-				<button
-					key={1}
-					className="btn btn-secondary"
-					onClick={handleViewProfile}
-				>
-					View profile
-				</button>
+				<ViewProfile key={0} callback={handleCloseNotify} profileId={profileId} />
 			];
 			break;
 		}

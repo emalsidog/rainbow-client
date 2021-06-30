@@ -127,7 +127,6 @@ const FriendsScreen: React.FC = () => {
 						? <section className={styles.cards}>{usersCards}</section> 
 						: <EmptyListIndicator message="Don't worry. You will find someone..." />
 				}
-				<section className={styles.cards}>{usersCards}</section>
 
 				<div className={styles.spinnerBlock}>
 					{isLoading.loadingUsers && <Spinner />}

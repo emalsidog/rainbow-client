@@ -578,12 +578,22 @@ export const user = (
 			const newRequests = state.user.friendRequests.filter(
 				(requestId) => requestId !== declinedRequestId
 			);
+
+			const newPopualtedRequests = state.populatedFields.populatedFriendRequests.requests.filter(request => request._id !== declinedRequestId);
+
 			return {
 				...state,
 				user: {
 					...state.user,
 					friendRequests: newRequests,
 				},
+				populatedFields: {
+					...state.populatedFields,
+					populatedFriendRequests: {
+						...state.populatedFields.populatedFriendRequests,
+						requests: newPopualtedRequests
+					}
+				}
 			};
 		}
 		case "DECLINE_FRIEND_REQ_FAILURE": {
@@ -696,12 +706,22 @@ export const user = (
 			const newFriends = state.user.friends.filter(
 				(friendId) => friendId !== idOfUserToRemove
 			);
+
+			const newPopualtedFriends = state.populatedFields.populatedFriends.friends.filter(friend => friend._id !== idOfUserToRemove);
+
 			return {
 				...state,
 				user: {
 					...state.user,
 					friends: newFriends,
 				},
+				populatedFields: {
+					...state.populatedFields,
+					populatedFriends: {
+						...state.populatedFields.populatedFriends,
+						friends: newPopualtedFriends
+					}
+				}
 			};
 		}
 
@@ -738,6 +758,9 @@ export const user = (
 			const newRequests = state.user.friendRequests.filter(
 				(requestId) => requestId.toString() !== newFriendId.toString()
 			);
+
+			const newPopualtedRequests = state.populatedFields.populatedFriendRequests.requests.filter(request => request._id !== newFriendId);
+
 			return {
 				...state,
 				user: {
@@ -745,6 +768,13 @@ export const user = (
 					friendRequests: newRequests,
 					friends: [...state.user.friends, newFriendId],
 				},
+				populatedFields: {
+					...state.populatedFields,
+					populatedFriendRequests: {
+						...state.populatedFields.populatedFriendRequests,
+						requests: newPopualtedRequests
+					}
+				}
 			};
 		}
 		/*
