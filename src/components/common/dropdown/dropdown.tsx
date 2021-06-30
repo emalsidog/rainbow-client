@@ -14,7 +14,6 @@ interface DropdownItemProps {
 	title: string;
 	isLoading?: boolean;
 	onClick: () => void;
-	setIsVisble?: (value: boolean) => void;
 }
 
 // Dropdown
@@ -72,15 +71,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 
 // Item
 export const DropdownItem: React.FC<DropdownItemProps> = (props) => {
-	const { title, onClick, setIsVisble, isLoading } = props;
+	const { title, onClick, isLoading } = props;
 
-	const handleClick = (): void => {
-		onClick();
-		setIsVisble && setIsVisble(false);
-	}
 	let classNames = `dd-list-item ${isLoading ? "disabled" : ""}`;
 	return (
-		<button disabled={isLoading} onClick={handleClick} className={classNames}>
+		<button disabled={isLoading} onClick={onClick} className={classNames}>
 			{title}
 		</button>
 	);
