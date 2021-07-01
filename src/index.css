@@ -19,6 +19,9 @@ body {
 	padding: 0;
 
 	background: var(--main);
+
+	min-height: 100vh;
+	min-height: -webkit-fill-available;
 }
 
 /* ============================ LAYOUT ============================ */
@@ -28,6 +31,8 @@ body {
 
 	width: 100%;
 	max-width: 1200px;
+	min-height: 100vh;
+	min-height: -webkit-fill-available;
 
 	margin: 0 auto;
 	padding: 0 15px;
