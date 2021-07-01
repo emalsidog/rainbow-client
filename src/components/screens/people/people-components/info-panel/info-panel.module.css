@@ -4,14 +4,16 @@
 	left: 0;
 
 	width: 320px;
-	
+
 	min-height: 100vh;
 	min-height: -webkit-fill-available;
 
 	background: #ffffff;
-    box-sizing: border-box;	
-	
+	box-sizing: border-box;
+
 	animation: SlideRight 0.2s forwards;
+
+	overflow: auto;
 
 	z-index: 10000;
 }
@@ -55,9 +57,9 @@
 }
 
 .header button {
-    position: fixed;
-    top: 10px;
-    right: 15px;
+	position: fixed;
+	top: 10px;
+	right: 15px;
 }
 
 .name {
@@ -72,7 +74,14 @@
 }
 
 .mainBlock {
+	position: absolute;
 	overflow-y: scroll;
+	height: 100%;
+}
+
+.content {
+	position: fixed;
+	width: 100%;
 }
 
 .infoItem {
@@ -88,14 +97,18 @@
 }
 
 .footer {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 }
 
 .footer button {
-    margin: 0 10px 5px;
+	margin: 0 10px 5px;
 }
 
+@media only screen and (min-height: 620px) {
+	.footer {
+		position: fixed;
+		bottom: 0;
+	}
+}

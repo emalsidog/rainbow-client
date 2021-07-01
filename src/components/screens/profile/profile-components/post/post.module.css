@@ -30,6 +30,7 @@
 
 .postBody {
     margin: 15px 0;
+    word-wrap: break-word;
 }
 
 /* POST FOOTER */

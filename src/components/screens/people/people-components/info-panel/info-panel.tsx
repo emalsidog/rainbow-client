@@ -71,7 +71,17 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 		}
 	};
 
-	const { _id, avatar, bio, birthday,	familyName, givenName, profileId, registrationDate, role } = user;
+	const {
+		_id,
+		avatar,
+		bio,
+		birthday,
+		familyName,
+		givenName,
+		profileId,
+		registrationDate,
+		role,
+	} = user;
 
 	if (isVisible === null) return null;
 	return (
@@ -95,31 +105,33 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 			<hr />
 
 			<div className={`${styles.wrapper} ${styles.mainBlock}`}>
-				<div className={styles.infoItem}>
-					<div>{profileId}</div>
-					<div className={styles.infoItemLabel}>Profile ID</div>
-				</div>
-				<div className={styles.infoItem}>
-					<div>
-						{formatDate(birthday, "BIRTHDAY") || "Not specified"}
+				<div className={styles.content}>
+					<div className={styles.infoItem}>
+						<div>{profileId}</div>
+						<div className={styles.infoItemLabel}>Profile ID</div>
 					</div>
-					<div className={styles.infoItemLabel}>Birthday</div>
-				</div>
-				<div className={styles.infoItem}>
-					<div>
-						{formatDate(registrationDate, "REGULAR") ||
-							"Not specified"}
+					<div className={styles.infoItem}>
+						<div>
+							{formatDate(birthday, "BIRTHDAY") ||
+								"Not specified"}
+						</div>
+						<div className={styles.infoItemLabel}>Birthday</div>
 					</div>
-					<div className={styles.infoItemLabel}>Member since</div>
+					<div className={styles.infoItem}>
+						<div>
+							{formatDate(registrationDate, "REGULAR") ||
+								"Not specified"}
+						</div>
+						<div className={styles.infoItemLabel}>Member since</div>
+					</div>
+					<div className={`${styles.footer}`}>
+						<DisplayActions
+							friendshipStatus={friendshipStatus}
+							userId={_id}
+							userProfileId={profileId}
+						/>
+					</div>
 				</div>
-			</div>
-
-			<div className={`${styles.footer} ${styles.wrapper}`}>
-				<DisplayActions
-					friendshipStatus={friendshipStatus}
-					userId={_id}
-					userProfileId={profileId}
-				/>
 			</div>
 		</div>
 	);
