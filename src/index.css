@@ -19,6 +19,9 @@ body {
 	padding: 0;
 
 	background: var(--main);
+
+	min-height: 100vh;
+	min-height: -webkit-fill-available;
 }
 
 /* ============================ LAYOUT ============================ */
