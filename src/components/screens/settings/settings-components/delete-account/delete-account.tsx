@@ -78,6 +78,7 @@ const DeleteAccount: React.FC<DeleteAccountProps> = ({ isLoading }) => {
 							className="input"
 							placeholder="Confirm by entering your password"
 							type="password"
+							disabled={isLoading}
 						/>
 						<ShowFormError message={errors.password?.message} />
 					</div>

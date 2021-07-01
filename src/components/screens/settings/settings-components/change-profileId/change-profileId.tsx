@@ -66,7 +66,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 
 			<div className="settings-row-change">
 				<span>
-					http://localhost:3000/<b>{userInput}</b>
+					rainbow-client.herokuapp.com/<b>{userInput}</b>
 				</span>
 				{changeProfileIdShow && (
 					<form
@@ -78,6 +78,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 								{...register("profileId", profileIdOptions)}
 								className="input"
 								placeholder="New profile ID"
+								disabled={isLoading}
 							/>
 							<ShowFormError
 								message={errors.profileId?.message}

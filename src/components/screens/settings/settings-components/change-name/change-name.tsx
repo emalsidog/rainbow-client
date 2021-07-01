@@ -76,6 +76,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 								{...register("givenName", givenNameOptions)}
 								className="input"
 								placeholder="New given name"
+								disabled={isLoading}
 							/>
 							<ShowFormError
 								message={errors.givenName?.message}
@@ -86,6 +87,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 								{...register("familyName", familyNameOptions)}
 								className="input"
 								placeholder="New family name"
+								disabled={isLoading}
 							/>
 							<ShowFormError
 								message={errors.familyName?.message}

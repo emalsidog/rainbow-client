@@ -146,6 +146,7 @@ const ChangeBio: React.FC<ChangeBioProps> = (props) => {
 								className="textarea"
 								onChange={handleChange}
 								onKeyDown={handleKeyDown}
+								disabled={isLoading}
 							/>
 						</div>
 						<div className="form-group">
