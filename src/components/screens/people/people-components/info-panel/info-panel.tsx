@@ -16,6 +16,7 @@ import styles from "./info-panel.module.css";
 
 // Components
 import DisplayActions from "../../../../common-actions/display-actions";
+import DisplayRole from "../../../../common/display-role";
 
 // Types
 import { initialUser, User } from "../../../../../redux/common-types";
@@ -70,7 +71,7 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 		}
 	};
 
-	const { _id, avatar, bio, birthday,	familyName, givenName, profileId, registrationDate } = user;
+	const { _id, avatar, bio, birthday,	familyName, givenName, profileId, registrationDate, role } = user;
 
 	if (isVisible === null) return null;
 	return (
@@ -80,9 +81,10 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 		>
 			<div className={`${styles.header} ${styles.wrapper}`}>
 				<img src={avatar} alt="" />
-				<div
-					className={styles.name}
-				>{`${givenName} ${familyName}`}</div>
+				<div className={styles.name}>
+					{`${givenName} ${familyName}`}
+					<DisplayRole role={role} />
+				</div>
 				<div className={styles.bio}>{bio}</div>
 
 				<button onClick={onClose} className="btn-transperent">

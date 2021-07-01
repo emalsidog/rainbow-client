@@ -33,6 +33,7 @@ import PostForm from "./profile-components/post-form";
 import DisplayPosts from "./profile-components/display-posts";
 import AdditionalInfo from "./profile-components/additional-info";
 import DisplayActions from "../../common-actions/display-actions";
+import DisplayRole from "../../common/display-role";
 
 import ProfileSkeleton from "../../skeletons/templates/profile-skeleton";
 import MainPhotoSkeleton from "../../skeletons/templates/profile-skeleton/additional/main-photo-skeleton";
@@ -72,31 +73,7 @@ const Profile: React.FC = () => {
 		posts,
 		role,
 	} = displayedUser;
-
-	let displayRole: JSX.Element | null = null;
-
-	switch (role) {
-		case "MEMBER":
-			displayRole = null;
-			break;
-		case "DEVELOPER":
-			displayRole = (
-				<i
-					style={{ marginLeft: "10px", fontSize: "1.5rem" }}
-					className="fab fa-dev"
-				/>
-			);
-			break;
-		case "VERIFIED":
-			displayRole = (
-				<i
-					style={{ marginLeft: "10px", fontSize: "1.5rem" }}
-					className="fas fa-check"
-				/>
-			);
-			break;
-	}
-
+	
 	if (isLoadingUsers.isFetchingUser) {
 		return (
 			<Layout>
@@ -121,7 +98,7 @@ const Profile: React.FC = () => {
 							<div className={styles.nameWrapper}>
 								<div className={styles.name}>
 									{`${givenName} ${familyName}`}
-									{displayRole}
+									<DisplayRole role={role} />
 								</div>
 								<div className={styles.bio}>{bio}</div>
 							</div>

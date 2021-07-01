@@ -81,7 +81,7 @@
 		transform: translateY(0) rotate(0deg);
 	}
 	100% {
-		transform: translateY(-1000px) rotate(360deg);
+		transform: translateY(-1150px) rotate(360deg);
 	}
 }
 
