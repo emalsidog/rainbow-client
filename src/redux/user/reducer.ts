@@ -4,6 +4,7 @@ import { PostActionTypes } from "../posts";
 import { EmailChangingProcess, IsLoading, UserActionTypes } from "./types";
 
 import { initialUser } from "../common-types";
+import { FriendsActionTypes } from "../friends/types";
 
 interface InitialState {
 	user: User;
@@ -65,14 +66,13 @@ const initialState: InitialState = {
 		deletePost: false,
 		editPost: false,
 
-		loadingUsers: false
+		loadingUsers: false,
 	},
 };
 
-export const user = (
-	state = initialState,
-	action: UserActionTypes | PostActionTypes
-): InitialState => {
+type ActionType = UserActionTypes | PostActionTypes | FriendsActionTypes;
+
+export const user = (state = initialState, action: ActionType): InitialState => {
 	switch (action.type) {
 		// SET USER
 
@@ -579,7 +579,10 @@ export const user = (
 				(requestId) => requestId !== declinedRequestId
 			);
 
-			const newPopualtedRequests = state.populatedFields.populatedFriendRequests.requests.filter(request => request._id !== declinedRequestId);
+			const newPopualtedRequests =
+				state.populatedFields.populatedFriendRequests.requests.filter(
+					(request) => request._id !== declinedRequestId
+				);
 
 			return {
 				...state,
@@ -591,9 +594,9 @@ export const user = (
 					...state.populatedFields,
 					populatedFriendRequests: {
 						...state.populatedFields.populatedFriendRequests,
-						requests: newPopualtedRequests
-					}
-				}
+						requests: newPopualtedRequests,
+					},
+				},
 			};
 		}
 		case "DECLINE_FRIEND_REQ_FAILURE": {
@@ -609,8 +612,8 @@ export const user = (
 				...state,
 				isLoading: {
 					...state.isLoading,
-					loadingUsers: true
-				}
+					loadingUsers: true,
+				},
 			};
 		}
 
@@ -621,14 +624,17 @@ export const user = (
 			if (meta.usersNeedToBeCleared) {
 				newFriends = [...friends];
 			} else {
-				newFriends = [...state.populatedFields.populatedFriends.friends, ...friends]
+				newFriends = [
+					...state.populatedFields.populatedFriends.friends,
+					...friends,
+				];
 			}
 
 			return {
 				...state,
 				isLoading: {
 					...state.isLoading,
-					loadingUsers: false
+					loadingUsers: false,
 				},
 				populatedFields: {
 					...state.populatedFields,
@@ -636,9 +642,9 @@ export const user = (
 						...state.populatedFields.populatedFriends,
 						friends: newFriends,
 						hasMoreData: meta.hasMoreData,
-						hasMoreSearchedData: meta.hasMoreSearchedData
-					}
-				}
+						hasMoreSearchedData: meta.hasMoreSearchedData,
+					},
+				},
 			};
 		}
 
@@ -647,7 +653,7 @@ export const user = (
 				...state,
 				isLoading: {
 					...state.isLoading,
-					loadingUsers: false
+					loadingUsers: false,
 				},
 			};
 		}
@@ -659,8 +665,8 @@ export const user = (
 				...state,
 				isLoading: {
 					...state.isLoading,
-					loadingUsers: true
-				}
+					loadingUsers: true,
+				},
 			};
 		}
 
@@ -670,16 +676,20 @@ export const user = (
 				...state,
 				isLoading: {
 					...state.isLoading,
-					loadingUsers: false
+					loadingUsers: false,
 				},
 				populatedFields: {
 					...state.populatedFields,
 					populatedFriendRequests: {
 						...state.populatedFields.populatedFriendRequests,
-						requests: [...state.populatedFields.populatedFriendRequests.requests, ...friendRequests],
-						hasMoreData
-					}
-				}
+						requests: [
+							...state.populatedFields.populatedFriendRequests
+								.requests,
+							...friendRequests,
+						],
+						hasMoreData,
+					},
+				},
 			};
 		}
 
@@ -688,7 +698,7 @@ export const user = (
 				...state,
 				isLoading: {
 					...state.isLoading,
-					loadingUsers: false
+					loadingUsers: false,
 				},
 			};
 		}
@@ -707,7 +717,10 @@ export const user = (
 				(friendId) => friendId !== idOfUserToRemove
 			);
 
-			const newPopualtedFriends = state.populatedFields.populatedFriends.friends.filter(friend => friend._id !== idOfUserToRemove);
+			const newPopualtedFriends =
+				state.populatedFields.populatedFriends.friends.filter(
+					(friend) => friend._id !== idOfUserToRemove
+				);
 
 			return {
 				...state,
@@ -719,9 +732,9 @@ export const user = (
 					...state.populatedFields,
 					populatedFriends: {
 						...state.populatedFields.populatedFriends,
-						friends: newPopualtedFriends
-					}
-				}
+						friends: newPopualtedFriends,
+					},
+				},
 			};
 		}
 
@@ -759,7 +772,10 @@ export const user = (
 				(requestId) => requestId.toString() !== newFriendId.toString()
 			);
 
-			const newPopualtedRequests = state.populatedFields.populatedFriendRequests.requests.filter(request => request._id !== newFriendId);
+			const newPopualtedRequests =
+				state.populatedFields.populatedFriendRequests.requests.filter(
+					(request) => request._id !== newFriendId
+				);
 
 			return {
 				...state,
@@ -772,9 +788,9 @@ export const user = (
 					...state.populatedFields,
 					populatedFriendRequests: {
 						...state.populatedFields.populatedFriendRequests,
-						requests: newPopualtedRequests
-					}
-				}
+						requests: newPopualtedRequests,
+					},
+				},
 			};
 		}
 		/*
@@ -801,8 +817,8 @@ export const user = (
 			const { count } = action;
 			return {
 				...state,
-				requestsCounter: count
-			}
+				requestsCounter: count,
+			};
 		}
 
 		default: {

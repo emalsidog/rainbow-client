@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 
 // Actions
-import { acceptFriendReqRequest } from "../../../redux/users/actions";
+import { acceptFriendReqRequest } from "../../../redux/friends/actions";
 
 // Types
 interface AcceptRequestProps {

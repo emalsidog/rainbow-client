@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // Actions
-import { getPopulatedFriendsRequest } from "../../../../redux/user/actions";
+import { getPopulatedFriendsRequest } from "../../../../redux/friends/actions";
 
 // Selectors
 import { selectIsLoading } from "../../../../redux/user/selector";

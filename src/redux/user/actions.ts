@@ -1,5 +1,5 @@
 // Types
-import { AppActionTypes, User } from "../common-types";
+import { AppActionTypes } from "../common-types";
 import {
 	ChangeBirthday,
 	ChangeEmail,
@@ -69,9 +69,7 @@ export const changeEmailReqRequest = (email: string): AppActionTypes => ({
 	email,
 });
 
-export const changeEmailReqSuccess = (
-	payload: EmailChangingProcess
-): AppActionTypes => ({
+export const changeEmailReqSuccess = (payload: EmailChangingProcess): AppActionTypes => ({
 	type: "CHANGE_EMAIL_REQ_SUCCESS",
 	payload,
 });
@@ -102,9 +100,7 @@ export const changeEmailAbortRequest = (): AppActionTypes => ({
 	type: "CHANGE_EMAIL_ABORT_REQUEST",
 });
 
-export const changeEmailAbortSuccess = (
-	payload: EmailChangingProcess
-): AppActionTypes => ({
+export const changeEmailAbortSuccess = (payload: EmailChangingProcess): AppActionTypes => ({
 	type: "CHANGE_EMAIL_ABORT_SUCCESS",
 	payload,
 });
@@ -130,16 +126,12 @@ export const deleteAccountFailure = (): AppActionTypes => ({
 
 // CHANGE PASSWORD
 
-export const changePasswordRequest = (
-	payload: ChangePassword
-): AppActionTypes => ({
+export const changePasswordRequest = (payload: ChangePassword): AppActionTypes => ({
 	type: "CHANGE_PASSWORD_REQUEST",
 	payload,
 });
 
-export const changePasswordSuccess = (
-	lastTimeChanged: Date
-): AppActionTypes => ({
+export const changePasswordSuccess = (lastTimeChanged: Date): AppActionTypes => ({
 	type: "CHANGE_PASSWORD_SUCCESS",
 	lastTimeChanged,
 });
@@ -182,9 +174,7 @@ export const changeBioFailure = (): AppActionTypes => ({
 
 // CHANGE BIRTHDAY
 
-export const changeBirthdayRequest = (
-	payload: ChangeBirthday
-): AppActionTypes => ({
+export const changeBirthdayRequest = (payload: ChangeBirthday): AppActionTypes => ({
 	type: "CHANGE_BIRTHDAY_REQUEST",
 	payload,
 });
@@ -196,105 +186,4 @@ export const changeBirthdaySuccess = (birthday: Date): AppActionTypes => ({
 
 export const changeBirthdayFailure = (): AppActionTypes => ({
 	type: "CHANGE_BIRTHDAY_FAILURE",
-});
-
-// DECLINE FRIEND REQUEST
-
-export const declineFriendReqRequest = (id: string): AppActionTypes => ({
-	type: "DECLINE_FRIEND_REQ_REQUEST",
-	id,
-});
-
-export const declineFriendReqSuccess = (
-	declinedRequestId: string
-): AppActionTypes => ({
-	type: "DECLINE_FRIEND_REQ_SUCCESS",
-	declinedRequestId,
-});
-
-export const declineFriendReqFailure = (): AppActionTypes => ({
-	type: "DECLINE_FRIEND_REQ_FAILURE",
-});
-
-// REMOVE FROM FRIENDS
-
-export const removeFromFriendsRequest = (id: string): AppActionTypes => ({
-	type: "REMOVE_FROM_FRIENDS_REQUEST",
-	id,
-});
-
-export const removeFromFriendsSuccess = (
-	idOfUserToRemove: string
-): AppActionTypes => ({
-	type: "REMOVE_FROM_FRIENDS_SUCCESS",
-	idOfUserToRemove,
-});
-
-export const removeFromFriendsFailure = (): AppActionTypes => ({
-	type: "REMOVE_FROM_FRIENDS_FAILURE",
-});
-
-// GET POPULATED FRIENDS
-
-export const getPopulatedFriendsRequest = (payload: {
-	requestOptions: {
-		page: number;
-	};
-	options?: {
-		displayName: string;
-	};
-}): AppActionTypes => ({
-	type: "GET_POPULATED_FRIENDS_REQUEST",
-	payload,
-});
-
-export const getPopulatedFriendsSuccess = (payload: {
-	friends: User[];
-	meta: {
-		hasMoreData: boolean;
-		hasMoreSearchedData: boolean;
-		usersNeedToBeCleared: boolean;
-	};
-}): AppActionTypes => ({
-	type: "GET_POPULATED_FRIENDS_SUCCESS",
-	payload,
-});
-
-export const getPopulatedFriendsFailure = (): AppActionTypes => ({
-	type: "GET_POPULATED_FRIENDS_FAILURE",
-});
-
-// GET POPULATED FRIEND REQUESTS
-
-export const getPopulatedFriendRequestsRequest = (requestOptions: {
-	page: number;
-}): AppActionTypes => ({
-	type: "GET_POPULATED_FRIEND_REQUESTS_REQUEST",
-	requestOptions,
-});
-
-export const getPopulatedFriendRequestsSuccess = (payload: {
-	friendRequests: User[];
-	hasMoreData: boolean;
-}): AppActionTypes => ({
-	type: "GET_POPULATED_FRIEND_REQUESTS_SUCCESS",
-	payload,
-});
-
-export const getPopulatedFriendRequestsFailure = (): AppActionTypes => ({
-	type: "GET_POPULATED_FRIEND_REQUESTS_FAILURE",
-});
-
-// WS action
-
-export const updateFriendsWhenAcceptedRequest = (
-	newFriendId: string
-): AppActionTypes => ({
-	type: "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST",
-	newFriendId,
-});
-
-export const updateRequestsCounter = (count: number): AppActionTypes => ({
-	type: "UPDATE_REQUEST_COUNTER",
-	count,
 });

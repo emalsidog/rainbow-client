@@ -1,9 +1,10 @@
 // Types
 import { User } from "../common-types";
 import { RootState } from "../store";
+import { isLoading } from "./reducer";
 
-// IS LAODING
-export const selectIsLoading = (state: RootState): boolean => state.users.isLoading;
+// IS LOADING
+export const selectUsersIsLoading = (state: RootState): isLoading => state.users.isLoading;
 
 // IS CURRENT USER
 export const selectIsCurrentUser = (state: RootState): boolean | undefined => state.users.isCurrenUser;

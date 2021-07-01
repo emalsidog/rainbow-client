@@ -5,6 +5,7 @@ import { takeEvery, call, put } from "redux-saga/effects";
 import * as userActions from "./actions";
 import { loginSuccess, logoutSuccess } from "../auth/actions";
 import { addNotification } from "../notifications/actions";
+import * as friendsActions from "../friends/actions";
 
 // Utils
 import { AxiosGetRequest, AxiosPostRequest } from "../utils/server-request";
@@ -20,10 +21,6 @@ import {
 	ChangeAvatarRequest,
 	ChangeBioRequest,
 	ChangeBirthdayRequest,
-	DeclineFriendReqRequest,
-	RemoveFromFriendsRequest,
-	GetPopulatedFriendRequestsRequest,
-	GetPopulatedFriendsRequest,
 } from "./types";
 import { UserExtended } from "./types";
 
@@ -42,13 +39,6 @@ export function* userWatcher() {
 	yield takeEvery("CHANGE_BIRTHDAY_REQUEST", changeBirthday);
 
 	yield takeEvery("DELETE_ACCOUNT_REQUEST", deleteAccount);
-
-	yield takeEvery("GET_POPULATED_FRIENDS_REQUEST", getPopulatedFriends);
-	yield takeEvery("GET_POPULATED_FRIEND_REQUESTS_REQUEST", getPopulatedFriendRequests);
-	
-
-	yield takeEvery("DECLINE_FRIEND_REQ_REQUEST", declineFriendRequest);
-	yield takeEvery("REMOVE_FROM_FRIENDS_REQUEST", removeFromFriends);
 }
 
 function* currentUser() {
@@ -56,9 +46,9 @@ function* currentUser() {
 		const { data } = yield call(() =>
 			AxiosGetRequest("/authentication/current-user")
 		);
-		
+
 		const { user, changingEmailProcess, requestsCounter } = data.body;
-		
+
 		const payload: UserExtended = {
 			user: {
 				...user,
@@ -69,7 +59,7 @@ function* currentUser() {
 		};
 
 		yield put(userActions.setUser(payload));
-		yield put(userActions.updateRequestsCounter(requestsCounter));
+		yield put(friendsActions.updateRequestsCounter(requestsCounter));
 		yield put(loginSuccess());
 		yield put(userActions.getUserSuccess());
 	} catch (error) {
@@ -234,7 +224,9 @@ function* changeBio(action: ChangeBioRequest) {
 
 function* changeBirthday(action: ChangeBirthdayRequest) {
 	try {
-		const { data } = yield call(() => AxiosPostRequest("/settings/change-birthday", action.payload));
+		const { data } = yield call(() =>
+			AxiosPostRequest("/settings/change-birthday", action.payload)
+		);
 		const { body, status } = data;
 
 		yield put(userActions.changeBirthdaySuccess(body.birthday));
@@ -242,69 +234,6 @@ function* changeBirthday(action: ChangeBirthdayRequest) {
 	} catch (error) {
 		const { status } = error.response.data;
 		yield put(userActions.changeBirthdayFailure());
-		yield put(addNotification(status));
-	}
-}
-
-function* declineFriendRequest(action: DeclineFriendReqRequest) {
-	const payload = { id: action.id };
-	try {
-		const { data } = yield call(() =>
-			AxiosPostRequest("/friends/decline-friend-request", payload)
-		);
-		const { body, status } = data;
-
-		yield put(userActions.declineFriendReqSuccess(body.declinedRequestId));
-		yield put(userActions.updateRequestsCounter(body.requestsCount))
-		yield put(addNotification(status));
-	} catch (error) {
-		const { status } = error.response.data;
-		yield put(userActions.declineFriendReqFailure());
-		yield put(addNotification(status));
-	}
-}
-
-function* removeFromFriends(action: RemoveFromFriendsRequest) {
-	const payload = { id: action.id };
-	try {
-		const { data } = yield call(() =>
-			AxiosPostRequest("/friends/remove-friend", payload)
-		);
-		const { body, status } = data;
-
-		yield put(userActions.removeFromFriendsSuccess(body.idOfUserToRemove));
-		yield put({ type: "REMOVE_FROM_FRIENDS", payload: body })
-		yield put(addNotification(status));
-	} catch (error) {
-		const { status } = error.response.data;
-		yield put(userActions.removeFromFriendsFailure());
-		yield put(addNotification(status));
-	}
-}
-
-function* getPopulatedFriends(action: GetPopulatedFriendsRequest) {
-	try {
-		const { data } = yield call(() => AxiosPostRequest("/friends", action.payload));
-		const { body } = data;
-		
-		yield put(userActions.getPopulatedFriendsSuccess(body));
-	} catch (error) {
-		const { status } = error.response.data;
-		yield put(userActions.getPopulatedFriendsFailure());
-		yield put(addNotification(status));
-	}
-}
-
-function* getPopulatedFriendRequests(action: GetPopulatedFriendRequestsRequest) {
-	const { requestOptions } = action;
-	try {
-		const { data } = yield call(() => AxiosPostRequest("/friends/requests", { requestOptions }));
-		const { body } = data;
-
-		yield put(userActions.getPopulatedFriendRequestsSuccess(body));
-	} catch (error) {
-		const { status } = error.response.data;
-		yield put(userActions.getPopulatedFriendRequestsFailure());
 		yield put(addNotification(status));
 	}
 }

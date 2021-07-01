@@ -16,6 +16,7 @@ import { authWatcher } from "./auth";
 import { usersWatcher } from "./users";
 import { wsWatcher } from "./websockets";
 import { postsWatcher } from "./posts";
+import { friendsWatcher } from "./friends";
 
 // Root reducer
 export const rootReducer = combineReducers({
@@ -33,6 +34,7 @@ function* rootWatcher() {
 		usersWatcher(),
 		wsWatcher(),
 		postsWatcher(),
+		friendsWatcher()
 	]);
 }
 

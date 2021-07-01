@@ -24,6 +24,11 @@ export const getUserByIdFailure = (): AppActionTypes => ({
 	type: "GET_USER_BY_ID_FAILURE",
 });
 
+export const setIsFetchingUser = (isFetching: boolean): AppActionTypes => ({
+	type: "SET_IS_FETCHING_USER",
+	isFetching
+});
+
 // SEARCH USERS
 
 export const searchUsersRequest = (
@@ -42,58 +47,4 @@ export const searchUsersSuccess = (
 
 export const searchUsersFailure = (): AppActionTypes => ({
 	type: "SEARCH_USERS_FAILURE",
-});
-
-// SEND FRIEND REQUEST
-
-export const sendFriendReqRequest = (profileId: string): AppActionTypes => ({
-	type: "SEND_FRIEND_REQ_REQUEST",
-	profileId,
-});
-
-export const sendFriendReqSuccess = (payload: {
-	newRequestId: string;
-	idOfUserToUpdate: string;
-}): AppActionTypes => ({
-	type: "SEND_FRIEND_REQ_SUCCESS",
-	payload,
-});
-
-export const sendFriendReqFailure = (): AppActionTypes => ({
-	type: "SEND_FRIEND_REQ_FAILURE",
-});
-
-// ACCEPT FRIEND REQUEST
-
-export const acceptFriendReqRequest = (id: string): AppActionTypes => ({
-	type: "ACCEPT_FRIEND_REQ_REQUEST",
-	id,
-});
-
-export const acceptFriendReqSuccess = (): AppActionTypes => ({
-	type: "ACCEPT_FRIEND_REQ_SUCCESS",
-});
-
-export const acceptFriendReqFailure = (): AppActionTypes => ({
-	type: "ACCEPT_FRIEND_REQ_FAILURE",
-});
-
-
-// CANCEL FRIEND REQUEST
-
-export const cancelFriendReqRequest = (id: string): AppActionTypes => ({
-	type: "CANCEL_FRIEND_REQ_REQUEST",
-	id,
-});
-
-export const cancelFriendReqSuccess = (payload: {
-	idOfUserWhoCancelled: string; 
-	userWhoHasRequest: string;
-}): AppActionTypes => ({
-	type: "CANCEL_FRIEND_REQ_SUCCESS",
-	payload
-});
-
-export const cancelFriendReqFailure = (): AppActionTypes => ({
-	type: "CANCEL_FRIEND_REQ_FAILURE",
 });

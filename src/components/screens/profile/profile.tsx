@@ -4,14 +4,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 
 // Actions
-import { getUserByIdRequest } from "../../../redux/users/actions";
+import { getUserByIdRequest, setIsFetchingUser } from "../../../redux/users/actions";
 
 // Selectors
 import {
 	selectIsCurrentUser,
+	selectUsersIsLoading,
 	selectUser,
 } from "../../../redux/users/selectors";
-import { selectIsLoading, selectUser as selectCurrentUser } from "../../../redux/user/selector"
+import {
+	selectIsLoading,
+	selectUser as selectCurrentUser,
+} from "../../../redux/user/selector";
 
 // Utils
 import { formatDate } from "../../utils/format-date";
@@ -30,28 +34,81 @@ import DisplayPosts from "./profile-components/display-posts";
 import AdditionalInfo from "./profile-components/additional-info";
 import DisplayActions from "../../common-actions/display-actions";
 
+import ProfileSkeleton from "../../skeletons/templates/profile-skeleton";
+import MainPhotoSkeleton from "../../skeletons/templates/profile-skeleton/additional/main-photo-skeleton";
+
 const Profile: React.FC = () => {
 	const dispatch = useDispatch();
 	const displayedUser = useSelector(selectUser);
 	const currentUser = useSelector(selectCurrentUser);
 	const isCurrentUser = useSelector(selectIsCurrentUser);
 	const isLoading = useSelector(selectIsLoading);
+	const isLoadingUsers = useSelector(selectUsersIsLoading);
 
 	const history = useHistory();
-
 	const friendshipStatus = useFriendshipStatus(currentUser, displayedUser);
-		
 	const { profileId }: any = useParams();
 
 	useEffect(() => {
 		dispatch(getUserByIdRequest(profileId));
+
+		return () => {
+			dispatch(setIsFetchingUser(true))
+		};
 	}, [dispatch, profileId]);
 
 	const handleEdit = (): void => {
 		history.push("/settings");
 	};
 
-	const {	_id, givenName, familyName, bio, avatar, birthday, registrationDate, posts } = displayedUser;
+	const {
+		_id,
+		givenName,
+		familyName,
+		bio,
+		avatar,
+		birthday,
+		registrationDate,
+		posts,
+		role,
+	} = displayedUser;
+
+	let displayRole: JSX.Element | null = null;
+
+	switch (role) {
+		case "MEMBER":
+			displayRole = null;
+			break;
+		case "DEVELOPER":
+			displayRole = (
+				<i
+					style={{ marginLeft: "10px", fontSize: "1.5rem" }}
+					className="fab fa-dev"
+				/>
+			);
+			break;
+		case "VERIFIED":
+			displayRole = (
+				<i
+					style={{ marginLeft: "10px", fontSize: "1.5rem" }}
+					className="fas fa-check"
+				/>
+			);
+			break;
+	}
+
+	if (isLoadingUsers.isFetchingUser) {
+		return (
+			<Layout>
+				<div className="col-7">
+					<ProfileSkeleton />
+				</div>
+				<div className="col-3">
+					<MainPhotoSkeleton />
+				</div>
+			</Layout>
+		);
+	}
 
 	return (
 		<Layout>
@@ -64,6 +121,7 @@ const Profile: React.FC = () => {
 							<div className={styles.nameWrapper}>
 								<div className={styles.name}>
 									{`${givenName} ${familyName}`}
+									{displayRole}
 								</div>
 								<div className={styles.bio}>{bio}</div>
 							</div>
@@ -85,12 +143,16 @@ const Profile: React.FC = () => {
 						/>
 					</div>
 
-					<div className={`${styles.wrapper} ${styles.mediumImageBlock}`}>
+					<div
+						className={`${styles.wrapper} ${styles.mediumImageBlock}`}
+					>
 						<img src={avatar} alt="" />
 					</div>
 				</div>
 
-				{isCurrentUser ? <PostForm isLoading={isLoading.addPost} /> : null}
+				{isCurrentUser ? (
+					<PostForm isLoading={isLoading.addPost} />
+				) : null}
 
 				<DisplayPosts
 					avatar={avatar}
@@ -115,11 +177,11 @@ const Profile: React.FC = () => {
 							Edit
 						</button>
 					) : (
-						<DisplayActions 
+						<DisplayActions
 							displayViewProfileButton={false}
-							friendshipStatus={friendshipStatus} 
-							userId={_id} 
-							userProfileId={profileId} 
+							friendshipStatus={friendshipStatus}
+							userId={_id}
+							userProfileId={profileId}
 						/>
 					)}
 				</div>

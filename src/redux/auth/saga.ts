@@ -3,7 +3,8 @@ import { takeEvery, call, put } from "redux-saga/effects";
 
 // Actions
 import * as authActions from "./actions";
-import { setUser, updateRequestsCounter } from "../user/actions";
+import { setUser } from "../user/actions";
+import { updateRequestsCounter } from "../friends/actions";
 import { addNotification } from "../notifications/actions";
 
 // Utils

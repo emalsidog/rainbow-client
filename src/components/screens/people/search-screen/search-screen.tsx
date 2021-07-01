@@ -9,7 +9,7 @@ import { searchUsersRequest } from "../../../../redux/users/actions";
 import {
 	selectHasMoreData,
 	selectUsers,
-	selectIsLoading,
+	selectUsersIsLoading,
 } from "../../../../redux/users/selectors";
 
 // Hooks
@@ -24,6 +24,7 @@ import FriendCard from "../people-components/people-card";
 import InfoPanel from "../people-components/info-panel";
 import ActionsPanel from "../people-components/actions-panel";
 import SearchPanel from "../people-components/search-panel";
+import PeopleSkeleton from "../../../skeletons/templates/people-card-skeleton";
 
 // Styles
 import styles from "../people.module.css";
@@ -40,7 +41,7 @@ const SearchScreen: React.FC = () => {
 	const dispatch = useDispatch();
 	const users = useSelector(selectUsers);
 	const [hasMoreData, hasMoreSearchedData] = useSelector(selectHasMoreData);
-	const isLoading = useSelector(selectIsLoading);
+	const isLoading = useSelector(selectUsersIsLoading);
 
 	const debouncedSearchedName = useDebounce<string>(searchValue, 300);
 	const oldSearchedValue = useRef<string>("");
@@ -64,10 +65,7 @@ const SearchScreen: React.FC = () => {
 	useEffect(() => {
 		if (!debouncedSearchedName) return;
 
-		if (
-			debouncedSearchedName !== oldSearchedValue.current ||
-			hasMoreSearchedData
-		) {
+		if (debouncedSearchedName !== oldSearchedValue.current || hasMoreSearchedData) {
 			dispatch(
 				searchUsersRequest({
 					requestOptions: {
@@ -120,15 +118,21 @@ const SearchScreen: React.FC = () => {
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
 				<SearchPanel
-					isLoading={isLoading}
+					isLoading={isLoading.loading}
 					value={searchValue}
 					handleChange={handleChange}
 				/>
 
-				<section className={styles.cards}>{usersCards}</section>
+				<section className={styles.cards}>
+					{
+						isLoading.isFetchingUsers 
+							? [1, 2, 3, 4, 5, 6, 7, 8].map(n => <PeopleSkeleton key={n} />)
+							: usersCards
+					}
+				</section>
 
 				<div className={styles.spinnerBlock}>
-					{isLoading && <Spinner />}
+					{isLoading.loading && <Spinner />}
 				</div>
 
 				<ActionsPanel />

@@ -1,5 +1,6 @@
 // Types
 import { PostType, initialUser, User } from "../common-types";
+import { FriendsActionTypes } from "../friends/types";
 import { UsersActionTypes } from "./types";
 
 interface InitialState {
@@ -10,7 +11,8 @@ interface InitialState {
 	hasMoreSearchedData: boolean;
 
 	isCurrenUser: boolean | undefined;
-	isLoading: boolean;
+
+	isLoading: isLoading;
 }
 
 const initialState: InitialState = {
@@ -21,26 +23,42 @@ const initialState: InitialState = {
 	hasMoreSearchedData: true,
 
 	isCurrenUser: undefined,
-	isLoading: false,
+
+	isLoading: {
+		isFetchingUser: true,
+		isFetchingUsers: false,
+		loading: false,
+	},
 };
 
-export const users = (
-	state = initialState,
-	action: UsersActionTypes
-): InitialState => {
+type ActionType = UsersActionTypes | FriendsActionTypes;
+
+export interface isLoading {
+	isFetchingUser: boolean,
+	isFetchingUsers: boolean,
+	loading: boolean,
+}
+
+export const users = (state = initialState,	action: ActionType): InitialState => {
 	switch (action.type) {
 		// GET USER
 
 		case "GET_USER_BY_ID_REQUEST": {
 			return {
 				...state,
-				isLoading: true,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: true
+				}
 			};
 		}
 		case "GET_USER_BY_ID_SUCCESS": {
 			return {
 				...state,
-				isLoading: false,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: false
+				},
 				user: {
 					...action.payload.user,
 				},
@@ -50,7 +68,19 @@ export const users = (
 		case "GET_USER_BY_ID_FAILURE": {
 			return {
 				...state,
-				isLoading: false,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: false
+				}
+			};
+		}
+		case "SET_IS_FETCHING_USER": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: action.isFetching
+				}
 			};
 		}
 
@@ -59,7 +89,10 @@ export const users = (
 		case "SEARCH_USERS_REQUEST": {
 			return {
 				...state,
-				isLoading: true,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUsers: true
+				}
 			};
 		}
 		case "SEARCH_USERS_SUCCESS": {
@@ -69,21 +102,27 @@ export const users = (
 			if (meta.usersNeedToBeCleared) {
 				newUsers = [...users];
 			} else {
-				newUsers = [...state.users, ...users]
+				newUsers = [...state.users, ...users];
 			}
 
 			return {
 				...state,
-				isLoading: false,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUsers: false
+				},
 				users: newUsers,
 				hasMoreData: meta.hasMoreData,
-				hasMoreSearchedData: meta.hasMoreSearchedData
+				hasMoreSearchedData: meta.hasMoreSearchedData,
 			};
 		}
 		case "SEARCH_USERS_FAILURE": {
 			return {
 				...state,
-				isLoading: false,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUsers: false
+				}
 			};
 		}
 
@@ -99,7 +138,10 @@ export const users = (
 
 			let newUser = { ...state.user };
 			if (state.user._id === idOfUserToUpdate) {
-				newUser.friendRequests = [...state.user.friendRequests, newRequestId]
+				newUser.friendRequests = [
+					...state.user.friendRequests,
+					newRequestId,
+				];
 			}
 
 			const newUsers = state.users.map((user) => {
@@ -115,7 +157,7 @@ export const users = (
 			return {
 				...state,
 				users: newUsers,
-				user: newUser
+				user: newUser,
 			};
 		}
 		case "SEND_FRIEND_REQ_FAILURE": {
@@ -155,24 +197,28 @@ export const users = (
 
 			let newUser = { ...state.user };
 			if (state.user._id === userWhoHasRequest) {
-				const newRequests = newUser.friendRequests.filter(requestId => requestId !== idOfUserWhoCancelled);
-				newUser.friendRequests = newRequests
+				const newRequests = newUser.friendRequests.filter(
+					(requestId) => requestId !== idOfUserWhoCancelled
+				);
+				newUser.friendRequests = newRequests;
 			}
 
-			const newUsers = state.users.map(user => {
+			const newUsers = state.users.map((user) => {
 				if (user._id === userWhoHasRequest) {
-					const newRequests = user.friendRequests.filter(requestId => requestId !== idOfUserWhoCancelled);
+					const newRequests = user.friendRequests.filter(
+						(requestId) => requestId !== idOfUserWhoCancelled
+					);
 					return {
 						...user,
-						friendRequests: newRequests
-					}
+						friendRequests: newRequests,
+					};
 				}
 				return user;
 			});
 			return {
 				...state,
 				users: newUsers,
-				user: newUser
+				user: newUser,
 			};
 		}
 
@@ -234,52 +280,26 @@ export const users = (
 		*/
 		case "UPDATE_USER_WHO_ACCEPTED": {
 			const { acceptedUserId, idOfUserWhoAccepted } = action.payload;
-			
+
 			let newUser = { ...state.user };
 			if (state.user._id === idOfUserWhoAccepted) {
-				const newRequests = newUser.friendRequests.filter(requestId => requestId !== acceptedUserId);
-				newUser.friendRequests = newRequests
+				const newRequests = newUser.friendRequests.filter(
+					(requestId) => requestId !== acceptedUserId
+				);
+				newUser.friendRequests = newRequests;
 			}
 
-			const newUsers = state.users.map(user => {
+			const newUsers = state.users.map((user) => {
 				if (user._id === idOfUserWhoAccepted) {
-					const newRequests = user.friendRequests.filter(requestId => requestId !== acceptedUserId);
+					const newRequests = user.friendRequests.filter(
+						(requestId) => requestId !== acceptedUserId
+					);
 
 					return {
 						...user,
 						friendRequests: newRequests,
-						friends: [...user.friends, acceptedUserId]
+						friends: [...user.friends, acceptedUserId],
 					};
-				}
-				return user;
-			})
-
-			return {
-				...state,
-				users: newUsers,
-				user: newUser
-			}
-		}
-		/*
-			FRIEND_REQUEST_DECLINED - after some client have declined request, update array of users
-			in client, whis has been rejected. 
-		*/
-		case "FRIEND_REQUEST_DECLINED": {
-			const { declinedRequestId, idOfUserWhoDeclined } = action.payload
-
-			let newUser = { ...state.user };
-			if (state.user._id === idOfUserWhoDeclined) {
-				const newRequests = newUser.friendRequests.filter(requestId => requestId !== declinedRequestId);
-				newUser.friendRequests = newRequests
-			}
-
-			const newUsers = state.users.map(user => {
-				if (user._id === idOfUserWhoDeclined) {
-					const newRequests = user.friendRequests.filter(requestId => requestId !== declinedRequestId);
-					return {
-						...user,
-						friendRequests: newRequests
-					}
 				}
 				return user;
 			});
@@ -287,8 +307,42 @@ export const users = (
 			return {
 				...state,
 				users: newUsers,
-				user: newUser
+				user: newUser,
+			};
+		}
+		/*
+			FRIEND_REQUEST_DECLINED - after some client have declined request, update array of users
+			in client, whis has been rejected. 
+		*/
+		case "FRIEND_REQUEST_DECLINED": {
+			const { declinedRequestId, idOfUserWhoDeclined } = action.payload;
+
+			let newUser = { ...state.user };
+			if (state.user._id === idOfUserWhoDeclined) {
+				const newRequests = newUser.friendRequests.filter(
+					(requestId) => requestId !== declinedRequestId
+				);
+				newUser.friendRequests = newRequests;
 			}
+
+			const newUsers = state.users.map((user) => {
+				if (user._id === idOfUserWhoDeclined) {
+					const newRequests = user.friendRequests.filter(
+						(requestId) => requestId !== declinedRequestId
+					);
+					return {
+						...user,
+						friendRequests: newRequests,
+					};
+				}
+				return user;
+			});
+
+			return {
+				...state,
+				users: newUsers,
+				user: newUser,
+			};
 		}
 		/* 
 			REMOVE_FROM_FRIENDS - Clear friends array in users.users 
@@ -296,23 +350,24 @@ export const users = (
 		case "REMOVE_FROM_FRIENDS": {
 			const { idOfUserToRemove, idOfUserWhoHasFriend } = action.payload;
 
-			const newUsers = state.users.map(user => {
+			const newUsers = state.users.map((user) => {
 				if (user._id === idOfUserToRemove) {
-					const newFriends = user.friends.filter(friendId => friendId !== idOfUserWhoHasFriend);
+					const newFriends = user.friends.filter(
+						(friendId) => friendId !== idOfUserWhoHasFriend
+					);
 					return {
 						...user,
-						friends: newFriends
-					}
+						friends: newFriends,
+					};
 				}
 				return user;
 			});
 
 			return {
 				...state,
-				users: newUsers
-			}
+				users: newUsers,
+			};
 		}
-
 
 		default: {
 			return {

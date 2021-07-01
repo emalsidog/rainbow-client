@@ -3,13 +3,15 @@ import { NotificationActionTypes } from "./notifications/types";
 import { UserActionTypes } from "./user/types";
 import { UsersActionTypes } from "./users/types";
 import { PostActionTypes } from "./posts/types";
+import { FriendsActionTypes } from "./friends/types";
 
 export type AppActionTypes =
 	| AuthActionTypes
 	| NotificationActionTypes
 	| UserActionTypes
 	| UsersActionTypes
-	| PostActionTypes;
+	| PostActionTypes
+	| FriendsActionTypes;
 
 // User related
 export const initialUser = {
@@ -21,6 +23,7 @@ export const initialUser = {
 	familyName: "",
 	bio: "",
 	email: "",
+	role: "MEMBER" as UserRole,
 
 	posts: [],
 	friends: [],
@@ -29,7 +32,7 @@ export const initialUser = {
 	registrationDate: undefined,
 	birthday: undefined,
 	lastTimeChanged: undefined,
-}
+};
 
 export interface User {
 	_id: string;
@@ -40,6 +43,7 @@ export interface User {
 	givenName: string;
 	familyName: string;
 	bio: string;
+	role: "DEVELOPER" | "MEMBER" | "VERIFIED";
 
 	posts: PostType[];
 	friends: string[];
@@ -59,4 +63,11 @@ export interface PostType {
 }
 
 // Friendship status
-export type FriendshipStatus = "FRIENDS" | "PENDING_FOR_USER_RESPONSE" | "PENDING_FOR_YOUR_RESPONSE" | "NONE";
+export type FriendshipStatus =
+	| "FRIENDS"
+	| "PENDING_FOR_USER_RESPONSE"
+	| "PENDING_FOR_YOUR_RESPONSE"
+	| "NONE";
+
+//  USER ROLE
+export type UserRole = "MEMBER" | "DEVELOPER" | "VERIFIED";

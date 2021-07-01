@@ -1,0 +1,22 @@
+.wrapper {
+    margin-bottom: 10px;
+    margin-left: 10px;
+
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.additional {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.additional div:last-child {
+    margin-left: 4rem;
+}
+
+@media (max-width: 850px) {
+    .wrapper {
+        margin-left: 0;
+    }
+}
