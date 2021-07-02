@@ -11,6 +11,7 @@ const SEARCH_USERS_FAILURE = "SEARCH_USERS_FAILURE";
 const NEW_POST_ADDED = "NEW_POST_ADDED";
 const DELETE_POST = "DELETE_POST";
 const POST_UPDATED = "POST_UPDATED";
+const UPDATE_ONLINE_STATUS = "UPDATE_ONLINE_STATUS";
 
 const SET_IS_FETCHING_USER = "SET_IS_FETCHING_USER";
 
@@ -99,6 +100,12 @@ export interface PostUpdated {
 	payload: PostType;
 }
 
+// UPDATE ONLINE STATUS
+export interface UpdateOnlineStatus {
+	type: typeof UPDATE_ONLINE_STATUS;
+	isOnline: boolean;
+}
+
 export type UsersActionTypes =
 	| GetUserByIdRequest
 	| GetUserByIdSuccess
@@ -109,4 +116,5 @@ export type UsersActionTypes =
 	| SetIsFetchingUser
 	| NewPostAdded
 	| DeletePost
-	| PostUpdated;
+	| PostUpdated
+	| UpdateOnlineStatus;

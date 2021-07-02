@@ -72,6 +72,7 @@ const Profile: React.FC = () => {
 		registrationDate,
 		posts,
 		role,
+		isOnline
 	} = displayedUser;
 	
 	if (isLoadingUsers.isFetchingUser) {
@@ -96,14 +97,22 @@ const Profile: React.FC = () => {
 					>
 						<div className={styles.nameAndSmallImageWrapper}>
 							<div className={styles.nameWrapper}>
-								<div className={styles.name}>
-									{`${givenName} ${familyName}`}
-									<DisplayRole role={role} />
+
+								<div className={styles.nameContainer}>
+									<div className={styles.name}>
+										{`${givenName} ${familyName}`}
+										<DisplayRole role={role} />
+									</div>
+									<div className={styles.onlineStatus}>
+										{ isOnline ? "ONLINE" : "OFFLINE" }
+									</div>
 								</div>
+
 								<div className={styles.bio}>{bio}</div>
 							</div>
 
 							<div className={styles.smallImageBlock}>
+								<div style={{ background: isOnline ? "#3ec252" : "#c40808" }} className={styles.onlineCircle} />
 								<img src={avatar} alt="" />
 							</div>
 						</div>

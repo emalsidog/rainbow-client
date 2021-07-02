@@ -24,6 +24,7 @@ export const initialUser = {
 	bio: "",
 	email: "",
 	role: "MEMBER" as UserRole,
+	isOnline: false,
 
 	posts: [],
 	friends: [],
@@ -44,6 +45,7 @@ export interface User {
 	familyName: string;
 	bio: string;
 	role: "DEVELOPER" | "MEMBER" | "VERIFIED";
+	isOnline: boolean;
 
 	posts: PostType[];
 	friends: string[];

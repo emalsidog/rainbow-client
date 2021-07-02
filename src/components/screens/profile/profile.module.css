@@ -24,6 +24,7 @@
 
 .smallImageBlock {
     display: none;
+    position: relative;
 }
 
 .smallImageBlock img {
@@ -49,8 +50,22 @@
     margin-bottom: 0;
 }
 
+.nameWrapper {
+    width: 100%;
+}
+
+.nameContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
 .name {
     font-size: 1.7rem;
+}
+
+.onlineStatus {
+    font-size: .8rem;
+    color: gray
 }
 
 .bio {
@@ -122,6 +137,19 @@
 
     .nameAndSmallImageWrapper {
         justify-content: space-between;
+    }
+
+    .onlineCircle {
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+    }
+
+    .onlineStatus {
+        display: none;
     }
 }
 

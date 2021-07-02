@@ -60,7 +60,7 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 					isFetchingUser: false
 				},
 				user: {
-					...action.payload.user,
+					...action.payload.user
 				},
 				isCurrenUser: action.payload.isCurrentUser,
 			};
@@ -367,6 +367,18 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				users: newUsers,
 			};
+		}
+		/*
+			UPDATE ONLINE STATUS
+		*/
+		case "UPDATE_ONLINE_STATUS": {
+			return {
+				...state,
+				user: {
+					...state.user,
+					isOnline: action.isOnline
+				}
+			}
 		}
 
 		default: {

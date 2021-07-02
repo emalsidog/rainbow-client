@@ -26,8 +26,8 @@ function initWebsocket(): EventChannel<any> {
 		let intervalId: number;
 
 		const initConnection = () => {
-			// const connectionUrl: string = "ws://localhost:4000" 
-			const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
+			const connectionUrl: string = "ws://localhost:4000" 
+			// const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
 				
 			let ws = new WebSocket(connectionUrl);
 			
@@ -36,7 +36,7 @@ function initWebsocket(): EventChannel<any> {
 
 				intervalId = window.setInterval(() => {
 					ws.send(JSON.stringify({ type: "PING" }))
-				}, 10000)
+				}, 30000)
 			};
 
 			ws.onerror = (error) => {
@@ -55,6 +55,13 @@ function initWebsocket(): EventChannel<any> {
 
 					case "CONNECTED_USER_ID": {
 						return id = response.id;
+					}
+
+					case "ONLINE_STATUS": {
+						return emitter({
+							type: "UPDATE_ONLINE_STATUS",
+							isOnline: response.isOnline
+						});
 					}
 
 					case "CLOSE_CONNECTION": {
