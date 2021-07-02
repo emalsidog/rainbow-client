@@ -23,15 +23,20 @@ function initWebsocket(): EventChannel<any> {
 			after loosing connection 
 		*/
 		let id: string | undefined;
+		let intervalId: number;
 
 		const initConnection = () => {
-			// const connectionUrl: string = "ws://localhost:4000" 
-			const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
+			const connectionUrl: string = "ws://localhost:4000" 
+			// const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
 				
 			let ws = new WebSocket(connectionUrl);
 			
 			ws.onopen = () => {
 				id && ws.send(JSON.stringify({ type: "GET_USER_ID", id }));
+
+				intervalId = window.setInterval(() => {
+					ws.send(JSON.stringify({ type: "PING" }))
+				}, 10000)
 			};
 
 			ws.onerror = (error) => {
@@ -54,6 +59,7 @@ function initWebsocket(): EventChannel<any> {
 
 					case "CLOSE_CONNECTION": {
 						id = undefined;
+						clearInterval(intervalId);
 						return ws.close();
 					}
 
@@ -186,6 +192,7 @@ function initWebsocket(): EventChannel<any> {
 
 			ws.onclose = (e) => {
 				console.log("Reconnect in 4s");
+				intervalId && clearInterval(intervalId);
 				id && setTimeout(initConnection, 4000);	
 			};
 		};
