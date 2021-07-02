@@ -17,6 +17,13 @@ function* wsConnectionWorker() {
 
 function initWebsocket(): EventChannel<any> {
 	return eventChannel((emitter) => {
+
+		/* 
+			User id which will be setted after connection to server. This id is necessary to reconnect
+			after loosing connection 
+		*/
+		let id: string | undefined;
+
 		const initConnection = () => {
 			// const connectionUrl: string = "ws://localhost:4000" 
 			const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
@@ -24,7 +31,6 @@ function initWebsocket(): EventChannel<any> {
 			let ws = new WebSocket(connectionUrl);
 			
 			ws.onopen = () => {
-				const id = localStorage.getItem("id");
 				id && ws.send(id);
 			};
 
@@ -43,7 +49,12 @@ function initWebsocket(): EventChannel<any> {
 				switch (response.type) {
 
 					case "CONNECTED_USER_ID": {
-						return localStorage.setItem("id", response.id);
+						return id = response.id;
+					}
+
+					case "CLOSE_CONNECTION": {
+						id = undefined;
+						return ws.close();
 					}
 
 					case "NEW_POST_ADDED": {
@@ -175,7 +186,7 @@ function initWebsocket(): EventChannel<any> {
 
 			ws.onclose = (e) => {
 				console.log("Reconnect in 4s");
-				setTimeout(initConnection, 4000);
+				id && setTimeout(initConnection, 4000);
 			};
 		};
 
