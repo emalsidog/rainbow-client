@@ -17,7 +17,7 @@ const DisplayRole: React.FC<DisplayRoleProps> = ({ role }) => {
 		case "DEVELOPER":
 			displayRole = (
 				<i
-					style={{ marginLeft: "10px", fontSize: "1.5rem" }}
+					style={{ marginLeft: "10px" }}
 					className="fab fa-dev"
 				/>
 			);
@@ -25,7 +25,7 @@ const DisplayRole: React.FC<DisplayRoleProps> = ({ role }) => {
 		case "VERIFIED":
 			displayRole = (
 				<i
-					style={{ marginLeft: "10px", fontSize: "1.5rem" }}
+					style={{ marginLeft: "10px" }}
 					className="fas fa-check"
 				/>
 			);
