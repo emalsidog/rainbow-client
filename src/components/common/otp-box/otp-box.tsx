@@ -23,6 +23,7 @@ const OtpBox: React.FC<OtpBoxProps> = (props) => {
 	// Handle change
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
 		if (!e.target.value.match(/[0-9]/g) || e.target.value === "") return false;
+		if (e.target.value.length > 1) return false;
 
 		setOtp([
 			...otp.map((value, idx) =>
@@ -68,7 +69,6 @@ const OtpBox: React.FC<OtpBoxProps> = (props) => {
 						ref={(el) => (refs.current[index] = el)}
 						className="otpbox-input"
 						key={index}
-						maxLength={1}
 						value={value}
 						onChange={(e) => handleChange(e, index)}
 						onKeyDown={(e) => handleKeyDown(e, index)}
