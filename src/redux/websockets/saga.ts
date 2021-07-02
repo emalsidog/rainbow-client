@@ -22,15 +22,14 @@ function initWebsocket(): EventChannel<any> {
 			const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
 				
 			let ws = new WebSocket(connectionUrl);
-
+			
 			ws.onopen = () => {
-				console.log("opening...");
-				ws.send("hello server");
+				const id = localStorage.getItem("id");
+				id && ws.send(id);
 			};
 
 			ws.onerror = (error) => {
-				console.log("WebSocket error " + error);
-				console.dir(error);
+				console.log(`WebSocket error: ${error}`);
 			};
 
 			ws.onmessage = (e) => {
@@ -42,6 +41,11 @@ function initWebsocket(): EventChannel<any> {
 				}
 
 				switch (response.type) {
+
+					case "CONNECTED_USER_ID": {
+						return localStorage.setItem("id", response.id);
+					}
+
 					case "NEW_POST_ADDED": {
 						return emitter({
 							type: "NEW_POST_ADDED",
