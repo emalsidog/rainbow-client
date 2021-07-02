@@ -34,6 +34,8 @@
     margin-top: 5px;
     right: 0;
     left: auto;
+
+	z-index: 50;
 }
 
 /* LIST ITEM */
