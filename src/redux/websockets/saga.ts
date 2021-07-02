@@ -25,8 +25,8 @@ function initWebsocket(): EventChannel<any> {
 		let id: string | undefined;
 
 		const initConnection = () => {
-			const connectionUrl: string = "ws://localhost:4000" 
-			// const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
+			// const connectionUrl: string = "ws://localhost:4000" 
+			const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
 				
 			let ws = new WebSocket(connectionUrl);
 			
