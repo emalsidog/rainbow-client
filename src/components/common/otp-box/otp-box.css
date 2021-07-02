@@ -20,6 +20,16 @@
 	animation: blink 1.5s linear infinite;
 }
 
+.otpbox-input::-webkit-outer-spin-button,
+.otpbox-input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.otpbox-input[type="number"] {
+	-moz-appearance: textfield;
+}
+
 @keyframes blink {
 	50% {
 		border-color: transparent;

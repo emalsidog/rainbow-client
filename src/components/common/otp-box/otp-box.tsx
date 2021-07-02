@@ -73,6 +73,7 @@ const OtpBox: React.FC<OtpBoxProps> = (props) => {
 						onChange={(e) => handleChange(e, index)}
 						onKeyDown={(e) => handleKeyDown(e, index)}
 						autoFocus={index === 0}
+						type="number"
 					/>
 				);
 			})}
