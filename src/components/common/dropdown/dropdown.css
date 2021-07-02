@@ -34,14 +34,12 @@
     margin-top: 5px;
     right: 0;
     left: auto;
-
-	z-index: 50;
 }
 
 /* LIST ITEM */
 
 .dd-list-item {
-	background: transparent;
+	background: #ffffff;
 
 	padding: 7px 10px;
 	width: 100%;

@@ -24,7 +24,7 @@
 
 .smallImageBlock {
     display: none;
-    position: relative;
+    /* position: relative; */
 }
 
 .smallImageBlock img {
@@ -65,7 +65,7 @@
 
 .onlineStatus {
     font-size: .8rem;
-    color: gray
+    color: gray;
 }
 
 .bio {
