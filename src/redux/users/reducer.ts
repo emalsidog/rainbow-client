@@ -372,11 +372,13 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 			UPDATE ONLINE STATUS
 		*/
 		case "UPDATE_ONLINE_STATUS": {
+			const { isOnline, lastSeenOnline } = action.payload;
 			return {
 				...state,
 				user: {
 					...state.user,
-					isOnline: action.isOnline
+					isOnline,
+					lastSeenOnline
 				}
 			}
 		}

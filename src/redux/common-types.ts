@@ -23,8 +23,10 @@ export const initialUser = {
 	familyName: "",
 	bio: "",
 	email: "",
-	role: "MEMBER" as UserRole,
+	accountType: "MEMBER" as AccountType,
+
 	isOnline: false,
+	lastSeenOnline: undefined,
 
 	posts: [],
 	friends: [],
@@ -44,8 +46,10 @@ export interface User {
 	givenName: string;
 	familyName: string;
 	bio: string;
-	role: "DEVELOPER" | "MEMBER" | "VERIFIED";
+	accountType: "DEVELOPER" | "MEMBER" | "VERIFIED";
+
 	isOnline: boolean;
+	lastSeenOnline: Date | undefined;
 
 	posts: PostType[];
 	friends: string[];
@@ -71,5 +75,5 @@ export type FriendshipStatus =
 	| "PENDING_FOR_YOUR_RESPONSE"
 	| "NONE";
 
-//  USER ROLE
-export type UserRole = "MEMBER" | "DEVELOPER" | "VERIFIED";
+//  ACCOUNT TYPE
+export type AccountType = "MEMBER" | "DEVELOPER" | "VERIFIED";

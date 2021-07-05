@@ -1,5 +1,5 @@
 // Types
-type Style = "BIRTHDAY" | "REGULAR";
+type Style = "BIRTHDAY" | "REGULAR" | "LAST_SEEN_ONLINE";
 type UnpdarsedDate = Date | undefined;
 
 // Minutes and Seconds (1:53)
@@ -17,7 +17,10 @@ export const formatToMinutesAndSeconds = (timeInMs: number): string => {
 };
 
 // REGULAR (Thu, June 17) || BIRTHDAY (April 10, 2001)
-export const formatDate = (unparsedDate: UnpdarsedDate, style: Style): string | undefined => {
+export const formatDate = (
+	unparsedDate: UnpdarsedDate,
+	style: Style
+): string | undefined => {
 	if (unparsedDate === undefined) {
 		return;
 	}
@@ -29,18 +32,45 @@ export const formatDate = (unparsedDate: UnpdarsedDate, style: Style): string | 
 	const parsedDay = date.getDate();
 	const parsedWeekDay = date.getDay();
 
-	if (style === "BIRTHDAY") {
-		return `${formatMonth(parsedMonth)} ${parsedDay}, ${parsedYear}`;
-	}
+	const minutes = date.getMinutes();
+	const hours = date.getHours();
 
-	if (style === "REGULAR") {
-		const formattedWeekDay = formatDay(parsedWeekDay);
-		const formattedMonth = formatMonth(parsedMonth);
-		
-		const displayYear = parsedYear === new Date().getFullYear() ? "" : `, ${parsedYear}`;
+	switch (style) {
+		case "BIRTHDAY":
+			return `${formatMonth(parsedMonth)} ${parsedDay}, ${parsedYear}`;
 
-		return `${formattedWeekDay}, ${formattedMonth} ${parsedDay}${displayYear}`;
+		case "REGULAR":
+			const formattedWeekDay = formatDay(parsedWeekDay);
+			const formattedMonth = formatMonth(parsedMonth);
+
+			const displayYear =
+				parsedYear === new Date().getFullYear()
+					? ""
+					: `, ${parsedYear}`;
+
+			return `${formattedWeekDay}, ${formattedMonth} ${parsedDay}${displayYear}`;
+
+		case "LAST_SEEN_ONLINE":
+			const time = `${hours}:${formatNumber(minutes)}`;
+			if (parsedDay === new Date().getDate()) {
+				return `last seen at ${time}`;
+			}
+
+			if (new Date().getFullYear() - parsedYear > 0) {
+				return Math.random() < 0.1 ? "probably dead" : "last seen a long time ago"
+			}
+
+			return `last seen ${formatMonth(parsedMonth)} ${formatNumber(
+				parsedDay
+			)} at ${time}`;
 	}
+};
+
+const formatNumber = (number: number): string => {
+	if (number < 10) {
+		return `0${number}`;
+	}
+	return `${number}`;
 };
 
 const formatDay = (day: number): string => {

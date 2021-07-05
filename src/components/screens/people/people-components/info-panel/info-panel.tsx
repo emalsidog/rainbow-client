@@ -16,7 +16,7 @@ import styles from "./info-panel.module.css";
 
 // Components
 import DisplayActions from "../../../../common-actions/display-actions";
-import DisplayRole from "../../../../common/display-role";
+import DisplayAccountType from "../../../../common/display-account-type";
 
 // Types
 import { initialUser, User } from "../../../../../redux/common-types";
@@ -80,7 +80,7 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 		givenName,
 		profileId,
 		registrationDate,
-		role,
+		accountType,
 	} = user;
 
 	if (isVisible === null) return null;
@@ -93,7 +93,7 @@ const InfoPanel: React.FC<InfoPanelProps> = (props) => {
 				<img src={avatar} alt="" />
 				<div className={styles.name}>
 					{`${givenName} ${familyName}`}
-					<DisplayRole role={role} />
+					<DisplayAccountType accountType={accountType} />
 				</div>
 				<div className={styles.bio}>{bio}</div>
 

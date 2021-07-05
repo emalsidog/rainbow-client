@@ -103,7 +103,10 @@ export interface PostUpdated {
 // UPDATE ONLINE STATUS
 export interface UpdateOnlineStatus {
 	type: typeof UPDATE_ONLINE_STATUS;
-	isOnline: boolean;
+	payload: {
+		isOnline: boolean,
+		lastSeenOnline?: Date
+	}
 }
 
 export type UsersActionTypes =

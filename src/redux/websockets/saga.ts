@@ -60,7 +60,7 @@ function initWebsocket(): EventChannel<any> {
 					case "ONLINE_STATUS": {
 						return emitter({
 							type: "UPDATE_ONLINE_STATUS",
-							isOnline: response.isOnline
+							payload: response.payload,
 						});
 					}
 

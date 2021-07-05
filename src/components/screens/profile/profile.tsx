@@ -4,7 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 
 // Actions
-import { getUserByIdRequest, setIsFetchingUser } from "../../../redux/users/actions";
+import {
+	getUserByIdRequest,
+	setIsFetchingUser,
+} from "../../../redux/users/actions";
 
 // Selectors
 import {
@@ -33,7 +36,7 @@ import PostForm from "./profile-components/post-form";
 import DisplayPosts from "./profile-components/display-posts";
 import AdditionalInfo from "./profile-components/additional-info";
 import DisplayActions from "../../common-actions/display-actions";
-import DisplayRole from "../../common/display-role";
+import DisplayAccountType from "../../common/display-account-type";
 
 import ProfileSkeleton from "../../skeletons/templates/profile-skeleton";
 import MainPhotoSkeleton from "../../skeletons/templates/profile-skeleton/additional/main-photo-skeleton";
@@ -54,7 +57,7 @@ const Profile: React.FC = () => {
 		dispatch(getUserByIdRequest(profileId));
 
 		return () => {
-			dispatch(setIsFetchingUser(true))
+			dispatch(setIsFetchingUser(true));
 		};
 	}, [dispatch, profileId]);
 
@@ -71,10 +74,11 @@ const Profile: React.FC = () => {
 		birthday,
 		registrationDate,
 		posts,
-		role,
-		isOnline
+		accountType,
+		isOnline,
+		lastSeenOnline
 	} = displayedUser;
-	
+
 	if (isLoadingUsers.isFetchingUser) {
 		return (
 			<Layout>
@@ -97,22 +101,34 @@ const Profile: React.FC = () => {
 					>
 						<div className={styles.nameAndSmallImageWrapper}>
 							<div className={styles.nameWrapper}>
-
 								<div className={styles.nameContainer}>
 									<div className={styles.name}>
 										{`${givenName} ${familyName}`}
-										<DisplayRole role={role} />
+										<DisplayAccountType
+											accountType={accountType}
+										/>
 									</div>
-									<div className={styles.onlineStatus}>
-										{ isOnline ? "ONLINE" : "OFFLINE" }
-									</div>
+									{!isCurrentUser && (
+										<div className={styles.onlineStatus}>
+											{isOnline ? "online" : formatDate(lastSeenOnline, "LAST_SEEN_ONLINE")}
+										</div>
+									)}
 								</div>
 
 								<div className={styles.bio}>{bio}</div>
 							</div>
 
 							<div className={styles.smallImageBlock}>
-								<div style={{ background: isOnline ? "#3ec252" : "#c40808" }} className={styles.onlineCircle} />
+								{!isCurrentUser && (
+									<div
+										style={{
+											background: isOnline
+												? "#3ec252"
+												: "#c40808",
+										}}
+										className={styles.onlineCircle}
+									/>
+								)}
 								<img src={avatar} alt="" />
 							</div>
 						</div>
