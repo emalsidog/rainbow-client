@@ -112,12 +112,8 @@ const Profile: React.FC = () => {
 							</div>
 
 							<div className={styles.smallImageBlock}>
-								{/* <div style={{ background: isOnline ? "#3ec252" : "#c40808" }} className={styles.onlineCircle} /> */}
-								<img style={{ 
-									borderBottom: isOnline ? "3px solid #3ec252" : "3px solid #c40808" 
-								}}
-									src={avatar} alt="" 
-								/>
+								<div style={{ background: isOnline ? "#3ec252" : "#c40808" }} className={styles.onlineCircle} />
+								<img src={avatar} alt="" />
 							</div>
 						</div>
 

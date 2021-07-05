@@ -5,6 +5,8 @@
 
     padding: 10px;
     margin: 0 0 10px 10px;
+
+    z-index: -5;
 }
 
 .wrapper img {
@@ -24,7 +26,7 @@
 
 .smallImageBlock {
     display: none;
-    /* position: relative; */
+    position: relative;
 }
 
 .smallImageBlock img {
@@ -140,12 +142,14 @@
     }
 
     .onlineCircle {
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
         position: absolute;
         top: -5px;
         right: -5px;
+
+        width: 13px;
+        height: 13px;
+        
+        border-radius: 50%;
     }
 
     .onlineStatus {
