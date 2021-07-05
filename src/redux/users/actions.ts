@@ -13,9 +13,7 @@ export const getUserByIdRequest = (profileId: string): AppActionTypes => ({
 	profileId,
 });
 
-export const getUserByIdSuccess = (
-	payload: GetUserPayload
-): AppActionTypes => ({
+export const getUserByIdSuccess = (payload: GetUserPayload): AppActionTypes => ({
 	type: "GET_USER_BY_ID_SUCCESS",
 	payload,
 });
@@ -31,16 +29,12 @@ export const setIsFetchingUser = (isFetching: boolean): AppActionTypes => ({
 
 // SEARCH USERS
 
-export const searchUsersRequest = (
-	payload: SearchUsersRequestPayload
-): AppActionTypes => ({
+export const searchUsersRequest = (payload: SearchUsersRequestPayload): AppActionTypes => ({
 	type: "SEARCH_USERS_REQUEST",
 	payload,
 });
 
-export const searchUsersSuccess = (
-	payload: SearchUsersSuccessPayload
-): AppActionTypes => ({
+export const searchUsersSuccess = (payload: SearchUsersSuccessPayload): AppActionTypes => ({
 	type: "SEARCH_USERS_SUCCESS",
 	payload,
 });

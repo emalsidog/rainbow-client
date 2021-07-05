@@ -31,6 +31,7 @@ import styles from "./profile.module.css";
 
 // Components
 import Layout from "../../common/layout";
+import Spinner from "../../common/spinner";
 
 import PostForm from "./profile-components/post-form";
 import DisplayPosts from "./profile-components/display-posts";
@@ -96,9 +97,7 @@ const Profile: React.FC = () => {
 		<Layout>
 			<div className="col-7">
 				<div className={styles.blocksWrapper}>
-					<div
-						className={`${styles.wrapper} ${styles.basicInfoBlock}`}
-					>
+					<div className={`${styles.wrapper} ${styles.basicInfoBlock}`} >
 						<div className={styles.nameAndSmallImageWrapper}>
 							<div className={styles.nameWrapper}>
 								<div className={styles.nameContainer}>
@@ -152,17 +151,40 @@ const Profile: React.FC = () => {
 					</div>
 				</div>
 
+				<div className={`${styles.wrapper} ${styles.upperActionButtons}`}>
+					{isCurrentUser ? (
+							<button
+								className="btn btn-primary"
+								onClick={handleEdit}
+							>
+								Edit
+							</button>
+						) : (
+							<DisplayActions
+								displayViewProfileButton={false}
+								friendshipStatus={friendshipStatus}
+								userId={_id}
+								userProfileId={profileId}
+							/>
+						)}
+				</div>
+
 				{isCurrentUser ? (
 					<PostForm isLoading={isLoading.addPost} />
 				) : null}
 
 				<DisplayPosts
+					id={_id}
 					avatar={avatar}
 					givenName={givenName}
 					familyName={familyName}
 					isCurrentUser={isCurrentUser}
 					posts={isCurrentUser ? currentUser.posts : posts}
 				/>
+
+				<div className={styles.spinnerBlock}>
+					{isLoadingUsers.loadingPosts && <Spinner />}
+				</div>
 			</div>
 
 			<div className="col-3">

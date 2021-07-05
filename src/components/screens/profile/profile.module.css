@@ -79,16 +79,27 @@
     font-size: 1.2rem;
 }
 
-.actionButtons button {
+.actionButtons button, 
+.upperActionButtons button {
     width: 100%;
     margin-bottom: 5px;
 }
 
-.actionButtons button:last-child {
+.actionButtons button:last-child, 
+.upperActionButtons button:last-child {
     margin-bottom: 0;
 }
 
+.upperActionButtons {
+    display: none;
+}
+
 /* CREATE POST */
+.spinnerBlock {
+    text-align: center;
+    margin: 10px 0;
+}
+
 .postControls {
     display: flex;
     justify-content: space-between;
@@ -121,6 +132,14 @@
 
     .basicInfoBlock {
         width: 75%;
+    }
+
+    .actionButtons {
+        display: none;
+    }
+
+    .upperActionButtons {
+        display: block;
     }
 }
 
@@ -156,6 +175,7 @@
         display: none;
     }
 }
+
 
 @media (max-width: 550px) {
     .additionalInfo div:first-child {

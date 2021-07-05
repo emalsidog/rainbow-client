@@ -5,7 +5,16 @@ import React from "react";
 import Layout from "../../common/layout";
 
 const Messenger: React.FC = () => {
-	return <Layout><div>Messenger</div></Layout>;
+	return (
+		<Layout>
+			<div className="col-8">
+				<button>asdasd</button>
+			</div>
+			<div className="col-2">
+
+			</div>
+		</Layout>
+	);
 };
 
 export default Messenger;

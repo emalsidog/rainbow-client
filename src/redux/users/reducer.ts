@@ -1,12 +1,14 @@
 // Types
 import { PostType, initialUser, User } from "../common-types";
 import { FriendsActionTypes } from "../friends/types";
+import { PostActionTypes } from "../posts";
 import { UsersActionTypes } from "./types";
 
 interface InitialState {
 	user: User;
 	users: User[];
 
+	hasMorePosts: boolean;
 	hasMoreData: boolean;
 	hasMoreSearchedData: boolean;
 
@@ -19,6 +21,7 @@ const initialState: InitialState = {
 	user: initialUser,
 	users: [],
 
+	hasMorePosts: true,
 	hasMoreData: true,
 	hasMoreSearchedData: true,
 
@@ -28,15 +31,19 @@ const initialState: InitialState = {
 		isFetchingUser: true,
 		isFetchingUsers: false,
 		loading: false,
+
+		loadingPosts: false
 	},
 };
 
-type ActionType = UsersActionTypes | FriendsActionTypes;
+type ActionType = UsersActionTypes | FriendsActionTypes | PostActionTypes;
 
 export interface isLoading {
 	isFetchingUser: boolean,
 	isFetchingUsers: boolean,
 	loading: boolean,
+
+	loadingPosts: boolean;
 }
 
 export const users = (state = initialState,	action: ActionType): InitialState => {
@@ -191,7 +198,6 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 			};
 		}
-
 		case "CANCEL_FRIEND_REQ_SUCCESS": {
 			const { idOfUserWhoCancelled, userWhoHasRequest } = action.payload;
 
@@ -221,11 +227,47 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				user: newUser,
 			};
 		}
-
 		case "CANCEL_FRIEND_REQ_FAILURE": {
 			return {
 				...state,
 			};
+		}
+
+		// LOAD MORE POSTS
+
+		case "LOAD_MORE_POSTS_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingPosts: true
+				}
+			}
+		}
+		case "LOAD_MORE_POSTS_SUCCESS": {
+			const { hasMorePosts, posts } = action.payload;
+			console.log(action.payload)
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingPosts: false
+				},
+				user: {
+					...state.user,
+					posts: [...state.user.posts, ...posts],
+				},
+				hasMorePosts
+			}
+		}
+		case "LOAD_MORE_POSTS_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingPosts: false
+				}
+			}
 		}
 
 		// WEB SOCKET ACTIONS

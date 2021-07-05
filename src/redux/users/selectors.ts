@@ -17,3 +17,6 @@ export const selectUsers = (state: RootState): User[] => state.users.users;
 
 // TOTAL USERS
 export const selectHasMoreData = (state: RootState) => [state.users.hasMoreData, state.users.hasMoreSearchedData];
+
+// HAS MORE POSTS
+export const selectHasMorePosts = (state: RootState): boolean => state.users.hasMorePosts;

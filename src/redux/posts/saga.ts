@@ -10,12 +10,27 @@ import { AxiosPostRequest } from "../utils/server-request";
 
 // Types
 import { AddPostRequest, DeletePostRequest, EditPostRequest } from "./types";
+import { LoadMorePostsRequest } from "./types";
 
 // Watcher
 export function* postsWatcher() {
+    yield takeEvery("LOAD_MORE_POSTS_REQUEST", loadPosts);
     yield takeEvery("ADD_POST_REQUEST", addPost);
     yield takeEvery("DELETE_POST_REQUEST", deletePost);
     yield takeEvery("EDIT_POST_REQUEST", editPost);
+}
+
+function* loadPosts(action: LoadMorePostsRequest) {
+	try {
+		const { data } = yield call(() => AxiosPostRequest("/posts", action.payload));
+
+        const body = data.body;
+
+		yield put(postsActions.loadMorePostsSuccess(body));
+	} catch (error) {
+        console.log(error)
+		yield put(postsActions.loadMorePostsFailure());
+	}
 }
 
 function* addPost(action: AddPostRequest) {

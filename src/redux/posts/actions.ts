@@ -2,6 +2,28 @@
 import { AppActionTypes } from "../common-types";
 import { PostType } from "../common-types";
 
+// LOAD MORE POSTS
+
+export const loadMorePostsRequest = (payload: {
+	id: string;
+	page: number;
+}) => ({
+	type: "LOAD_MORE_POSTS_REQUEST",
+	payload
+});
+
+export const loadMorePostsSuccess = (payload: {
+	hasMorePosts: boolean;
+	posts: PostType[];
+}) => ({
+	type: "LOAD_MORE_POSTS_SUCCESS",
+	payload
+});
+
+export const loadMorePostsFailure = () => ({
+	type: "LOAD_MORE_POSTS_FAILURE"
+})
+
 // ADD POST
 
 export const addPostRequest = (payload: PostType): AppActionTypes => ({
