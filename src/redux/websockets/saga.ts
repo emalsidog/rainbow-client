@@ -15,9 +15,10 @@ function* wsConnectionWorker() {
 	}
 }
 
+export let websocket;
+
 function initWebsocket(): EventChannel<any> {
 	return eventChannel((emitter) => {
-
 		/* 
 			User id which will be setted after connection to server. This id is necessary to reconnect
 			after loosing connection 
@@ -26,17 +27,19 @@ function initWebsocket(): EventChannel<any> {
 		let intervalId: number;
 
 		const initConnection = () => {
-			// const connectionUrl: string = "ws://localhost:4000" 
+			// const connectionUrl: string = "ws://localhost:4000";
 			const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
-				
+
 			let ws = new WebSocket(connectionUrl);
-			
+			websocket = ws;
+
 			ws.onopen = () => {
+
 				id && ws.send(JSON.stringify({ type: "GET_USER_ID", id }));
 
 				intervalId = window.setInterval(() => {
-					ws.send(JSON.stringify({ type: "PING" }))
-				}, 30000)
+					ws.send(JSON.stringify({ type: "PING" }));
+				}, 30000);
 			};
 
 			ws.onerror = (error) => {
@@ -52,9 +55,8 @@ function initWebsocket(): EventChannel<any> {
 				}
 
 				switch (response.type) {
-
 					case "CONNECTED_USER_ID": {
-						return id = response.id;
+						return (id = response.id);
 					}
 
 					case "ONLINE_STATUS": {
@@ -100,15 +102,15 @@ function initWebsocket(): EventChannel<any> {
 						const { serverData, notification } = response.payload;
 						emitter({
 							type: "NEW_FRIEND_REQUEST",
-							payload: serverData
+							payload: serverData,
 						});
 						emitter({
 							type: "UPDATE_REQUEST_COUNTER",
-							count: serverData.requestsCount
-						})
+							count: serverData.requestsCount,
+						});
 						return emitter({
 							type: "ADD_USER_NOTIFICATION",
-							payload: notification
+							payload: notification,
 						});
 					}
 					/* 
@@ -128,18 +130,18 @@ function initWebsocket(): EventChannel<any> {
 							}
 						*/
 						const { serverData, notification } = response.payload;
-						emitter({ 
+						emitter({
 							type: "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST",
-							newFriendId: serverData.idOfUserWhoAccepted
+							newFriendId: serverData.idOfUserWhoAccepted,
 						});
 						emitter({
 							type: "UPDATE_USER_WHO_ACCEPTED",
-							payload: serverData
-						})
+							payload: serverData,
+						});
 						return emitter({
 							type: "ADD_USER_NOTIFICATION",
-							payload: notification
-						})
+							payload: notification,
+						});
 					}
 					/* 
 						FRIEND_REQUEST_DECLINED - after some client have declined request, update array of users
@@ -154,8 +156,8 @@ function initWebsocket(): EventChannel<any> {
 						const { serverData } = response.payload;
 						return emitter({
 							type: "FRIEND_REQUEST_DECLINED",
-							payload: serverData
-						})
+							payload: serverData,
+						});
 					}
 					/*
 						FRIEND_REQUEST_CANCELLED - after some client has cancelled its request - update client (user.user)
@@ -170,11 +172,12 @@ function initWebsocket(): EventChannel<any> {
 						const { serverData } = response.payload;
 						emitter({
 							type: "UPDATE_REQUEST_COUNTER",
-							count: serverData.requestsCount
-						})
+							count: serverData.requestsCount,
+						});
 						return emitter({
 							type: "FRIEND_REQUEST_CANCELLED",
-							idOfUserWhoCancelled: serverData.idOfUserWhoCancelled
+							idOfUserWhoCancelled:
+								serverData.idOfUserWhoCancelled,
 						});
 					}
 					/*
@@ -187,11 +190,11 @@ function initWebsocket(): EventChannel<any> {
 						const { serverData } = response.payload;
 						emitter({
 							type: "REMOVE_FROM_FRIENDS",
-							payload: serverData
+							payload: serverData,
 						});
 						return emitter({
 							type: "REMOVE_FROM_FRIENDS_SUCCESS",
-							idOfUserToRemove: serverData.idOfUserToRemove
+							idOfUserToRemove: serverData.idOfUserToRemove,
 						});
 					}
 				}
@@ -200,7 +203,7 @@ function initWebsocket(): EventChannel<any> {
 			ws.onclose = (e) => {
 				console.log("Reconnect in 4s");
 				intervalId && clearInterval(intervalId);
-				id && setTimeout(initConnection, 4000);	
+				id && setTimeout(initConnection, 4000);
 			};
 		};
 

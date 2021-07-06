@@ -109,7 +109,7 @@ const Post: React.FC<PostProps> = (props) => {
 					</div>
 					<div className={styles.postInfo}>
 						<div>{authorName}</div>
-						<div>{formatDate(timePosted, "REGULAR")}</div>
+						<div>{`${formatDate(timePosted, "REGULAR")} at ${formatDate(timePosted, "TIME")}`}</div>
 					</div>
 				</div>
 

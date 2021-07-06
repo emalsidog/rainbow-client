@@ -1,5 +1,5 @@
 // Types
-type Style = "BIRTHDAY" | "REGULAR" | "LAST_SEEN_ONLINE";
+type Style = "BIRTHDAY" | "REGULAR" | "LAST_SEEN_ONLINE" | "TIME";
 type UnpdarsedDate = Date | undefined;
 
 // Minutes and Seconds (1:53)
@@ -63,6 +63,9 @@ export const formatDate = (
 			return `last seen ${formatMonth(parsedMonth)} ${formatNumber(
 				parsedDay
 			)} at ${time}`;
+
+		case "TIME": 
+			return `${hours}:${formatNumber(minutes)}`
 	}
 };
 
