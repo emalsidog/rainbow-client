@@ -11,6 +11,8 @@ interface DisplayDialogProps {
 	givenName: string;
 	familyName: string;
 
+	lastMessage: string | undefined;
+
 	handleDialogClick: (chatId: string) => void;
 
 	isActive: boolean;
@@ -22,9 +24,16 @@ const DisplayDialog: React.FC<DisplayDialogProps> = (props) => {
 		avatar,
 		givenName,
 		familyName,
+		lastMessage,
 		handleDialogClick,
 		isActive,
 	} = props;
+
+	let lastMessageFormatted = lastMessage;
+
+	if (lastMessage && lastMessage.length > 25) {
+		lastMessageFormatted = lastMessage.slice(0, 25) + "...";
+	}
 
 	return (
 		<div
@@ -36,7 +45,9 @@ const DisplayDialog: React.FC<DisplayDialogProps> = (props) => {
 			</div>
 			<div>
 				<div>{`${givenName} ${familyName}`}</div>
-				<span className={styles.lastMessage}>Last message goes he</span>
+				<span className={styles.lastMessage}>
+					{lastMessageFormatted}
+				</span>
 			</div>
 		</div>
 	);

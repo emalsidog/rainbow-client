@@ -35,4 +35,6 @@
 	font-size: 0.8rem;
 	color: gray;
 	margin-top: 5px;
+
+	word-wrap: break-all;
 }

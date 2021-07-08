@@ -40,6 +40,18 @@ const Messenger: React.FC = () => {
 		dispatch(getChatsRequest());
 	}, [dispatch]);
 
+	useEffect(() => {
+		const chat = chats.find((chat) => chat.chatId === chatId);
+		if (!chat) return;
+		setChatToDisplay(chat);
+	}, [chatId, chats]);
+
+	useEffect(() => {
+		if (!chatId) {
+			setChatToDisplay(null);
+		}
+	}, [chatId]);
+
 	const handleDialogClick = useCallback(
 		(chatId: string): void => {
 			history.push(`/messenger/${chatId}`);
@@ -52,15 +64,9 @@ const Messenger: React.FC = () => {
 		history.push("/messenger");
 	};
 
-	useEffect(() => {
-		const chat = chats.find((chat) => chat.chatId === chatId);
-		if (!chat) return;
-		setChatToDisplay(chat);
-	}, [chatId, chats]);
-
 	// render list of dialogs
 	const listOfDialogs = chats.map((chat) => {
-		const { chatId, participants, creator } = chat;
+		const { chatId, participants, creator, messages } = chat;
 
 		let givenName: string;
 		let familyName: string;
@@ -76,12 +82,18 @@ const Messenger: React.FC = () => {
 			avatar = creator.avatar.linkToAvatar;
 		}
 
+		let lastMessage: string | undefined =
+			messages.length > 0
+				? messages[messages.length - 1].text
+				: undefined;
+
 		return (
 			<DisplayDialog
 				key={chatId}
 				chatId={chatId}
 				givenName={givenName}
 				familyName={familyName}
+				lastMessage={lastMessage}
 				avatar={avatar}
 				handleDialogClick={handleDialogClick}
 				isActive={chatToDisplay?.chatId === chatId}
@@ -101,7 +113,6 @@ const Messenger: React.FC = () => {
 						currentUserId={currentUser._id}
 						currentUserProfileId={currentUser.profileId}
 						onGoBack={handleGoBack}
-						removeChat={setChatToDisplay}
 					/>
 				)}
 			</div>

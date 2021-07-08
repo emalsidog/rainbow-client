@@ -7,6 +7,10 @@ const ADD_MESSAGE_SUCCESS = "ADD_MESSAGE_SUCCESS";
 const ADD_MESSAGE_FAILURE = "ADD_MESSAGE_FAILURE";
 const ADD_MESSAGE_WS = "ADD_MESSAGE_WS";
 
+const CREATE_CHAT_REQUEST = "CREATE_CHAT_REQUEST";
+const CREATE_CHAT_SUCCESS = "CREATE_CHAT_SUCCESS";
+const CREATE_CHAT_FAILURE = "CREATE_CHAT_FAILURE";
+
 export interface Chat {
 	participants: Participant[];
 	messages: Message[];
@@ -66,6 +70,20 @@ export interface AddMessageWS {
 	message: Message;
 }
 
+// Create chat
+export interface CreateChatRequest {
+	type: typeof CREATE_CHAT_REQUEST;
+	participants: string[];
+}
+
+export interface CreateChatSuccess {
+	type: typeof CREATE_CHAT_SUCCESS;
+}
+
+export interface CreateChatFailure {
+	type: typeof CREATE_CHAT_FAILURE;
+}
+
 export type ChatActionTypes =
 	| GetChatsRequest
 	| GetChatsSuccess
@@ -73,4 +91,7 @@ export type ChatActionTypes =
 	| AddMessageRequest
 	| AddMessageSuccess
 	| AddMessageFailure
-	| AddMessageWS;
+	| AddMessageWS
+	| CreateChatRequest
+	| CreateChatSuccess
+	| CreateChatFailure;

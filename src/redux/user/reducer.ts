@@ -73,6 +73,7 @@ const initialState: InitialState = {
 		loadingUsers: false,
 
 		loadingChats: false,
+		creatingNewChat: false,
 	},
 };
 
@@ -815,6 +816,35 @@ export const user = (
 			return {
 				...state,
 				chats: newChats,
+			};
+		}
+
+		// Create new chat
+		case "CREATE_CHAT_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					creatingNewChat: true,
+				},
+			};
+		}
+		case "CREATE_CHAT_SUCCESS": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					creatingNewChat: false,
+				},
+			};
+		}
+		case "CREATE_CHAT_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					creatingNewChat: false,
+				},
 			};
 		}
 

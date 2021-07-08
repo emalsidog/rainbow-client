@@ -25,12 +25,10 @@ interface DisplayChatProps {
 	currentUserProfileId: string;
 
 	onGoBack: () => void;
-	removeChat: (value: null) => void;
 }
 
 const DisplayChat: React.FC<DisplayChatProps> = (props) => {
-	const { chat, currentUserId, currentUserProfileId, onGoBack, removeChat } =
-		props;
+	const { chat, currentUserId, currentUserProfileId, onGoBack } = props;
 
 	const [textareaOptions, setTextareaOptions] = useState<TextAreaOptions>({
 		rows: 1,
@@ -49,10 +47,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			messagesDiv.current!.scrollTop = messagesDiv.current!.scrollHeight;
 		}
 	}, [chat.messages]);
-
-	useEffect(() => {
-		return () => removeChat(null);
-	}, [removeChat]);
 
 	const sendMessage = (): void => {
 		if (textareaOptions.value.length <= 0) return;
@@ -139,7 +133,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				</div>
 				<div className={styles.userInfo}>
 					<div>{`${givenName} ${familyName}`}</div>
-					<span>info</span>
+					<span>Test</span>
 				</div>
 			</div>
 

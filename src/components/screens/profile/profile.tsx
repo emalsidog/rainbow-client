@@ -77,7 +77,7 @@ const Profile: React.FC = () => {
 		posts,
 		accountType,
 		isOnline,
-		lastSeenOnline
+		lastSeenOnline,
 	} = displayedUser;
 
 	if (isLoadingUsers.isFetchingUser) {
@@ -97,7 +97,9 @@ const Profile: React.FC = () => {
 		<Layout>
 			<div className="col-7">
 				<div className={styles.blocksWrapper}>
-					<div className={`${styles.wrapper} ${styles.basicInfoBlock}`} >
+					<div
+						className={`${styles.wrapper} ${styles.basicInfoBlock}`}
+					>
 						<div className={styles.nameAndSmallImageWrapper}>
 							<div className={styles.nameWrapper}>
 								<div className={styles.nameContainer}>
@@ -109,7 +111,12 @@ const Profile: React.FC = () => {
 									</div>
 									{!isCurrentUser && (
 										<div className={styles.onlineStatus}>
-											{isOnline ? "online" : formatDate(lastSeenOnline, "LAST_SEEN_ONLINE")}
+											{isOnline
+												? "online"
+												: formatDate(
+														lastSeenOnline,
+														"LAST_SEEN_ONLINE"
+												  )}
 										</div>
 									)}
 								</div>
@@ -118,16 +125,6 @@ const Profile: React.FC = () => {
 							</div>
 
 							<div className={styles.smallImageBlock}>
-								{!isCurrentUser && (
-									<div
-										style={{
-											background: isOnline
-												? "#3ec252"
-												: "#c40808",
-										}}
-										className={styles.onlineCircle}
-									/>
-								)}
 								<img src={avatar} alt="" />
 							</div>
 						</div>
@@ -151,22 +148,24 @@ const Profile: React.FC = () => {
 					</div>
 				</div>
 
-				<div className={`${styles.wrapper} ${styles.upperActionButtons}`}>
+				<div
+					className={`${styles.wrapper} ${styles.upperActionButtons}`}
+				>
 					{isCurrentUser ? (
-							<button
-								className="btn btn-primary"
-								onClick={handleEdit}
-							>
-								Edit
-							</button>
-						) : (
-							<DisplayActions
-								displayViewProfileButton={false}
-								friendshipStatus={friendshipStatus}
-								userId={_id}
-								userProfileId={profileId}
-							/>
-						)}
+						<button
+							className="btn btn-primary"
+							onClick={handleEdit}
+						>
+							Edit
+						</button>
+					) : (
+						<DisplayActions
+							displayViewProfileButton={false}
+							friendshipStatus={friendshipStatus}
+							userId={_id}
+							userProfileId={profileId}
+						/>
+					)}
 				</div>
 
 				{isCurrentUser ? (

@@ -28,3 +28,17 @@ export const addMessageSuccess = (): ChatActionTypes => ({
 export const addMessageFailure = (): ChatActionTypes => ({
 	type: "ADD_MESSAGE_FAILURE",
 });
+
+// Create chat
+export const createChatRequest = (participants: string[]): ChatActionTypes => ({
+	type: "CREATE_CHAT_REQUEST",
+	participants,
+});
+
+export const createChatSuccess = (): ChatActionTypes => ({
+	type: "CREATE_CHAT_FAILURE",
+});
+
+export const createChatFailure = (): ChatActionTypes => ({
+	type: "CREATE_CHAT_FAILURE",
+});

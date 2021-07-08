@@ -1,202 +1,193 @@
 /* WRAPPERS */
 .wrapper {
-    border: 1px solid #d7d7d7;
-    background: #FFFFFF;
+	border: 1px solid #d7d7d7;
+	background: #ffffff;
 
-    padding: 10px;
-    margin: 0 0 10px 10px;
+	padding: 10px;
+	margin: 0 0 10px 10px;
 
-    z-index: -5;
+	z-index: -5;
 }
 
 .wrapper img {
-    width: 100%;
+	width: 100%;
 }
 
 .nameAndSmallImageWrapper {
-    display: flex;
-    width: 100%;
+	display: flex;
+	width: 100%;
 }
 
 /* IMAGE BLOCKS */
 
 .mediumImageBlock {
-    display: none;
+	display: none;
 }
 
 .smallImageBlock {
-    display: none;
-    position: relative;
+	display: none;
+	position: relative;
 }
 
 .smallImageBlock img {
-    width: 70px;
+	width: 70px;
 }
 
 /* GENERAL */
 
 .additionalInfo {
-    display: flex;
-    margin-bottom: 15px;
+	display: flex;
+	margin-bottom: 15px;
 }
 
 .additionalInfo div {
-    font-size: .8rem;
+	font-size: 0.8rem;
 }
 
 .additionalInfo div:first-child {
-    width: 40%;
+	width: 40%;
 }
 
 .additionalInfo:last-child {
-    margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 .nameWrapper {
-    width: 100%;
+	width: 100%;
 }
 
 .nameContainer {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 
 .name {
-    font-size: 1.7rem;
+	font-size: 1.7rem;
 }
 
 .onlineStatus {
-    font-size: .8rem;
-    color: gray;
+	font-size: 0.8rem;
+	color: gray;
 }
 
 .bio {
-    margin: 10px 0;
-    color: rgb(109, 109, 109);
-    word-wrap: break-word;
+	margin: 10px 0;
+	color: rgb(109, 109, 109);
+	word-wrap: break-word;
 }
 
 .sectionHeading span {
-    font-size: 1.2rem;
+	font-size: 1.2rem;
 }
 
-.actionButtons button, 
+.actionButtons button,
 .upperActionButtons button {
-    width: 100%;
-    margin-bottom: 5px;
+	width: 100%;
+	margin-bottom: 5px;
 }
 
-.actionButtons button:last-child, 
+.actionButtons button:last-child,
 .upperActionButtons button:last-child {
-    margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 .upperActionButtons {
-    display: none;
+	display: none;
 }
 
 /* CREATE POST */
 .spinnerBlock {
-    text-align: center;
-    margin: 10px 0;
+	text-align: center;
+	margin: 10px 0;
 }
 
 .postControls {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
+	display: flex;
+	justify-content: space-between;
+	margin-top: 15px;
 }
 
 .postControls select {
-    max-width: 30%;
-    width: 30%;
+	max-width: 30%;
+	width: 30%;
 }
 
 @media (max-width: 850px) {
-    .wrapper {
-        margin-left: 0;
-    }
+	.wrapper {
+		margin-left: 0;
+	}
 
-    .blocksWrapper {
-        display: flex;
-    }
+	.blocksWrapper {
+		display: flex;
+	}
 
-    .bigImageBlock {
-        display: none;
-    }
+	.bigImageBlock {
+		display: none;
+	}
 
-    .mediumImageBlock {
-        display: block;
-        width: 25%;
-        margin-left: 10px;
-    }
+	.mediumImageBlock {
+		display: block;
+		width: 25%;
+		margin-left: 10px;
+	}
 
-    .basicInfoBlock {
-        width: 75%;
-    }
+	.basicInfoBlock {
+		width: 75%;
+	}
 
-    .actionButtons {
-        display: none;
-    }
+	.actionButtons {
+		display: none;
+	}
 
-    .upperActionButtons {
-        display: block;
-    }
+	.upperActionButtons {
+		display: block;
+	}
 }
 
 @media (max-width: 650px) {
-    .basicInfoBlock {
-        width: 100%;
-    }
+	.basicInfoBlock {
+		width: 100%;
+	}
 
-    .mediumImageBlock {
-        display: none;
-    }
+	.mediumImageBlock {
+		display: none;
+	}
 
-    .smallImageBlock {
-        display: block;
-    }
+	.smallImageBlock {
+		display: block;
+	}
 
-    .nameAndSmallImageWrapper {
-        justify-content: space-between;
-    }
+	.nameAndSmallImageWrapper {
+		justify-content: space-between;
+	}
 
-    .onlineCircle {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-
-        width: 13px;
-        height: 13px;
-        
-        border-radius: 50%;
-    }
-
-    .onlineStatus {
-        display: none;
-    }
+	.nameContainer {
+		display: block;
+	}
+	.onlineStatus {
+		margin-top: 5px;
+	}
 }
 
-
 @media (max-width: 550px) {
-    .additionalInfo div:first-child {
-        width: auto;
-    } 
-    .additionalInfo {
-        justify-content: space-between;
-    }
+	.additionalInfo div:first-child {
+		width: auto;
+	}
+	.additionalInfo {
+		justify-content: space-between;
+	}
 }
 
 @media (max-width: 430px) {
-    .name {
-        font-size: 1.4rem;
-    }
-    .bio {
-        font-size: .9rem;
-    }
+	.name {
+		font-size: 1.4rem;
+	}
+	.bio {
+		font-size: 0.9rem;
+	}
 
-    .postControls select {
-        max-width: 40%;
-        width: 40%;
-    }
+	.postControls select {
+		max-width: 40%;
+		width: 40%;
+	}
 }
