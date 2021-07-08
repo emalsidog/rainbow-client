@@ -53,8 +53,6 @@ function initWebsocket(): EventChannel<any> {
 					throw error;
 				}
 
-				console.log(response);
-
 				switch (response.type) {
 					case "CONNECTED_USER_ID": {
 						return (id = response.id);
@@ -209,9 +207,10 @@ function initWebsocket(): EventChannel<any> {
 			};
 
 			ws.onclose = (e) => {
-				console.log("Reconnect in 4s");
+				const reconnectIn: number = 3000;
+				console.log(`Reconnect in: ${reconnectIn / 1000}s.`);
 				intervalId && clearInterval(intervalId);
-				id && setTimeout(initConnection, 4000);
+				id && setTimeout(initConnection, reconnectIn);
 			};
 		};
 

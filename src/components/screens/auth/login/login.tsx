@@ -5,10 +5,7 @@ import { Link, useHistory } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 // Actions
-import {
-	loginRequest,
-	forgotRequest,
-} from "../../../../redux/auth/actions";
+import { loginRequest, forgotRequest } from "../../../../redux/auth/actions";
 
 // Selectors
 import {
@@ -65,7 +62,6 @@ const Login: React.FC = () => {
 			const timeLeftMs = timeToNextEmail - new Date().getTime();
 
 			intervalId = window.setInterval(() => {
-				console.log(timeLeftMs);
 				setTimeLeft(formatToMinutesAndSeconds(timeLeftMs));
 			}, 1000);
 

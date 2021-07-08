@@ -14,64 +14,71 @@ import { LoadMorePostsRequest } from "./types";
 
 // Watcher
 export function* postsWatcher() {
-    yield takeEvery("LOAD_MORE_POSTS_REQUEST", loadPosts);
-    yield takeEvery("ADD_POST_REQUEST", addPost);
-    yield takeEvery("DELETE_POST_REQUEST", deletePost);
-    yield takeEvery("EDIT_POST_REQUEST", editPost);
+	yield takeEvery("LOAD_MORE_POSTS_REQUEST", loadPosts);
+	yield takeEvery("ADD_POST_REQUEST", addPost);
+	yield takeEvery("DELETE_POST_REQUEST", deletePost);
+	yield takeEvery("EDIT_POST_REQUEST", editPost);
 }
 
 function* loadPosts(action: LoadMorePostsRequest) {
 	try {
-		const { data } = yield call(() => AxiosPostRequest("/posts", action.payload));
+		const { data } = yield call(() =>
+			AxiosPostRequest("/posts", action.payload)
+		);
 
-        const body = data.body;
+		const body = data.body;
 
 		yield put(postsActions.loadMorePostsSuccess(body));
 	} catch (error) {
-        console.log(error)
 		yield put(postsActions.loadMorePostsFailure());
 	}
 }
 
 function* addPost(action: AddPostRequest) {
-    try {
-        const { data } = yield call(() => AxiosPostRequest("/posts/add-post", action.payload));
-        const { body, status } = data;
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/posts/add-post", action.payload)
+		);
+		const { body, status } = data;
 
-        yield put(postsActions.addPostSuccess(body.post));
-        yield put(addNotification(status));
-    } catch (error) {
-        const { status } = error.response.data;
+		yield put(postsActions.addPostSuccess(body.post));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
 		yield put(postsActions.addPostFailure());
 		yield put(addNotification(status));
-    }
+	}
 }
 
 function* deletePost(action: DeletePostRequest) {
-    const payload = { postId: action.postId };
-    try {
-        const { data } = yield call(() => AxiosPostRequest("/posts/delete-post", payload));
-        const { body, status } = data;
+	const payload = { postId: action.postId };
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/posts/delete-post", payload)
+		);
+		const { body, status } = data;
 
-        yield put(postsActions.deletePostSuccess(body.postToDelete));
-        yield put(addNotification(status));
-    } catch (error) {
-        const { status } = error.response.data;
-        yield put(postsActions.deletePostFailure());
-        yield put(addNotification(status));
-    }
+		yield put(postsActions.deletePostSuccess(body.postToDelete));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(postsActions.deletePostFailure());
+		yield put(addNotification(status));
+	}
 }
 
 function* editPost(action: EditPostRequest) {
-    try {
-        const { data } = yield call(() => AxiosPostRequest("/posts/edit-post", action.payload));
-        const { body, status } = data;
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/posts/edit-post", action.payload)
+		);
+		const { body, status } = data;
 
-        yield put(postsActions.editPostSuccess(body.updatedPost));
-        yield put(addNotification(status));
-    } catch (error) {
-        const { status } = error.response.data;
-        yield put(postsActions.editPostFailure());
-        yield put(addNotification(status));
-    }
+		yield put(postsActions.editPostSuccess(body.updatedPost));
+		yield put(addNotification(status));
+	} catch (error) {
+		const { status } = error.response.data;
+		yield put(postsActions.editPostFailure());
+		yield put(addNotification(status));
+	}
 }

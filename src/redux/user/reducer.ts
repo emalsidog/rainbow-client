@@ -817,7 +817,6 @@ export const user = (
 			};
 		}
 		case "ADD_MESSAGE_WS": {
-			console.log(action);
 			const { message } = action;
 			const newChats = state.chats.map((chat) => {
 				if (chat.chatId === message.chatId) {
