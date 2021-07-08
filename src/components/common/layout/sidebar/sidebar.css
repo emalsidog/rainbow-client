@@ -44,6 +44,10 @@
 	);
 }
 
+.sidebar-item:focus {
+	-webkit-tap-highlight-color: transparent;
+}
+
 @media (max-width: 850px) {
 	.sidebar-container {
 		flex-direction: row;

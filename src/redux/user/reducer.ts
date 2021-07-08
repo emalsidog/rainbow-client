@@ -4,7 +4,7 @@ import { PostActionTypes } from "../posts";
 import { EmailChangingProcess, IsLoading, UserActionTypes } from "./types";
 
 import { FriendsActionTypes } from "../friends/types";
-import { Chat, ChatActionTypes } from "../chat/types";
+import { Chat, ChatActionTypes, Message } from "../chat/types";
 
 interface InitialState {
 	user: User;
@@ -791,15 +791,7 @@ export const user = (
 		// ADD MESSAGE
 		case "ADD_MESSAGE_REQUEST": {
 			const { message } = action;
-			const newChats = state.chats.map((chat) => {
-				if (chat.chatId === message.chatId) {
-					return {
-						...chat,
-						messages: [...chat.messages, message],
-					};
-				}
-				return chat;
-			});
+			const newChats = addMessage(state.chats, message);
 
 			return {
 				...state,
@@ -818,15 +810,8 @@ export const user = (
 		}
 		case "ADD_MESSAGE_WS": {
 			const { message } = action;
-			const newChats = state.chats.map((chat) => {
-				if (chat.chatId === message.chatId) {
-					return {
-						...chat,
-						messages: [...chat.messages, message],
-					};
-				}
-				return chat;
-			});
+			const newChats = addMessage(state.chats, message);
+
 			return {
 				...state,
 				chats: newChats,
@@ -916,4 +901,17 @@ export const user = (
 			};
 		}
 	}
+};
+
+// Add new message to chat
+const addMessage = (chats: Chat[], message: Message): Chat[] => {
+	return chats.map((chat) => {
+		if (chat.chatId === message.chatId) {
+			return {
+				...chat,
+				messages: [...chat.messages, message],
+			};
+		}
+		return chat;
+	});
 };

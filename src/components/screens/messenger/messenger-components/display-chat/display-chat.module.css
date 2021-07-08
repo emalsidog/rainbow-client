@@ -6,16 +6,32 @@
 }
 
 /* Header */
-.interlocutorInfo {
-	margin: 0 auto;
+.header {
+	display: flex;
+	align-items: center;
+
 	text-align: center;
 }
 
-.interlocutorInfo div {
+.backButton {
+	position: absolute;
+}
+
+.backButton i {
+	padding: 10px 10px 10px 0;
+	font-size: 1.1rem;
+	color: gray;
+}
+
+.userInfo {
+	margin: 0 auto;
+}
+
+.userInfo div {
 	font-size: 1.1rem;
 }
 
-.interlocutorInfo span {
+.userInfo span {
 	font-size: 0.9rem;
 	color: gray;
 }
@@ -38,9 +54,15 @@
 		rgb(172, 172, 172),
 		transparent
 	);
+	z-index: -1;
 }
 
 /* Messages */
+.sayHiBlock {
+	text-align: center;
+	font-style: italic;
+}
+
 .messages {
 	min-height: 0;
 	height: 85vh;
@@ -65,4 +87,10 @@
 /* Footer */
 .writeMessageBlock {
 	padding-top: 10px;
+}
+
+@media (min-width: 850px) {
+	.backButton {
+		display: none;
+	}
 }

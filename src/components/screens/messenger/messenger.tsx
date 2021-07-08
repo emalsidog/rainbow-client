@@ -9,6 +9,9 @@ import { getChatsRequest } from "../../../redux/chat/actions";
 // Selectors
 import { selectChats, selectUser } from "../../../redux/user/selector";
 
+// Hooks
+import useWindowSize from "../../../hocs/useWindowsSize";
+
 // Styles
 // import styles from "./messenger.module.css";
 
@@ -31,6 +34,8 @@ const Messenger: React.FC = () => {
 	const history = useHistory();
 	const { chatId }: any = useParams();
 
+	const { width } = useWindowSize();
+
 	useEffect(() => {
 		dispatch(getChatsRequest());
 	}, [dispatch]);
@@ -41,6 +46,11 @@ const Messenger: React.FC = () => {
 		},
 		[history]
 	);
+
+	const handleGoBack = (): void => {
+		setChatToDisplay(null);
+		history.push("/messenger");
+	};
 
 	useEffect(() => {
 		const chat = chats.find((chat) => chat.chatId === chatId);
@@ -79,20 +89,37 @@ const Messenger: React.FC = () => {
 		);
 	});
 
-	return (
-		<Layout>
+	let chat: JSX.Element | null = null;
+	let dialogs: JSX.Element | null = null;
+
+	if (chatId || width > 850) {
+		chat = (
 			<div className="col-7">
 				{chatToDisplay && (
 					<DisplayChat
 						chat={chatToDisplay}
 						currentUserId={currentUser._id}
 						currentUserProfileId={currentUser.profileId}
+						onGoBack={handleGoBack}
+						removeChat={setChatToDisplay}
 					/>
 				)}
 			</div>
+		);
+	}
+
+	if (!chatId || width > 850) {
+		dialogs = (
 			<div style={{ marginLeft: "5px" }} className="col-3">
 				{listOfDialogs}
 			</div>
+		);
+	}
+
+	return (
+		<Layout>
+			{chat}
+			{dialogs}
 		</Layout>
 	);
 };

@@ -23,10 +23,14 @@ interface DisplayChatProps {
 	chat: Chat;
 	currentUserId: string;
 	currentUserProfileId: string;
+
+	onGoBack: () => void;
+	removeChat: (value: null) => void;
 }
 
 const DisplayChat: React.FC<DisplayChatProps> = (props) => {
-	const { chat, currentUserId, currentUserProfileId } = props;
+	const { chat, currentUserId, currentUserProfileId, onGoBack, removeChat } =
+		props;
 
 	const [textareaOptions, setTextareaOptions] = useState<TextAreaOptions>({
 		rows: 1,
@@ -45,6 +49,10 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			messagesDiv.current!.scrollTop = messagesDiv.current!.scrollHeight;
 		}
 	}, [chat.messages]);
+
+	useEffect(() => {
+		return () => removeChat(null);
+	}, [removeChat]);
 
 	const sendMessage = (): void => {
 		if (textareaOptions.value.length <= 0) return;
@@ -105,21 +113,34 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		familyName = chat.creator.familyName;
 	}
 
-	const messages = chat.messages.map((message, index) => {
-		return (
-			<Message
-				key={index}
-				messageText={message.text}
-				isRightAligned={message.sender === currentUserId}
-			/>
-		);
-	});
+	let messages;
+
+	if (chat.messages.length > 0) {
+		messages = chat.messages.map((message, index) => {
+			return (
+				<Message
+					key={index}
+					messageText={message.text}
+					isRightAligned={message.sender === currentUserId}
+				/>
+			);
+		});
+	} else {
+		messages = <div className={styles.sayHiBlock}>Say hi!</div>;
+	}
 
 	return (
 		<div className={styles.wrapper}>
-			<div className={styles.interlocutorInfo}>
-				<div>{`${givenName} ${familyName}`}</div>
-				<span>info</span>
+			<div className={styles.header}>
+				<div className={styles.backButton}>
+					<button onClick={onGoBack} className="btn-transperent">
+						<i className="fas fa-arrow-left"></i>
+					</button>
+				</div>
+				<div className={styles.userInfo}>
+					<div>{`${givenName} ${familyName}`}</div>
+					<span>info</span>
+				</div>
 			</div>
 
 			<div className={styles.divider}></div>
