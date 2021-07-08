@@ -73,6 +73,7 @@
 .bio {
     margin: 10px 0;
     color: rgb(109, 109, 109);
+    word-wrap: break-word;
 }
 
 .sectionHeading span {

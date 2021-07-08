@@ -55,9 +55,11 @@ body {
 	width: calc(var(--width) * 6);
 }
 .col-7 {
+	height: 90vh;
 	width: calc(var(--width) * 7);
 }
 .col-8 {
+	height: 90vh;
 	width: calc(var(--width) * 8);
 }
 .col-9 {

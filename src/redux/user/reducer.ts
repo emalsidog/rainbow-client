@@ -1,10 +1,10 @@
 // Types
-import { PostType, User } from "../common-types";
+import { PostType, User, initialUser } from "../common-types";
 import { PostActionTypes } from "../posts";
 import { EmailChangingProcess, IsLoading, UserActionTypes } from "./types";
 
-import { initialUser } from "../common-types";
 import { FriendsActionTypes } from "../friends/types";
+import { Chat, ChatActionTypes } from "../chat/types";
 
 interface InitialState {
 	user: User;
@@ -19,6 +19,8 @@ interface InitialState {
 			hasMoreData: boolean;
 		};
 	};
+
+	chats: Chat[];
 
 	requestsCounter: number;
 
@@ -42,6 +44,8 @@ const initialState: InitialState = {
 			hasMoreData: true,
 		},
 	},
+	chats: [],
+
 	requestsCounter: 0,
 
 	isFetching: true,
@@ -67,12 +71,21 @@ const initialState: InitialState = {
 		editPost: false,
 
 		loadingUsers: false,
+
+		loadingChats: false,
 	},
 };
 
-type ActionType = UserActionTypes | PostActionTypes | FriendsActionTypes;
+type ActionType =
+	| UserActionTypes
+	| PostActionTypes
+	| FriendsActionTypes
+	| ChatActionTypes;
 
-export const user = (state = initialState, action: ActionType): InitialState => {
+export const user = (
+	state = initialState,
+	action: ActionType
+): InitialState => {
 	switch (action.type) {
 		// SET USER
 
@@ -741,6 +754,83 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 		case "REMOVE_FROM_FRIENDS_FAILURE": {
 			return {
 				...state,
+			};
+		}
+
+		// GET CHATS
+
+		case "GET_CHATS_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: true,
+				},
+			};
+		}
+		case "GET_CHATS_SUCCESS": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: false,
+				},
+				chats: [...action.chats],
+			};
+		}
+		case "GET_CHATS_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					loadingUsers: false,
+				},
+			};
+		}
+
+		// ADD MESSAGE
+		case "ADD_MESSAGE_REQUEST": {
+			const { message } = action;
+			const newChats = state.chats.map((chat) => {
+				if (chat.chatId === message.chatId) {
+					return {
+						...chat,
+						messages: [...chat.messages, message],
+					};
+				}
+				return chat;
+			});
+
+			return {
+				...state,
+				chats: newChats,
+			};
+		}
+		case "ADD_MESSAGE_SUCCESS": {
+			return {
+				...state,
+			};
+		}
+		case "ADD_MESSAGE_FAILURE": {
+			return {
+				...state,
+			};
+		}
+		case "ADD_MESSAGE_WS": {
+			console.log(action);
+			const { message } = action;
+			const newChats = state.chats.map((chat) => {
+				if (chat.chatId === message.chatId) {
+					return {
+						...chat,
+						messages: [...chat.messages, message],
+					};
+				}
+				return chat;
+			});
+			return {
+				...state,
+				chats: newChats,
 			};
 		}
 

@@ -94,6 +94,8 @@ export interface IsLoading {
 	editPost: boolean;
 
 	loadingUsers: boolean;
+
+	loadingChats: boolean;
 }
 
 // SET USER

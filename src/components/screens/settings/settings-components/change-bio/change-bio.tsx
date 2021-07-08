@@ -5,17 +5,15 @@ import { useDispatch } from "react-redux";
 // Actions
 import { changeBioRequest } from "../../../../../redux/user/actions";
 
+// Components
+import Textarea from "../../../../common/textarea";
+
 // Types
+import { TextAreaOptions } from "../../../../common/textarea/textarea";
+
 interface ChangeBioProps {
 	isLoading: boolean;
 	bio: string;
-}
-
-interface TextAreaOptions {
-	rows: number;
-	minRows: number;
-	maxRows: number;
-	value: string;
 }
 
 const ChangeBio: React.FC<ChangeBioProps> = (props) => {
@@ -35,6 +33,7 @@ const ChangeBio: React.FC<ChangeBioProps> = (props) => {
 		rows: 2,
 		minRows: 2,
 		maxRows: 10,
+		charactersLimit: 100,
 		value: "",
 	});
 
@@ -52,6 +51,16 @@ const ChangeBio: React.FC<ChangeBioProps> = (props) => {
 		setTextareaOptions((prev) => ({ ...prev, value: bio }));
 	}, [bio]);
 
+	useEffect(() => {
+		setAvailableCharacters(100 - textareaOptions.value.length);
+
+		if (textareaOptions.value !== oldBio.current) {
+			setIsTheSame(false);
+		} else {
+			setIsTheSame(true);
+		}
+	}, [textareaOptions.value.length, textareaOptions.value]);
+
 	// Helper. Add '...' to the end if bio is too long (> 35 characters)
 	const formatBio = (bio: string): string => {
 		if (bio.length > 35) {
@@ -68,58 +77,15 @@ const ChangeBio: React.FC<ChangeBioProps> = (props) => {
 	// Handle showinf form to change bio
 	const handleChangeBioShow = (): void => {
 		setChangeBioShow((prev) => !prev);
-		
+
 		setIsTheSame(true);
 		setAvailableCharacters(100 - bio.length);
 		setTextareaOptions((prev) => ({ ...prev, value: bio }));
 	};
 
-	// Handle changing textarea
-	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
-		// Do not write value, if bio is already 100 characters long
-		if (e.target.value.length > 100) return;
-
-		// If old bio is equal to a new one - disable "Save" button
-		if (e.target.value !== oldBio.current) {
-			setIsTheSame(false);
-		} else {
-			setIsTheSame(true);
-		}
-
-		const textareaLineHeight = 24;
-		const { minRows, maxRows } = textareaOptions;
-
-		const previousRows = e.target.rows;
-		e.target.rows = minRows;
-
-		const currentRows = ~~(e.target.scrollHeight / textareaLineHeight);
-
-		if (currentRows === previousRows) {
-			e.target.rows = currentRows;
-		}
-
-		if (currentRows >= maxRows) {
-			e.target.rows = maxRows;
-			e.target.scrollTop = e.target.scrollHeight;
-		}
-
-		// Set available characters
-		setAvailableCharacters(100 - e.target.value.length);
-
-		// Set new text area options
-		setTextareaOptions((prev) => ({
-			...prev,
-			rows: currentRows < maxRows ? currentRows : maxRows,
-			value: e.target.value,
-		}));
-	};
-
-	// Handle key down
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
-		if (e.key === "Enter") {
-			e.preventDefault();
-			dispatch(changeBioRequest(textareaOptions.value));
-		}
+	// Handle enter click (textarea)
+	const onEnter = (): void => {
+		!isTheSame && dispatch(changeBioRequest(textareaOptions.value));
 	};
 
 	// Handle form submit
@@ -139,14 +105,12 @@ const ChangeBio: React.FC<ChangeBioProps> = (props) => {
 				{changeBioShow && (
 					<form className="form-block">
 						<div className="form-group" onSubmit={handleSubmit}>
-							<textarea
-								rows={textareaOptions.rows}
-								value={textareaOptions.value}
+							<Textarea
 								placeholder="Enter your text here or leave it empty..."
-								className="textarea"
-								onChange={handleChange}
-								onKeyDown={handleKeyDown}
-								disabled={isLoading}
+								isLoading={isLoading}
+								textareaOptions={textareaOptions}
+								setTextareaOptions={setTextareaOptions}
+								onEnter={onEnter}
 							/>
 						</div>
 						<div className="form-group">

@@ -27,14 +27,13 @@ function initWebsocket(): EventChannel<any> {
 		let intervalId: number;
 
 		const initConnection = () => {
-			// const connectionUrl: string = "ws://localhost:4000";
-			const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
+			const connectionUrl: string = "ws://localhost:4000";
+			// const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com"
 
 			let ws = new WebSocket(connectionUrl);
 			websocket = ws;
 
 			ws.onopen = () => {
-
 				id && ws.send(JSON.stringify({ type: "GET_USER_ID", id }));
 
 				intervalId = window.setInterval(() => {
@@ -54,6 +53,8 @@ function initWebsocket(): EventChannel<any> {
 					throw error;
 				}
 
+				console.log(response);
+
 				switch (response.type) {
 					case "CONNECTED_USER_ID": {
 						return (id = response.id);
@@ -70,6 +71,13 @@ function initWebsocket(): EventChannel<any> {
 						id = undefined;
 						clearInterval(intervalId);
 						return ws.close();
+					}
+
+					case "ADD_MESSAGE": {
+						return emitter({
+							type: "ADD_MESSAGE_WS",
+							message: response.payload,
+						});
 					}
 
 					case "NEW_POST_ADDED": {

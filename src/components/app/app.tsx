@@ -38,14 +38,14 @@ const App: React.FC = () => {
 	const isAuthenticated = useSelector(selectIsAuthenticated);
 	const isFetching = useSelector((state: RootState) => state.user.isFetching);
 
-	useEffect(() => {	
+	useEffect(() => {
 		if (!isAuthenticated) {
 			dispatch(getUserRequest());
 		}
 	}, [dispatch, isAuthenticated]);
 
 	if (isFetching) {
-		return <MainLoader />
+		return <MainLoader />;
 	}
 
 	return (
@@ -63,17 +63,37 @@ const App: React.FC = () => {
 			<Switch>
 				<ProtectedRoute exact path="/settings" component={Settings} />
 
-				<ProtectedRoute exact path="/people/friends" component={FriendsScreen} />
-				<ProtectedRoute exact path="/people/search" component={SearchScreen} />
-				<ProtectedRoute exact path="/people/requests" component={RequestScreen} />
+				<ProtectedRoute
+					exact
+					path="/people/friends"
+					component={FriendsScreen}
+				/>
+				<ProtectedRoute
+					exact
+					path="/people/search"
+					component={SearchScreen}
+				/>
+				<ProtectedRoute
+					exact
+					path="/people/requests"
+					component={RequestScreen}
+				/>
 
 				<ProtectedRoute exact path="/messenger" component={Messenger} />
+				<ProtectedRoute
+					exact
+					path="/messenger/:chatId"
+					component={Messenger}
+				/>
 				<ProtectedRoute exact path="/music" component={Music} />
 				<ProtectedRoute exact path="/:profileId" component={Profile} />
 
 				<Route path="/users/login" component={Login} />
 				<Route path="/users/register" component={Register} />
-				<Route path="/users/activate/:activationToken" component={Activate} />
+				<Route
+					path="/users/activate/:activationToken"
+					component={Activate}
+				/>
 				<Route path="/users/reset/:resetToken" component={Reset} />
 
 				<Route path="/" render={() => <h1>404</h1>} />

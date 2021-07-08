@@ -1,0 +1,68 @@
+/* Wrapper */
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+/* Header */
+.interlocutorInfo {
+	margin: 0 auto;
+	text-align: center;
+}
+
+.interlocutorInfo div {
+	font-size: 1.1rem;
+}
+
+.interlocutorInfo span {
+	font-size: 0.9rem;
+	color: gray;
+}
+
+.divider {
+	position: relative;
+	height: 1px;
+
+	margin: 15px 0;
+}
+
+.divider:before {
+	content: "";
+	position: absolute;
+	width: 100%;
+	height: 1px;
+	background-image: linear-gradient(
+		to right,
+		transparent,
+		rgb(172, 172, 172),
+		transparent
+	);
+}
+
+/* Messages */
+.messages {
+	min-height: 0;
+	height: 85vh;
+	overflow: auto;
+}
+
+.messages::-webkit-scrollbar {
+	display: block;
+	width: 5px;
+}
+
+.messages::-webkit-scrollbar-track {
+	background: #dddddd;
+	border-radius: 15px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+	border-radius: 15px;
+	background: rgb(189, 189, 189);
+}
+
+/* Footer */
+.writeMessageBlock {
+	padding-top: 10px;
+}
