@@ -4,7 +4,7 @@ import { PostActionTypes } from "../posts";
 import { EmailChangingProcess, IsLoading, UserActionTypes } from "./types";
 
 import { FriendsActionTypes } from "../friends/types";
-import { Chat, ChatActionTypes, Message } from "../chat/types";
+import { Chat, ChatActionTypes, ChatProcesses, Message } from "../chat/types";
 
 interface InitialState {
 	user: User;
@@ -770,13 +770,21 @@ export const user = (
 			};
 		}
 		case "GET_CHATS_SUCCESS": {
+			const chats = action.chats.map((chat) => ({
+				...chat,
+				status: {
+					type: "IDLE" as ChatProcesses,
+					whoInProcess: null,
+				},
+			}));
+
 			return {
 				...state,
 				isLoading: {
 					...state.isLoading,
 					loadingUsers: false,
 				},
-				chats: [...action.chats],
+				chats,
 			};
 		}
 		case "GET_CHATS_FAILURE": {
@@ -851,6 +859,26 @@ export const user = (
 			return {
 				...state,
 				chats: [...state.chats, action.chat],
+			};
+		}
+
+		case "CHANGE_CHAT_PROCESS": {
+			const { chatId, processType, whoInAction } = action.payload;
+			const newChats = state.chats.map((chat) => {
+				if (chat.chatId === chatId) {
+					return {
+						...chat,
+						status: {
+							type: processType,
+							whoInProcess: whoInAction,
+						},
+					};
+				}
+				return chat;
+			});
+			return {
+				...state,
+				chats: newChats,
 			};
 		}
 

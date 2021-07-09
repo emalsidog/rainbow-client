@@ -9,7 +9,7 @@ import { addNotification } from "../notifications/actions";
 import { AxiosGetRequest, AxiosPostRequest } from "../utils/server-request";
 
 // History
-import history, { forwardTo } from "../common/history";
+import { forwardTo } from "../common/history";
 
 // Types
 import { CreateChatRequest } from "./types";

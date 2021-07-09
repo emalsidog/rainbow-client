@@ -1,5 +1,5 @@
 // Dependencies
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 // Websocket connection
@@ -14,9 +14,10 @@ import styles from "./display-chat.module.css";
 // Components
 import Textarea from "../../../../common/textarea";
 import Message from "../message";
+import ThreeDots from "../../../../common/spinner/three-dots";
 
 // Types
-import { Chat, Participant } from "../../../../../redux/chat/types";
+import { Chat, ChatProcesses } from "../../../../../redux/chat/types";
 import { TextAreaOptions } from "../../../../common/textarea/textarea";
 
 interface DisplayChatProps {
@@ -25,6 +26,16 @@ interface DisplayChatProps {
 	currentUserProfileId: string;
 
 	onGoBack: () => void;
+}
+
+interface WebsocketPayload {
+	type: string;
+	payload: {
+		process?: ChatProcesses;
+		chatId: string;
+		chatParticipantsIds: string[];
+		whoInAction: string;
+	};
 }
 
 const DisplayChat: React.FC<DisplayChatProps> = (props) => {
@@ -48,19 +59,53 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}, [chat.messages]);
 
-	const sendMessage = (): void => {
-		if (textareaOptions.value.length <= 0) return;
+	const isTyping = useRef<boolean>(false);
 
-		let recipients: Participant[] = [chat.creator];
-		let filteredParticipants: Participant[] = chat.participants.filter(
-			(participant) => participant._id !== currentUserId
-		);
+	const getParticipants = useCallback((): string[] => {
+		let recipients: string[] = [chat.creator._id];
+		let filteredParticipants: string[] = chat.participants
+			.filter((participant) => participant._id !== currentUserId)
+			.map((filteredParticipant) => filteredParticipant._id);
 
 		recipients = [...recipients, ...filteredParticipants];
 
 		if (chat.creator._id === currentUserId) {
-			recipients = [...chat.participants];
+			recipients = chat.participants.map(
+				(participant) => participant._id
+			);
 		}
+
+		return recipients;
+	}, [chat.creator._id, chat.participants, currentUserId]);
+
+	useEffect(() => {
+		const chatParticipantsIds = getParticipants();
+		const payload: WebsocketPayload = {
+			type: "CHANGE_CHAT_PROCESS",
+			payload: {
+				chatId: chat.chatId,
+				chatParticipantsIds,
+				whoInAction: currentUserId,
+			},
+		};
+
+		if (!isTyping.current && textareaOptions.value.length > 0) {
+			isTyping.current = true;
+			payload.payload.process = "TYPING";
+			websocket.send(JSON.stringify(payload));
+		}
+
+		if (isTyping && textareaOptions.value.length === 0) {
+			isTyping.current = false;
+			payload.payload.process = "IDLE";
+			websocket.send(JSON.stringify(payload));
+		}
+	}, [textareaOptions.value, getParticipants, chat.chatId, currentUserId]);
+
+	const sendMessage = (): void => {
+		if (textareaOptions.value.length <= 0) return;
+
+		const recipients = getParticipants();
 
 		const payload = {
 			message: {
@@ -123,6 +168,17 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		messages = <div className={styles.sayHiBlock}>Say hi!</div>;
 	}
 
+	let displayChatProcess: JSX.Element | undefined = undefined;
+
+	switch (chat.status.type) {
+		case "TYPING":
+			displayChatProcess = <span>typing...</span>;
+			break;
+		case "IDLE":
+			displayChatProcess = <span>idle</span>;
+			break;
+	}
+
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.header}>
@@ -133,7 +189,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				</div>
 				<div className={styles.userInfo}>
 					<div>{`${givenName} ${familyName}`}</div>
-					<span>Test</span>
+					{displayChatProcess}
 				</div>
 			</div>
 

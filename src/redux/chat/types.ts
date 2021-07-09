@@ -12,11 +12,19 @@ const CREATE_CHAT_SUCCESS = "CREATE_CHAT_SUCCESS";
 const CREATE_CHAT_FAILURE = "CREATE_CHAT_FAILURE";
 const CHAT_CREATED_WS = "CHAT_CREATED_WS";
 
+const CHANGE_CHAT_PROCESS = "CHANGE_CHAT_PROCESS";
+
+export type ChatProcesses = "TYPING" | "IDLE";
+
 export interface Chat {
 	participants: Participant[];
 	messages: Message[];
 	chatId: string;
 	creator: Participant;
+	status: {
+		type: ChatProcesses | null;
+		whoInProcess: string | null;
+	};
 }
 
 export interface Participant {
@@ -84,9 +92,20 @@ export interface CreateChatSuccess {
 export interface CreateChatFailure {
 	type: typeof CREATE_CHAT_FAILURE;
 }
+
 export interface ChatCreatedWS {
 	type: typeof CHAT_CREATED_WS;
 	chat: Chat;
+}
+
+// Change status of chat to TYPING
+export interface ChangeChatProcess {
+	type: typeof CHANGE_CHAT_PROCESS;
+	payload: {
+		chatId: string;
+		whoInAction: string;
+		processType: ChatProcesses;
+	};
 }
 
 export type ChatActionTypes =
@@ -100,4 +119,5 @@ export type ChatActionTypes =
 	| CreateChatRequest
 	| CreateChatSuccess
 	| CreateChatFailure
-	| ChatCreatedWS;
+	| ChatCreatedWS
+	| ChangeChatProcess;
