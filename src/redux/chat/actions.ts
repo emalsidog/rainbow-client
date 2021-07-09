@@ -36,7 +36,7 @@ export const createChatRequest = (participants: string[]): ChatActionTypes => ({
 });
 
 export const createChatSuccess = (): ChatActionTypes => ({
-	type: "CREATE_CHAT_FAILURE",
+	type: "CREATE_CHAT_SUCCESS",
 });
 
 export const createChatFailure = (): ChatActionTypes => ({

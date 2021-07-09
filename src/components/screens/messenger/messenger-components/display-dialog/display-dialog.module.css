@@ -38,3 +38,12 @@
 
 	word-wrap: break-all;
 }
+
+@media (max-width: 850px) {
+	.wrapper {
+		border-bottom: 1px solid rgb(233, 233, 233);
+	}
+	.wrapper:last-child {
+		border-bottom: none;
+	}
+}

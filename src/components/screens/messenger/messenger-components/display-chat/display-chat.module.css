@@ -2,7 +2,8 @@
 .wrapper {
 	display: flex;
 	flex-direction: column;
-	height: 100%;
+
+	height: calc(100vh - 57.09px);
 }
 
 /* Header */
@@ -65,7 +66,9 @@
 
 .messages {
 	min-height: 0;
-	height: 85vh;
+	height: 100%;
+
+	/* min-height: -webkit-fill-available; */
 	overflow: auto;
 }
 
@@ -86,11 +89,39 @@
 
 /* Footer */
 .writeMessageBlock {
-	padding-top: 10px;
+	display: flex;
+	align-content: stretch;
+
+	padding: 10px 5px;
+
+	border-top: 1px solid rgb(202, 202, 202);
+	margin-top: 2px;
+}
+
+.writeMessageBlock button {
+	padding: 0 5px;
+}
+
+.messageTextarea {
+	flex: 1 0 auto;
+
+	border: none;
+	line-height: 24px;
+	resize: none;
+}
+
+.messageTextarea:focus {
+	outline: none;
 }
 
 @media (min-width: 850px) {
 	.backButton {
 		display: none;
+	}
+}
+
+@media (max-width: 850px) {
+	.wrapper {
+		height: calc(100vh - 104.29px);
 	}
 }

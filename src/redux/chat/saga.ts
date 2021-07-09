@@ -8,6 +8,9 @@ import { addNotification } from "../notifications/actions";
 // Utils
 import { AxiosGetRequest, AxiosPostRequest } from "../utils/server-request";
 
+// History
+import history, { forwardTo } from "../common/history";
+
 // Types
 import { CreateChatRequest } from "./types";
 
@@ -41,6 +44,13 @@ function* createChat(action: CreateChatRequest) {
 		const { data } = yield call(() =>
 			AxiosPostRequest("/chats/create", payload)
 		);
+
+		const { body } = data;
+
+		const redirectTo = `/messenger/${body.chatId}`;
+
+		yield put(chatsActions.createChatSuccess());
+		yield call(forwardTo, redirectTo);
 	} catch (error) {
 		const { status } = error.response.data;
 		yield put(chatsActions.createChatFailure());

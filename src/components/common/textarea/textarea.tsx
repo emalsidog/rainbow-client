@@ -14,6 +14,7 @@ interface TextareaProps {
 	isLoading?: boolean;
 	autoFocus?: boolean;
 	placeholder?: string;
+	classNames?: string;
 
 	textareaOptions: TextAreaOptions;
 	setTextareaOptions: (prev: any) => any;
@@ -68,11 +69,11 @@ const Textarea: React.FC<TextareaProps> = (props) => {
 		}
 	};
 
-	const { autoFocus = false, placeholder } = props;
+	const { autoFocus = false, placeholder, classNames = "textarea" } = props;
 
 	return (
 		<textarea
-			className="textarea"
+			className={classNames}
 			rows={textareaOptions.rows}
 			value={textareaOptions.value}
 			placeholder={placeholder}

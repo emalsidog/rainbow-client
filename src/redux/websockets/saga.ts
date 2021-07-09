@@ -27,9 +27,8 @@ function initWebsocket(): EventChannel<any> {
 		let intervalId: number;
 
 		const initConnection = () => {
-			// const connectionUrl: string = "ws://localhost:4000";
-			const connectionUrl: string =
-				"wss://rainbow-server-api.herokuapp.com";
+			const connectionUrl: string = "ws://localhost:4000";
+			// const connectionUrl: string = "wss://rainbow-server-api.herokuapp.com";
 
 			let ws = new WebSocket(connectionUrl);
 			websocket = ws;
@@ -54,6 +53,8 @@ function initWebsocket(): EventChannel<any> {
 					throw error;
 				}
 
+				console.log(response);
+
 				switch (response.type) {
 					case "CONNECTED_USER_ID": {
 						return (id = response.id);
@@ -76,6 +77,13 @@ function initWebsocket(): EventChannel<any> {
 						return emitter({
 							type: "ADD_MESSAGE_WS",
 							message: response.payload,
+						});
+					}
+
+					case "NEW_CHAT_CREATED": {
+						return emitter({
+							type: "CHAT_CREATED_WS",
+							chat: response.payload,
 						});
 					}
 

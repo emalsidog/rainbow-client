@@ -847,6 +847,12 @@ export const user = (
 				},
 			};
 		}
+		case "CHAT_CREATED_WS": {
+			return {
+				...state,
+				chats: [...state.chats, action.chat],
+			};
+		}
 
 		/* 
 			"NEW_FRIEND_REQUEST" - responsible for updating client,

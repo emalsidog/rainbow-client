@@ -150,7 +150,14 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					setTextareaOptions={setTextareaOptions}
 					onEnter={onEnter}
 					placeholder="Write a message..."
+					classNames={styles.messageTextarea}
 				/>
+				<button onClick={sendMessage} className="btn-transperent">
+					<i
+						style={{ fontSize: "1.4rem" }}
+						className="fas fa-paper-plane"
+					></i>
+				</button>
 			</form>
 		</div>
 	);
