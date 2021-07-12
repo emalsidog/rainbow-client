@@ -8,9 +8,6 @@ const SEARCH_USERS_REQUEST = "SEARCH_USERS_REQUEST";
 const SEARCH_USERS_SUCCESS = "SEARCH_USERS_SUCCESS";
 const SEARCH_USERS_FAILURE = "SEARCH_USERS_FAILURE";
 
-const NEW_POST_ADDED = "NEW_POST_ADDED";
-const DELETE_POST = "DELETE_POST";
-const POST_UPDATED = "POST_UPDATED";
 const UPDATE_ONLINE_STATUS = "UPDATE_ONLINE_STATUS";
 
 const SET_IS_FETCHING_USER = "SET_IS_FETCHING_USER";
@@ -79,27 +76,6 @@ export interface SetIsFetchingUser {
 	isFetching: boolean;
 }
 
-// NEW POST ADDED (BY SOMEONE)
-
-export interface NewPostAdded {
-	type: typeof NEW_POST_ADDED;
-	payload: PostType;
-}
-
-// POST DELETED (BY SOMEONE)
-
-export interface DeletePost {
-	type: typeof DELETE_POST;
-	postId: string;
-}
-
-// POST UPDATED (BY SOMEONE)
-
-export interface PostUpdated {
-	type: typeof POST_UPDATED;
-	payload: PostType;
-}
-
 // UPDATE ONLINE STATUS
 export interface UpdateOnlineStatus {
 	type: typeof UPDATE_ONLINE_STATUS;
@@ -117,7 +93,4 @@ export type UsersActionTypes =
 	| SearchUsersSuccess
 	| SearchUsersFailure
 	| SetIsFetchingUser
-	| NewPostAdded
-	| DeletePost
-	| PostUpdated
 	| UpdateOnlineStatus;

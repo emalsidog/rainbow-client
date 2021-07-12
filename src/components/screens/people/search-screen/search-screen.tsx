@@ -18,7 +18,7 @@ import { useIntersectionObserver } from "../../../../hocs/useIntersectionObserve
 
 // Components
 import Layout from "../../../common/layout";
-import Spinner from "../../../common/spinner";
+import Spinner from "../../../common/spinners/cirlce";
 
 import FriendCard from "../people-components/people-card";
 import InfoPanel from "../people-components/info-panel";
@@ -30,7 +30,9 @@ import PeopleSkeleton from "../../../skeletons/templates/people-card-skeleton";
 import styles from "../people.module.css";
 
 const SearchScreen: React.FC = () => {
-	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<boolean | null>(null);
+	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<
+		boolean | null
+	>(null);
 	const [pageNumber, setPageNumber] = useState<number>(1);
 
 	const [idToDisplay, setIdToDisplay] = useState<string>();
@@ -65,7 +67,10 @@ const SearchScreen: React.FC = () => {
 	useEffect(() => {
 		if (!debouncedSearchedName) return;
 
-		if (debouncedSearchedName !== oldSearchedValue.current || hasMoreSearchedData) {
+		if (
+			debouncedSearchedName !== oldSearchedValue.current ||
+			hasMoreSearchedData
+		) {
 			dispatch(
 				searchUsersRequest({
 					requestOptions: {
@@ -109,9 +114,22 @@ const SearchScreen: React.FC = () => {
 		const payload = { _id, givenName, familyName, avatar };
 
 		if (users.length === index + 1) {
-			return <FriendCard ref={ref} key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
+			return (
+				<FriendCard
+					ref={ref}
+					key={_id}
+					{...payload}
+					openInfoPanel={onOpenInfoPanel}
+				/>
+			);
 		}
-		return <FriendCard key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
+		return (
+			<FriendCard
+				key={_id}
+				{...payload}
+				openInfoPanel={onOpenInfoPanel}
+			/>
+		);
 	});
 
 	return (
@@ -124,11 +142,11 @@ const SearchScreen: React.FC = () => {
 				/>
 
 				<section className={styles.cards}>
-					{
-						isLoading.isFetchingUsers 
-							? [1, 2, 3, 4, 5, 6, 7, 8].map(n => <PeopleSkeleton key={n} />)
-							: usersCards
-					}
+					{isLoading.isFetchingUsers
+						? [1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+								<PeopleSkeleton key={n} />
+						  ))
+						: usersCards}
 				</section>
 
 				<div className={styles.spinnerBlock}>

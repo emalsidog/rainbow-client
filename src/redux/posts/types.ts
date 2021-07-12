@@ -16,6 +16,18 @@ const EDIT_POST_REQUEST = "EDIT_POST_REQUEST";
 const EDIT_POST_SUCCESS = "EDIT_POST_SUCCESS";
 const EDIT_POST_FAILURE = "EDIT_POST_FAILURE";
 
+const NEW_POST_ADDED = "NEW_POST_ADDED";
+const DELETE_POST = "DELETE_POST";
+const POST_UPDATED = "POST_UPDATED";
+
+// COMMON
+export interface isLoading {
+	addPost: boolean;
+	editPost: boolean;
+	deletePost: boolean;
+	loadingPosts: boolean;
+}
+
 // LOAD MORE POSTS
 export interface LoadMorePostsRequest {
 	type: typeof LOAD_MORE_POSTS_REQUEST;
@@ -30,6 +42,7 @@ export interface LoadMorePostsSuccess {
 	payload: {
 		hasMorePosts: boolean;
 		posts: PostType[];
+		isCurrentUser: boolean;
 	};
 }
 
@@ -85,6 +98,37 @@ export interface EditPostFailure {
 	type: typeof EDIT_POST_FAILURE;
 }
 
+// NEW POST ADDED (BY SOMEONE)
+
+export interface NewPostAdded {
+	type: typeof NEW_POST_ADDED;
+	payload: PostType;
+}
+
+// POST DELETED (BY SOMEONE)
+
+export interface DeletePost {
+	type: typeof DELETE_POST;
+	postId: string;
+}
+
+// POST UPDATED (BY SOMEONE)
+
+interface PostUpdatedUpdate {
+	action: "UPDATE";
+	updatedPost: PostType;
+}
+
+interface PostUpdatedRemove {
+	action: "REMOVE";
+	postId: string;
+}
+
+export interface PostUpdated {
+	type: typeof POST_UPDATED;
+	payload: PostUpdatedRemove | PostUpdatedUpdate;
+}
+
 export type PostActionTypes =
 	| LoadMorePostsRequest
 	| LoadMorePostsSuccess
@@ -97,4 +141,7 @@ export type PostActionTypes =
 	| DeletePostFailure
 	| EditPostRequest
 	| EditPostSuccess
-	| EditPostFailure;
+	| EditPostFailure
+	| NewPostAdded
+	| DeletePost
+	| PostUpdated;

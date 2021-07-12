@@ -1,5 +1,5 @@
 // Types
-import { PostType, initialUser, User } from "../common-types";
+import { initialUser, User } from "../common-types";
 import { FriendsActionTypes } from "../friends/types";
 import { PostActionTypes } from "../posts";
 import { UsersActionTypes } from "./types";
@@ -32,21 +32,24 @@ const initialState: InitialState = {
 		isFetchingUsers: false,
 		loading: false,
 
-		loadingPosts: false
+		loadingPosts: false,
 	},
 };
 
 type ActionType = UsersActionTypes | FriendsActionTypes | PostActionTypes;
 
 export interface isLoading {
-	isFetchingUser: boolean,
-	isFetchingUsers: boolean,
-	loading: boolean,
+	isFetchingUser: boolean;
+	isFetchingUsers: boolean;
+	loading: boolean;
 
 	loadingPosts: boolean;
 }
 
-export const users = (state = initialState,	action: ActionType): InitialState => {
+export const users = (
+	state = initialState,
+	action: ActionType
+): InitialState => {
 	switch (action.type) {
 		// GET USER
 
@@ -55,8 +58,8 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				isLoading: {
 					...state.isLoading,
-					isFetchingUser: true
-				}
+					isFetchingUser: true,
+				},
 			};
 		}
 		case "GET_USER_BY_ID_SUCCESS": {
@@ -64,10 +67,10 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				isLoading: {
 					...state.isLoading,
-					isFetchingUser: false
+					isFetchingUser: false,
 				},
 				user: {
-					...action.payload.user
+					...action.payload.user,
 				},
 				isCurrenUser: action.payload.isCurrentUser,
 			};
@@ -77,8 +80,8 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				isLoading: {
 					...state.isLoading,
-					isFetchingUser: false
-				}
+					isFetchingUser: false,
+				},
 			};
 		}
 		case "SET_IS_FETCHING_USER": {
@@ -86,8 +89,8 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				isLoading: {
 					...state.isLoading,
-					isFetchingUser: action.isFetching
-				}
+					isFetchingUser: action.isFetching,
+				},
 			};
 		}
 
@@ -98,8 +101,8 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				isLoading: {
 					...state.isLoading,
-					isFetchingUsers: true
-				}
+					isFetchingUsers: true,
+				},
 			};
 		}
 		case "SEARCH_USERS_SUCCESS": {
@@ -116,7 +119,7 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				isLoading: {
 					...state.isLoading,
-					isFetchingUsers: false
+					isFetchingUsers: false,
 				},
 				users: newUsers,
 				hasMoreData: meta.hasMoreData,
@@ -128,8 +131,8 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				...state,
 				isLoading: {
 					...state.isLoading,
-					isFetchingUsers: false
-				}
+					isFetchingUsers: false,
+				},
 			};
 		}
 
@@ -230,88 +233,6 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 		case "CANCEL_FRIEND_REQ_FAILURE": {
 			return {
 				...state,
-			};
-		}
-
-		// LOAD MORE POSTS
-
-		case "LOAD_MORE_POSTS_REQUEST": {
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					loadingPosts: true
-				}
-			}
-		}
-		case "LOAD_MORE_POSTS_SUCCESS": {
-			const { hasMorePosts, posts } = action.payload;
-			console.log(action.payload)
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					loadingPosts: false
-				},
-				user: {
-					...state.user,
-					posts: [...state.user.posts, ...posts],
-				},
-				hasMorePosts
-			}
-		}
-		case "LOAD_MORE_POSTS_FAILURE": {
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					loadingPosts: false
-				}
-			}
-		}
-
-		// WEB SOCKET ACTIONS
-
-		case "NEW_POST_ADDED": {
-			return {
-				...state,
-				user: {
-					...state.user,
-					posts: [action.payload, ...state.user.posts],
-				},
-			};
-		}
-		case "DELETE_POST": {
-			const newPosts = state.user.posts.filter(
-				(post: PostType) => post.postId !== action.postId
-			);
-			return {
-				...state,
-				user: {
-					...state.user,
-					posts: newPosts,
-				},
-			};
-		}
-		case "POST_UPDATED": {
-			const { postText, isPublic, postId } = action.payload;
-
-			const newPosts = state.user.posts.map((post) => {
-				if (post.postId === postId) {
-					return {
-						...post,
-						postText,
-						isPublic,
-					};
-				}
-				return post;
-			});
-			return {
-				...state,
-				user: {
-					...state.user,
-					posts: newPosts,
-				},
 			};
 		}
 
@@ -420,9 +341,9 @@ export const users = (state = initialState,	action: ActionType): InitialState =>
 				user: {
 					...state.user,
 					isOnline,
-					lastSeenOnline
-				}
-			}
+					lastSeenOnline,
+				},
+			};
 		}
 
 		default: {

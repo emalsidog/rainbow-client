@@ -9,7 +9,7 @@ export const loadMorePostsRequest = (payload: {
 	page: number;
 }) => ({
 	type: "LOAD_MORE_POSTS_REQUEST",
-	payload
+	payload,
 });
 
 export const loadMorePostsSuccess = (payload: {
@@ -17,12 +17,12 @@ export const loadMorePostsSuccess = (payload: {
 	posts: PostType[];
 }) => ({
 	type: "LOAD_MORE_POSTS_SUCCESS",
-	payload
+	payload,
 });
 
 export const loadMorePostsFailure = () => ({
-	type: "LOAD_MORE_POSTS_FAILURE"
-})
+	type: "LOAD_MORE_POSTS_FAILURE",
+});
 
 // ADD POST
 

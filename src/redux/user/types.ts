@@ -89,10 +89,6 @@ export interface IsLoading {
 	changeBio: boolean;
 	changeBirthday: boolean;
 
-	addPost: boolean;
-	deletePost: boolean;
-	editPost: boolean;
-
 	loadingUsers: boolean;
 
 	loadingChats: boolean;

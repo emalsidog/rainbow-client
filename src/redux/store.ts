@@ -9,6 +9,7 @@ import { user } from "./user";
 import { auth } from "./auth";
 import { users } from "./users";
 import { notifications } from "./notifications";
+import { posts } from "./posts";
 
 // Watchers
 import { userWatcher } from "./user";
@@ -25,6 +26,7 @@ export const rootReducer = combineReducers({
 	notifications,
 	user,
 	users,
+	posts,
 });
 
 // Root watcher

@@ -14,7 +14,7 @@ import { useIntersectionObserver } from "../../../../hocs/useIntersectionObserve
 
 // Components
 import Layout from "../../../common/layout";
-import Spinner from "../../../common/spinner";
+import Spinner from "../../../common/spinners/cirlce";
 
 import FriendCard from "../people-components/people-card";
 import InfoPanel from "../people-components/info-panel";
@@ -25,7 +25,9 @@ import EmptyListIndicator from "../people-components/empty-list-indicator";
 import styles from "../people.module.css";
 
 const RequestScreen: React.FC = () => {
-	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<boolean | null>(null);
+	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<
+		boolean | null
+	>(null);
 	const [pageNumber, setPageNumber] = useState<number>(1);
 
 	const [idToDisplay, setIdToDisplay] = useState<string>();
@@ -40,9 +42,9 @@ const RequestScreen: React.FC = () => {
 	useEffect(() => {
 		if (hasMoreData) {
 			const requestOptions = {
-				page: pageNumber
-			}
-            dispatch(getPopulatedFriendRequestsRequest(requestOptions));
+				page: pageNumber,
+			};
+			dispatch(getPopulatedFriendRequestsRequest(requestOptions));
 		}
 	}, [dispatch, pageNumber, hasMoreData]);
 
@@ -67,22 +69,34 @@ const RequestScreen: React.FC = () => {
 	const usersCards = requests.map((user, index) => {
 		const { _id, givenName, familyName, avatar } = user;
 		const payload = { _id, givenName, familyName, avatar };
-     
+
 		if (requests.length === index + 1) {
-			return <FriendCard ref={ref} key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
+			return (
+				<FriendCard
+					ref={ref}
+					key={_id}
+					{...payload}
+					openInfoPanel={onOpenInfoPanel}
+				/>
+			);
 		}
-		return <FriendCard key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
+		return (
+			<FriendCard
+				key={_id}
+				{...payload}
+				openInfoPanel={onOpenInfoPanel}
+			/>
+		);
 	});
 
 	return (
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
-
-				{
-					usersCards.length > 0 
-						? <section className={styles.cards}>{usersCards}</section> 
-						: <EmptyListIndicator message="Oh... Nobody wants to be friends with you..." />
-				}
+				{usersCards.length > 0 ? (
+					<section className={styles.cards}>{usersCards}</section>
+				) : (
+					<EmptyListIndicator message="Oh... Nobody wants to be friends with you..." />
+				)}
 
 				<div className={styles.spinnerBlock}>
 					{isLoading.loadingUsers && <Spinner />}
@@ -92,7 +106,7 @@ const RequestScreen: React.FC = () => {
 			</div>
 			<InfoPanel
 				idToDisplay={idToDisplay ? idToDisplay : ""}
-                users={requests}
+				users={requests}
 				isVisible={isInfoPanelVisible}
 				onClose={onCloseInfoPanel}
 			/>

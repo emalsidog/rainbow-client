@@ -14,7 +14,7 @@ import styles from "./display-chat.module.css";
 // Components
 import Textarea from "../../../../common/textarea";
 import Message from "../message";
-import ThreeDots from "../../../../common/spinner/three-dots";
+// import ThreeDots from "../../../../common/spinners/three-dots";
 
 // Types
 import { Chat, ChatProcesses } from "../../../../../redux/chat/types";

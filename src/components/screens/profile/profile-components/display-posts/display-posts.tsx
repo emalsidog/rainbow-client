@@ -1,12 +1,9 @@
 // Dependencies
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // Actions
 import { loadMorePostsRequest } from "../../../../../redux/posts/actions";
-
-// Selectors
-import { selectHasMorePosts } from "../../../../../redux/users/selectors";
 
 // Hooks
 import { useIntersectionObserver } from "../../../../../hocs/useIntersectionObserver";
@@ -27,28 +24,37 @@ interface DisplayPostsProps {
 	familyName: string;
 
 	posts: PostType[];
+	hasMorePosts: boolean;
 
 	isCurrentUser: boolean | undefined;
 }
 
 const DisplayPosts: React.FC<DisplayPostsProps> = (props) => {
-	const { id, avatar, givenName, familyName, posts, isCurrentUser } = props;
+	const {
+		id,
+		avatar,
+		givenName,
+		familyName,
+		posts,
+		isCurrentUser,
+		hasMorePosts,
+	} = props;
 
 	const dispatch = useDispatch();
-	const hasMorePosts = useSelector(selectHasMorePosts);
 
-	const [pageNumber, setPageNumber] = useState<number>(2);
+	const [pageNumber, setPageNumber] = useState<number>(1);
 	const { isIntersecting, ref } = useIntersectionObserver();
 
 	useEffect(() => {
 		if (hasMorePosts) {
 			const payload = {
 				id,
-				page: pageNumber
-			}
+				page: pageNumber,
+				isCurrentUser,
+			};
 			dispatch(loadMorePostsRequest(payload));
 		}
-	}, [dispatch, hasMorePosts, id, pageNumber])
+	}, [dispatch, hasMorePosts, id, pageNumber, isCurrentUser]);
 
 	useEffect(() => {
 		if (isIntersecting) {
@@ -56,15 +62,10 @@ const DisplayPosts: React.FC<DisplayPostsProps> = (props) => {
 		}
 	}, [isIntersecting]);
 
-	let postsToRender = posts;
 	let headingRendering;
 	let postsList;
 
-	if (!isCurrentUser) {
-		postsToRender = posts.filter((post) => post.isPublic !== false);
-	}
-
-	if (postsToRender.length <= 0) {
+	if (posts.length <= 0) {
 		isCurrentUser
 			? (headingRendering = "You do not have posts")
 			: (headingRendering = "User does not have posts");
@@ -74,15 +75,14 @@ const DisplayPosts: React.FC<DisplayPostsProps> = (props) => {
 				authorName={`${givenName} ${familyName}`}
 				isCurrentUser={isCurrentUser}
 				avatar={avatar}
-				post={postsToRender[0]}
+				post={posts[0]}
 			/>
 		);
 	}
 
-	postsList = postsToRender.slice(1).map((post, index) => {
-		
+	postsList = posts.slice(1).map((post, index) => {
 		// +2 because starting from 1 index ^^^
-		if (postsToRender.length === index + 2) {
+		if (posts.length === index + 2) {
 			return (
 				<div ref={ref} key={post.postId} className={styles.wrapper}>
 					<Post

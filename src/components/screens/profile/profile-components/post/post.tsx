@@ -9,7 +9,7 @@ import {
 } from "../../../../../redux/posts/actions";
 
 // Selectors
-import { selectIsLoading } from "../../../../../redux/user/selector";
+import { selectIsPostsLoading } from "../../../../../redux/posts/selectors";
 
 // Utils
 import { formatDate } from "../../../../utils/format-date";
@@ -39,12 +39,13 @@ const Post: React.FC<PostProps> = (props) => {
 
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const [editedPostText, setEditedPostText] = useState<string>(postText);
-	const [editedAccessRight, setEditedAccessRight] = useState<boolean>(isPublic);
+	const [editedAccessRight, setEditedAccessRight] =
+		useState<boolean>(isPublic);
 
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
 	const dispatch = useDispatch();
-	const isLoading = useSelector(selectIsLoading);
+	const isLoading = useSelector(selectIsPostsLoading);
 
 	const oldPostText = useRef(postText);
 	const oldAccessRights = useRef(isPublic);
@@ -69,7 +70,9 @@ const Post: React.FC<PostProps> = (props) => {
 		postId && dispatch(deletePostRequest(postId));
 	};
 
-	const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+	const handleTextAreaChange = (
+		e: React.ChangeEvent<HTMLTextAreaElement>
+	) => {
 		setEditedPostText(e.target.value);
 	};
 
@@ -98,7 +101,9 @@ const Post: React.FC<PostProps> = (props) => {
 	};
 
 	const isSavedButtonDisabled =
-		(editedPostText === oldPostText.current && editedAccessRight === oldAccessRights.current) || isLoading.editPost;
+		(editedPostText === oldPostText.current &&
+			editedAccessRight === oldAccessRights.current) ||
+		isLoading.editPost;
 
 	return (
 		<React.Fragment>
@@ -109,7 +114,10 @@ const Post: React.FC<PostProps> = (props) => {
 					</div>
 					<div className={styles.postInfo}>
 						<div>{authorName}</div>
-						<div>{`${formatDate(timePosted, "REGULAR")} at ${formatDate(timePosted, "TIME")}`}</div>
+						<div>{`${formatDate(
+							timePosted,
+							"REGULAR"
+						)} at ${formatDate(timePosted, "TIME")}`}</div>
 					</div>
 				</div>
 

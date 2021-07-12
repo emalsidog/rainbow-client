@@ -15,7 +15,7 @@ import { useIntersectionObserver } from "../../../../hocs/useIntersectionObserve
 
 // Components
 import Layout from "../../../common/layout";
-import Spinner from "../../../common/spinner";
+import Spinner from "../../../common/spinners/cirlce";
 
 import FriendCard from "../people-components/people-card";
 import InfoPanel from "../people-components/info-panel";
@@ -27,7 +27,9 @@ import EmptyListIndicator from "../people-components/empty-list-indicator";
 import styles from "../people.module.css";
 
 const FriendsScreen: React.FC = () => {
-	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<boolean | null>(null);
+	const [isInfoPanelVisible, setIsInfoPanelVisible] = useState<
+		boolean | null
+	>(null);
 	const [pageNumber, setPageNumber] = useState<number>(1);
 
 	const [idToDisplay, setIdToDisplay] = useState<string>();
@@ -36,9 +38,9 @@ const FriendsScreen: React.FC = () => {
 	const { isIntersecting, ref } = useIntersectionObserver();
 
 	const dispatch = useDispatch();
-    const [friends, hasMoreData, hasMoreSearchedData] = useSelector(selectFriends);
+	const [friends, hasMoreData, hasMoreSearchedData] =
+		useSelector(selectFriends);
 	const isLoading = useSelector(selectIsLoading);
-
 
 	const debouncedSearchedName = useDebounce<string>(searchValue, 300);
 	const oldSearchedValue = useRef<string>("");
@@ -46,30 +48,33 @@ const FriendsScreen: React.FC = () => {
 	// Handle users fetching without search values
 	useEffect(() => {
 		if (debouncedSearchedName) return;
-		
+
 		if (hasMoreData) {
 			const payload = {
 				requestOptions: {
-					page: pageNumber
-				}
-			}
-            dispatch(getPopulatedFriendsRequest(payload));
+					page: pageNumber,
+				},
+			};
+			dispatch(getPopulatedFriendsRequest(payload));
 		}
 	}, [dispatch, pageNumber, hasMoreData, debouncedSearchedName]);
 
 	// Handle users fetching with search values
 	useEffect(() => {
 		if (!debouncedSearchedName) return;
-		
-		if (debouncedSearchedName !== oldSearchedValue.current || hasMoreSearchedData) {
+
+		if (
+			debouncedSearchedName !== oldSearchedValue.current ||
+			hasMoreSearchedData
+		) {
 			const payload = {
 				requestOptions: {
-					page: pageNumber
+					page: pageNumber,
 				},
 				options: {
-					displayName: debouncedSearchedName
-				}
-			}
+					displayName: debouncedSearchedName,
+				},
+			};
 			dispatch(getPopulatedFriendsRequest(payload));
 
 			oldSearchedValue.current = debouncedSearchedName;
@@ -102,31 +107,42 @@ const FriendsScreen: React.FC = () => {
 	const usersCards = friends.map((user, index) => {
 		const { _id, givenName, familyName, avatar } = user;
 		const payload = { _id, givenName, familyName, avatar };
-     
+
 		if (friends.length === index + 1) {
-			return <FriendCard ref={ref} key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
+			return (
+				<FriendCard
+					ref={ref}
+					key={_id}
+					{...payload}
+					openInfoPanel={onOpenInfoPanel}
+				/>
+			);
 		}
-		return <FriendCard key={_id} {...payload} openInfoPanel={onOpenInfoPanel} />
+		return (
+			<FriendCard
+				key={_id}
+				{...payload}
+				openInfoPanel={onOpenInfoPanel}
+			/>
+		);
 	});
 
 	return (
 		<Layout overlay={isInfoPanelVisible}>
 			<div className="col-10">
-				{
-					usersCards.length > 0 && (
-						<SearchPanel
-							isLoading={isLoading.loadingUsers}
-							value={searchValue}
-							handleChange={handleChange}
-						/>
-					)
-				}
+				{usersCards.length > 0 && (
+					<SearchPanel
+						isLoading={isLoading.loadingUsers}
+						value={searchValue}
+						handleChange={handleChange}
+					/>
+				)}
 
-				{
-					usersCards.length > 0 
-						? <section className={styles.cards}>{usersCards}</section> 
-						: <EmptyListIndicator message="Don't worry. You will find someone..." />
-				}
+				{usersCards.length > 0 ? (
+					<section className={styles.cards}>{usersCards}</section>
+				) : (
+					<EmptyListIndicator message="Don't worry. You will find someone..." />
+				)}
 
 				<div className={styles.spinnerBlock}>
 					{isLoading.loadingUsers && <Spinner />}
@@ -136,7 +152,7 @@ const FriendsScreen: React.FC = () => {
 			</div>
 			<InfoPanel
 				idToDisplay={idToDisplay ? idToDisplay : ""}
-                users={friends}
+				users={friends}
 				isVisible={isInfoPanelVisible}
 				onClose={onCloseInfoPanel}
 			/>

@@ -15,10 +15,12 @@ import {
 	selectUsersIsLoading,
 	selectUser,
 } from "../../../redux/users/selectors";
+import { selectUser as selectCurrentUser } from "../../../redux/user/selector";
 import {
-	selectIsLoading,
-	selectUser as selectCurrentUser,
-} from "../../../redux/user/selector";
+	selectPosts,
+	selectDisplayedUserPosts,
+	selectIsPostsLoading,
+} from "../../../redux/posts/selectors";
 
 // Utils
 import { formatDate } from "../../utils/format-date";
@@ -31,7 +33,7 @@ import styles from "./profile.module.css";
 
 // Components
 import Layout from "../../common/layout";
-import Spinner from "../../common/spinner";
+import Spinner from "../../common/spinners/cirlce";
 
 import PostForm from "./profile-components/post-form";
 import DisplayPosts from "./profile-components/display-posts";
@@ -47,8 +49,13 @@ const Profile: React.FC = () => {
 	const displayedUser = useSelector(selectUser);
 	const currentUser = useSelector(selectCurrentUser);
 	const isCurrentUser = useSelector(selectIsCurrentUser);
-	const isLoading = useSelector(selectIsLoading);
 	const isLoadingUsers = useSelector(selectUsersIsLoading);
+
+	const { posts, hasMorePosts } = useSelector(selectPosts);
+	const { displayedUserPosts, hasMoreDisplayedUserPosts } = useSelector(
+		selectDisplayedUserPosts
+	);
+	const isPostsLoading = useSelector(selectIsPostsLoading);
 
 	const history = useHistory();
 	const friendshipStatus = useFriendshipStatus(currentUser, displayedUser);
@@ -74,7 +81,6 @@ const Profile: React.FC = () => {
 		avatar,
 		birthday,
 		registrationDate,
-		posts,
 		accountType,
 		isOnline,
 		lastSeenOnline,
@@ -169,7 +175,7 @@ const Profile: React.FC = () => {
 				</div>
 
 				{isCurrentUser ? (
-					<PostForm isLoading={isLoading.addPost} />
+					<PostForm isLoading={isPostsLoading.addPost} />
 				) : null}
 
 				<DisplayPosts
@@ -178,11 +184,14 @@ const Profile: React.FC = () => {
 					givenName={givenName}
 					familyName={familyName}
 					isCurrentUser={isCurrentUser}
-					posts={isCurrentUser ? currentUser.posts : posts}
+					posts={isCurrentUser ? posts : displayedUserPosts}
+					hasMorePosts={
+						isCurrentUser ? hasMorePosts : hasMoreDisplayedUserPosts
+					}
 				/>
 
 				<div className={styles.spinnerBlock}>
-					{isLoadingUsers.loadingPosts && <Spinner />}
+					{isPostsLoading.loadingPosts && <Spinner />}
 				</div>
 			</div>
 

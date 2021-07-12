@@ -27,7 +27,7 @@ import Settings from "../screens/settings";
 
 import Notification from "../common/notification";
 import BgAnimation from "../common/bg-animation";
-import MainLoader from "../common/main-loader";
+import MainLoader from "../common/spinners/main-loader";
 
 import ProtectedRoute from "../../hocs/protected-route";
 

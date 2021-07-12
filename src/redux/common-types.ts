@@ -28,7 +28,6 @@ export const initialUser = {
 	isOnline: false,
 	lastSeenOnline: undefined,
 
-	posts: [],
 	friends: [],
 	friendRequests: [],
 
@@ -51,7 +50,6 @@ export interface User {
 	isOnline: boolean;
 	lastSeenOnline: Date | undefined;
 
-	posts: PostType[];
 	friends: string[];
 	friendRequests: string[];
 
