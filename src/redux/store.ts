@@ -10,6 +10,7 @@ import { auth } from "./auth";
 import { users } from "./users";
 import { notifications } from "./notifications";
 import { posts } from "./posts";
+import { chats } from "./chat/reducer";
 
 // Watchers
 import { userWatcher } from "./user";
@@ -27,6 +28,7 @@ export const rootReducer = combineReducers({
 	user,
 	users,
 	posts,
+	chats,
 });
 
 // Root watcher

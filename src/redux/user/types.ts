@@ -90,9 +90,6 @@ export interface IsLoading {
 	changeBirthday: boolean;
 
 	loadingUsers: boolean;
-
-	loadingChats: boolean;
-	creatingNewChat: boolean;
 }
 
 // SET USER

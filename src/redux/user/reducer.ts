@@ -4,7 +4,6 @@ import { PostActionTypes } from "../posts";
 import { EmailChangingProcess, IsLoading, UserActionTypes } from "./types";
 
 import { FriendsActionTypes } from "../friends/types";
-import { Chat, ChatActionTypes, ChatProcesses, Message } from "../chat/types";
 
 interface InitialState {
 	user: User;
@@ -19,8 +18,6 @@ interface InitialState {
 			hasMoreData: boolean;
 		};
 	};
-
-	chats: Chat[];
 
 	requestsCounter: number;
 
@@ -44,7 +41,6 @@ const initialState: InitialState = {
 			hasMoreData: true,
 		},
 	},
-	chats: [],
 
 	requestsCounter: 0,
 
@@ -67,17 +63,10 @@ const initialState: InitialState = {
 		changeBirthday: false,
 
 		loadingUsers: false,
-
-		loadingChats: false,
-		creatingNewChat: false,
 	},
 };
 
-type ActionType =
-	| UserActionTypes
-	| PostActionTypes
-	| FriendsActionTypes
-	| ChatActionTypes;
+type ActionType = UserActionTypes | PostActionTypes | FriendsActionTypes;
 
 export const user = (
 	state = initialState,
@@ -637,130 +626,6 @@ export const user = (
 			};
 		}
 
-		// GET CHATS
-
-		case "GET_CHATS_REQUEST": {
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					loadingUsers: true,
-				},
-			};
-		}
-		case "GET_CHATS_SUCCESS": {
-			const chats = action.chats.map((chat) => ({
-				...chat,
-				status: {
-					type: "IDLE" as ChatProcesses,
-					whoInProcess: null,
-				},
-			}));
-
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					loadingUsers: false,
-				},
-				chats,
-			};
-		}
-		case "GET_CHATS_FAILURE": {
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					loadingUsers: false,
-				},
-			};
-		}
-
-		// ADD MESSAGE
-		case "ADD_MESSAGE_REQUEST": {
-			const { message } = action;
-			const newChats = addMessage(state.chats, message);
-
-			return {
-				...state,
-				chats: newChats,
-			};
-		}
-		case "ADD_MESSAGE_SUCCESS": {
-			return {
-				...state,
-			};
-		}
-		case "ADD_MESSAGE_FAILURE": {
-			return {
-				...state,
-			};
-		}
-		case "ADD_MESSAGE_WS": {
-			const { message } = action;
-			const newChats = addMessage(state.chats, message);
-
-			return {
-				...state,
-				chats: newChats,
-			};
-		}
-
-		// Create new chat
-		case "CREATE_CHAT_REQUEST": {
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					creatingNewChat: true,
-				},
-			};
-		}
-		case "CREATE_CHAT_SUCCESS": {
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					creatingNewChat: false,
-				},
-			};
-		}
-		case "CREATE_CHAT_FAILURE": {
-			return {
-				...state,
-				isLoading: {
-					...state.isLoading,
-					creatingNewChat: false,
-				},
-			};
-		}
-		case "CHAT_CREATED_WS": {
-			return {
-				...state,
-				chats: [...state.chats, action.chat],
-			};
-		}
-
-		case "CHANGE_CHAT_PROCESS": {
-			const { chatId, processType, whoInAction } = action.payload;
-			const newChats = state.chats.map((chat) => {
-				if (chat.chatId === chatId) {
-					return {
-						...chat,
-						status: {
-							type: processType,
-							whoInProcess: whoInAction,
-						},
-					};
-				}
-				return chat;
-			});
-			return {
-				...state,
-				chats: newChats,
-			};
-		}
-
 		/* 
 			"NEW_FRIEND_REQUEST" - responsible for updating client,
 			which have got a notification (add currentUserId to friendRequests)
@@ -844,17 +709,4 @@ export const user = (
 			};
 		}
 	}
-};
-
-// Add new message to chat
-const addMessage = (chats: Chat[], message: Message): Chat[] => {
-	return chats.map((chat) => {
-		if (chat.chatId === message.chatId) {
-			return {
-				...chat,
-				messages: [...chat.messages, message],
-			};
-		}
-		return chat;
-	});
 };

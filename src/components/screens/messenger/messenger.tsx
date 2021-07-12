@@ -7,13 +7,11 @@ import { useHistory, useParams } from "react-router";
 import { getChatsRequest } from "../../../redux/chat/actions";
 
 // Selectors
-import { selectChats, selectUser } from "../../../redux/user/selector";
+import { selectUser } from "../../../redux/user/selector";
+import { selectChats } from "../../../redux/chat/selectors";
 
 // Hooks
 import useWindowSize from "../../../hocs/useWindowsSize";
-
-// Styles
-// import styles from "./messenger.module.css";
 
 // Components
 import Layout from "../../common/layout";

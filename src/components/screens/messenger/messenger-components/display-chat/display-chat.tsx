@@ -14,7 +14,7 @@ import styles from "./display-chat.module.css";
 // Components
 import Textarea from "../../../../common/textarea";
 import Message from "../message";
-// import ThreeDots from "../../../../common/spinners/three-dots";
+import ThreeDots from "../../../../common/spinners/three-dots";
 
 // Types
 import { Chat, ChatProcesses } from "../../../../../redux/chat/types";
@@ -172,7 +172,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	switch (chat.status.type) {
 		case "TYPING":
-			displayChatProcess = <span>typing...</span>;
+			displayChatProcess = <ThreeDots loadingText="typing" />;
 			break;
 		case "IDLE":
 			displayChatProcess = <span>idle</span>;

@@ -2,7 +2,6 @@
 import { RootState } from "../store";
 import { IsLoading, EmailChangingProcess } from "./types";
 import { User } from "../common-types";
-import { Chat } from "../chat/types";
 
 // USER
 export const selectUser = (state: RootState): User => state.user.user;
@@ -36,6 +35,3 @@ export const selectRequests = (state: RootState): [User[], boolean] => [
 // REQUESTS COUNTER
 export const selectRequestsCounter = (state: RootState): number =>
 	state.user.requestsCounter;
-
-// GET CHATS
-export const selectChats = (state: RootState): Chat[] => state.user.chats;
