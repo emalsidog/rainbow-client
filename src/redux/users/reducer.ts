@@ -343,8 +343,6 @@ export const users = (
 
 			const alreadyInList = state.onlineUsers.includes(id);
 
-			console.log(alreadyInList);
-
 			if (isOnline && alreadyInList) {
 				newOnlineUsers = [...state.onlineUsers];
 			} else if (isOnline) {

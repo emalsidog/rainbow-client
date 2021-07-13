@@ -169,15 +169,16 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		familyName = chat.creator.familyName;
 	}
 
-	let messages;
+	let messages: JSX.Element[] | JSX.Element = [];
 
 	if (chat.messages.length > 0) {
-		messages = chat.messages.map((message, index) => {
+		messages = chat.messages.map((message) => {
 			return (
 				<Message
 					key={message.messageId}
 					messageText={message.text}
 					isRightAligned={message.sender === currentUserId}
+					messageId={message.messageId}
 				/>
 			);
 		});

@@ -1,5 +1,5 @@
 .dd-wrapper {
-    position: relative;
+	position: relative;
 }
 
 /* HEADER */
@@ -23,17 +23,19 @@
 
 .dd-list {
 	position: absolute;
-	
+
 	background-color: #ffffff;
 
 	border: 1px solid #d7d7d7;
 
-    min-width: 200px;
-    width: 100%;
+	min-width: 200px;
+	width: 100%;
 
-    margin-top: 5px;
-    right: 0;
-    left: auto;
+	margin-top: 5px;
+	right: 0;
+	left: auto;
+
+	z-index: 5;
 }
 
 /* LIST ITEM */
@@ -79,8 +81,8 @@
 /* DIVIDER */
 
 .dd-divider {
-    height: 0;
-    margin: .5rem 0;
-    overflow: hidden;
-    border-top: 1px solid rgba(0,0,0,.15);
+	height: 0;
+	margin: 0.5rem 0;
+	overflow: hidden;
+	border-top: 1px solid rgba(0, 0, 0, 0.15);
 }
