@@ -8,7 +8,6 @@ interface InitialState {
 	user: User;
 	users: User[];
 
-	hasMorePosts: boolean;
 	hasMoreData: boolean;
 	hasMoreSearchedData: boolean;
 
@@ -21,7 +20,6 @@ const initialState: InitialState = {
 	user: initialUser,
 	users: [],
 
-	hasMorePosts: true,
 	hasMoreData: true,
 	hasMoreSearchedData: true,
 

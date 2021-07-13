@@ -27,6 +27,7 @@ import { formatDate } from "../../utils/format-date";
 
 // Hooks
 import { useFriendshipStatus } from "../../../hocs/useFriendshipStatus";
+import { useOnlineStatus } from "../../../hocs/useOnlineStatus";
 
 // Styles
 import styles from "./profile.module.css";
@@ -58,8 +59,10 @@ const Profile: React.FC = () => {
 	const isPostsLoading = useSelector(selectIsPostsLoading);
 
 	const history = useHistory();
-	const friendshipStatus = useFriendshipStatus(currentUser, displayedUser);
 	const { profileId }: any = useParams();
+	const friendshipStatus = useFriendshipStatus(currentUser, displayedUser);
+
+	const onlineStatus = useOnlineStatus(displayedUser._id);
 
 	useEffect(() => {
 		dispatch(getUserByIdRequest(profileId));
@@ -117,10 +120,16 @@ const Profile: React.FC = () => {
 									</div>
 									{!isCurrentUser && (
 										<div className={styles.onlineStatus}>
-											{isOnline
+											{/* {isOnline
 												? "online"
 												: formatDate(
 														lastSeenOnline,
+														"LAST_SEEN_ONLINE"
+												  )} */}
+											{onlineStatus.isOnline
+												? onlineStatus.status
+												: formatDate(
+														onlineStatus.lastSeenOnline,
 														"LAST_SEEN_ONLINE"
 												  )}
 										</div>

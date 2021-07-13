@@ -4,10 +4,12 @@ import { RootState } from "../store";
 import { isLoading } from "./reducer";
 
 // IS LOADING
-export const selectUsersIsLoading = (state: RootState): isLoading => state.users.isLoading;
+export const selectUsersIsLoading = (state: RootState): isLoading =>
+	state.users.isLoading;
 
 // IS CURRENT USER
-export const selectIsCurrentUser = (state: RootState): boolean | undefined => state.users.isCurrenUser;
+export const selectIsCurrentUser = (state: RootState): boolean | undefined =>
+	state.users.isCurrenUser;
 
 // USER
 export const selectUser = (state: RootState): User => state.users.user;
@@ -16,7 +18,7 @@ export const selectUser = (state: RootState): User => state.users.user;
 export const selectUsers = (state: RootState): User[] => state.users.users;
 
 // TOTAL USERS
-export const selectHasMoreData = (state: RootState) => [state.users.hasMoreData, state.users.hasMoreSearchedData];
-
-// HAS MORE POSTS
-export const selectHasMorePosts = (state: RootState): boolean => state.users.hasMorePosts;
+export const selectHasMoreData = (state: RootState) => [
+	state.users.hasMoreData,
+	state.users.hasMoreSearchedData,
+];

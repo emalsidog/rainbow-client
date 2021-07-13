@@ -99,12 +99,14 @@ function initWebsocket(): EventChannel<any> {
 							payload: response.payload,
 						});
 					}
+
 					case "DELETE_POST": {
 						return emitter({
 							type: "DELETE_POST",
 							postId: response.payload,
 						});
 					}
+
 					case "POST_UPDATED": {
 						return emitter({
 							type: "POST_UPDATED",
