@@ -84,8 +84,13 @@ const ChangeBio: React.FC<ChangeBioProps> = (props) => {
 	};
 
 	// Handle enter click (textarea)
-	const onEnter = (): void => {
-		!isTheSame && dispatch(changeBioRequest(textareaOptions.value));
+	const handleKeyDown = (
+		e: React.KeyboardEvent<HTMLTextAreaElement>
+	): void => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			!isTheSame && dispatch(changeBioRequest(textareaOptions.value));
+		}
 	};
 
 	// Handle form submit
@@ -110,7 +115,7 @@ const ChangeBio: React.FC<ChangeBioProps> = (props) => {
 								isLoading={isLoading}
 								textareaOptions={textareaOptions}
 								setTextareaOptions={setTextareaOptions}
-								onEnter={onEnter}
+								handleKeyDown={handleKeyDown}
 							/>
 						</div>
 						<div className="form-group">

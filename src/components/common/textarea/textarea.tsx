@@ -19,7 +19,7 @@ interface TextareaProps {
 	textareaOptions: TextAreaOptions;
 	setTextareaOptions: (prev: any) => any;
 
-	onEnter?: () => void;
+	handleKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 const Textarea: React.FC<TextareaProps> = (props) => {
@@ -57,19 +57,12 @@ const Textarea: React.FC<TextareaProps> = (props) => {
 		}));
 	};
 
-	// Handle key down
-	const handleKeyDown = (
-		e: React.KeyboardEvent<HTMLTextAreaElement>
-	): void => {
-		const { onEnter } = props;
-
-		if (onEnter && e.key === "Enter") {
-			e.preventDefault();
-			onEnter();
-		}
-	};
-
-	const { autoFocus = false, placeholder, classNames = "textarea" } = props;
+	const {
+		autoFocus = false,
+		placeholder,
+		classNames = "textarea",
+		handleKeyDown,
+	} = props;
 
 	return (
 		<textarea

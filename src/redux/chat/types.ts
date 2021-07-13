@@ -43,6 +43,7 @@ export interface Message {
 	time: Date;
 	sender: string;
 	chatId: string;
+	messageId: string;
 }
 
 // GET CHATS

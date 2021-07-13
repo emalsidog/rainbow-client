@@ -1,6 +1,7 @@
 // Dependencies
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
 
 // Websocket connection
 import { websocket } from "../../../../../redux/websockets/saga";
@@ -55,7 +56,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const dispatch = useDispatch();
 
 	let id: string = chat.creator._id;
-
 	if (currentUserId === id) {
 		id = chat.participants[0]._id;
 	}
@@ -124,6 +124,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				time: new Date(),
 				sender: currentUserId,
 				chatId: chat.chatId,
+				messageId: uuidv4(),
 			},
 			recipients,
 		};
@@ -148,8 +149,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		sendMessage();
 	};
 
-	const onEnter = (): void => {
-		sendMessage();
+	const handleKeyDown = (
+		e: React.KeyboardEvent<HTMLTextAreaElement>
+	): void => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			sendMessage();
+		}
 	};
 
 	let givenName: string;
@@ -169,7 +175,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		messages = chat.messages.map((message, index) => {
 			return (
 				<Message
-					key={index}
+					key={message.messageId}
 					messageText={message.text}
 					isRightAligned={message.sender === currentUserId}
 				/>
@@ -186,7 +192,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			displayChatProcess = <ThreeDots loadingText="typing" />;
 			break;
 		case "IDLE":
-			displayChatProcess = <span>{onlineStatus}</span>;
+			displayChatProcess = <span>{onlineStatus.status}</span>;
 			break;
 	}
 
@@ -215,7 +221,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					textareaOptions={textareaOptions}
 					autoFocus={true}
 					setTextareaOptions={setTextareaOptions}
-					onEnter={onEnter}
+					handleKeyDown={handleKeyDown}
 					placeholder="Write a message..."
 					classNames={styles.messageTextarea}
 				/>

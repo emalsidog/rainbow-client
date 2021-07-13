@@ -112,13 +112,17 @@ const Messenger: React.FC = () => {
 	if (chatId || width > 850) {
 		chat = (
 			<div className="col-7">
-				{chatToDisplay && (
+				{chatToDisplay ? (
 					<DisplayChat
 						chat={chatToDisplay}
 						currentUserId={currentUser._id}
 						currentUserProfileId={currentUser.profileId}
 						onGoBack={handleGoBack}
 					/>
+				) : (
+					<div style={{ textAlign: "center" }}>
+						Select dialog to start chatting
+					</div>
 				)}
 			</div>
 		);
@@ -127,7 +131,13 @@ const Messenger: React.FC = () => {
 	if (!chatId || width > 850) {
 		dialogs = (
 			<div style={{ marginLeft: "5px" }} className="col-3">
-				{listOfDialogs}
+				{listOfDialogs.length > 0 ? (
+					listOfDialogs
+				) : (
+					<div style={{ textAlign: "center" }}>
+						You do not have opened dialogs
+					</div>
+				)}
 			</div>
 		);
 	}

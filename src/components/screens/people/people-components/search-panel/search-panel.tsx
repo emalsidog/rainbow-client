@@ -26,7 +26,6 @@ const SearchPanel: React.FC<SearchPanelProps> = (props) => {
 				value={value}
 				onChange={handleChange}
 				placeholder="Search by name..."
-				autoFocus
 			/>
 		</div>
 	);
