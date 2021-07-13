@@ -85,6 +85,12 @@ const Messenger: React.FC = () => {
 				? messages[messages.length - 1].text
 				: undefined;
 
+		let id: string = chat.creator._id;
+
+		if (currentUser._id === id) {
+			id = chat.participants[0]._id;
+		}
+
 		return (
 			<DisplayDialog
 				key={chatId}
@@ -93,6 +99,7 @@ const Messenger: React.FC = () => {
 				familyName={familyName}
 				lastMessage={lastMessage}
 				avatar={avatar}
+				participantId={id}
 				handleDialogClick={handleDialogClick}
 				isActive={chatToDisplay?.chatId === chatId}
 			/>

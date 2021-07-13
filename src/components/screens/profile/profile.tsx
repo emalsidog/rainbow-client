@@ -85,8 +85,6 @@ const Profile: React.FC = () => {
 		birthday,
 		registrationDate,
 		accountType,
-		isOnline,
-		lastSeenOnline,
 	} = displayedUser;
 
 	if (isLoadingUsers.isFetchingUser) {
@@ -120,18 +118,7 @@ const Profile: React.FC = () => {
 									</div>
 									{!isCurrentUser && (
 										<div className={styles.onlineStatus}>
-											{/* {isOnline
-												? "online"
-												: formatDate(
-														lastSeenOnline,
-														"LAST_SEEN_ONLINE"
-												  )} */}
-											{onlineStatus.isOnline
-												? onlineStatus.status
-												: formatDate(
-														onlineStatus.lastSeenOnline,
-														"LAST_SEEN_ONLINE"
-												  )}
+											{onlineStatus.status}
 										</div>
 									)}
 								</div>

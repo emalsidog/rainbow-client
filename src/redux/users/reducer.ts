@@ -11,6 +11,8 @@ interface InitialState {
 	hasMoreData: boolean;
 	hasMoreSearchedData: boolean;
 
+	onlineUsers: string[];
+
 	isCurrenUser: boolean | undefined;
 
 	isLoading: isLoading;
@@ -22,6 +24,8 @@ const initialState: InitialState = {
 
 	hasMoreData: true,
 	hasMoreSearchedData: true,
+
+	onlineUsers: [],
 
 	isCurrenUser: undefined,
 
@@ -333,14 +337,33 @@ export const users = (
 			UPDATE ONLINE STATUS
 		*/
 		case "UPDATE_ONLINE_STATUS": {
-			const { isOnline, lastSeenOnline } = action.payload;
+			const { isOnline, id } = action.payload;
+
+			let newOnlineUsers: string[] = [];
+
+			const alreadyInList = state.onlineUsers.includes(id);
+
+			console.log(alreadyInList);
+
+			if (isOnline && alreadyInList) {
+				newOnlineUsers = [...state.onlineUsers];
+			} else if (isOnline) {
+				newOnlineUsers = [...state.onlineUsers, id];
+			} else {
+				newOnlineUsers = state.onlineUsers.filter(
+					(userId) => userId !== id
+				);
+			}
+
 			return {
 				...state,
-				user: {
-					...state.user,
-					isOnline,
-					lastSeenOnline,
-				},
+				onlineUsers: newOnlineUsers,
+			};
+		}
+		case "GET_ONLINE_CLIENTS": {
+			return {
+				...state,
+				onlineUsers: action.clients,
 			};
 		}
 

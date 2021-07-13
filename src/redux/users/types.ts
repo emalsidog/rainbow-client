@@ -9,6 +9,7 @@ const SEARCH_USERS_SUCCESS = "SEARCH_USERS_SUCCESS";
 const SEARCH_USERS_FAILURE = "SEARCH_USERS_FAILURE";
 
 const UPDATE_ONLINE_STATUS = "UPDATE_ONLINE_STATUS";
+const GET_ONLINE_CLIENTS = "GET_ONLINE_CLIENTS";
 
 const SET_IS_FETCHING_USER = "SET_IS_FETCHING_USER";
 
@@ -81,8 +82,13 @@ export interface UpdateOnlineStatus {
 	type: typeof UPDATE_ONLINE_STATUS;
 	payload: {
 		isOnline: boolean;
-		lastSeenOnline?: Date;
+		id: string;
 	};
+}
+
+export interface GetOnlineClients {
+	type: typeof GET_ONLINE_CLIENTS;
+	clients: string[];
 }
 
 export type UsersActionTypes =
@@ -93,4 +99,5 @@ export type UsersActionTypes =
 	| SearchUsersSuccess
 	| SearchUsersFailure
 	| SetIsFetchingUser
-	| UpdateOnlineStatus;
+	| UpdateOnlineStatus
+	| GetOnlineClients;

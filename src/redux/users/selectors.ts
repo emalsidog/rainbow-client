@@ -22,3 +22,7 @@ export const selectHasMoreData = (state: RootState) => [
 	state.users.hasMoreData,
 	state.users.hasMoreSearchedData,
 ];
+
+// GET ONLINE USERS
+export const selectOnlineUsers = (state: RootState): string[] =>
+	state.users.onlineUsers;

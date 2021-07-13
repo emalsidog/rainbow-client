@@ -47,9 +47,6 @@ export interface User {
 	bio: string;
 	accountType: "DEVELOPER" | "MEMBER" | "VERIFIED";
 
-	isOnline: boolean;
-	lastSeenOnline: Date | undefined;
-
 	friends: string[];
 	friendRequests: string[];
 

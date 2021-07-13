@@ -8,6 +8,9 @@ import { websocket } from "../../../../../redux/websockets/saga";
 // Actions
 import { addMessageRequest } from "../../../../../redux/chat/actions";
 
+// Hooks
+import { useOnlineStatus } from "../../../../../hocs/useOnlineStatus";
+
 // Styles
 import styles from "./display-chat.module.css";
 
@@ -50,6 +53,14 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	});
 
 	const dispatch = useDispatch();
+
+	let id: string = chat.creator._id;
+
+	if (currentUserId === id) {
+		id = chat.participants[0]._id;
+	}
+
+	const onlineStatus = useOnlineStatus(id);
 
 	const messagesDiv = useRef<HTMLDivElement>(null);
 
@@ -175,7 +186,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			displayChatProcess = <ThreeDots loadingText="typing" />;
 			break;
 		case "IDLE":
-			displayChatProcess = <span>idle</span>;
+			displayChatProcess = <span>{onlineStatus}</span>;
 			break;
 	}
 

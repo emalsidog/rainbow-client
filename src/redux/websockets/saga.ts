@@ -66,6 +66,13 @@ function initWebsocket(): EventChannel<any> {
 						});
 					}
 
+					case "ONLINE_CLIENTS": {
+						return emitter({
+							type: "GET_ONLINE_CLIENTS",
+							clients: response.onlineClientsIds,
+						});
+					}
+
 					case "CLOSE_CONNECTION": {
 						id = undefined;
 						clearInterval(intervalId);

@@ -43,7 +43,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 		},
 	});
 
-    const userInput = watch("profileId");
+	const userInput = watch("profileId");
 
 	const onSubmit: SubmitHandler<Inputs> = ({ profileId }) => {
 		dispatch(changeProfileIdRequest(profileId));
@@ -66,7 +66,7 @@ const ChangeName: React.FC<ChangeNameProps> = (props) => {
 
 			<div className="settings-row-change">
 				<span>
-					rainbow-client.herokuapp.com/<b>{userInput}</b>
+					rainbow-tm.herokuapp.com/<b>{userInput}</b>
 				</span>
 				{changeProfileIdShow && (
 					<form

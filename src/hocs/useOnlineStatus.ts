@@ -1,45 +1,56 @@
 // Dependencies
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
+// Selectors
+import { selectOnlineUsers } from "../redux/users/selectors";
 
 // Utils
 import { AxiosPostRequest } from "../redux/utils/server-request";
+import { formatDate } from "../components/utils/format-date";
 
 // Types
 interface OnlineStatus {
 	isOnline: boolean;
 	status: string;
-	lastSeenOnline: Date | undefined;
 }
 
 export const useOnlineStatus = (userId: string): OnlineStatus => {
 	const [onlineStatus, setOnlineStatus] = useState<OnlineStatus>({
 		isOnline: false,
-		status: "offline",
-		lastSeenOnline: undefined,
+		status: "",
 	});
+
+	const onlineUsers = useSelector(selectOnlineUsers);
 
 	useEffect(() => {
 		const getLastSeen = async () => {
 			const { data } = await AxiosPostRequest("/users/last-seen", {
 				userId,
 			});
-			return data;
+			return data.lastSeenOnline;
 		};
-
-		if (userId) {
-			getLastSeen()
-				.then((data) => {
-					setOnlineStatus(data);
-				})
-				.catch(() => {
-					setOnlineStatus({
-						isOnline: false,
-						lastSeenOnline: undefined,
-						status: "Unable to fetch data",
+		if (onlineUsers.includes(userId)) {
+			setOnlineStatus({ isOnline: true, status: "online" });
+		} else {
+			userId &&
+				getLastSeen()
+					.then((lastSeenOnline) => {
+						const date = formatDate(
+							lastSeenOnline,
+							"LAST_SEEN_ONLINE"
+						);
+						date &&
+							setOnlineStatus({ isOnline: false, status: date });
+					})
+					.catch(() => {
+						setOnlineStatus({
+							isOnline: false,
+							status: "Unable to fetch data",
+						});
 					});
-				});
 		}
-	}, [userId]);
+	}, [userId, onlineUsers]);
 
 	return onlineStatus;
 };
