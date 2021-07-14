@@ -23,6 +23,7 @@ import ThreeDots from "../../../../common/spinners/three-dots";
 // Types
 import { Chat, ChatProcesses } from "../../../../../redux/chat/types";
 import { TextAreaOptions } from "../../../../common/textarea/textarea";
+import { formatDate } from "../../../../utils/format-date";
 
 interface DisplayChatProps {
 	chat: Chat;
@@ -172,13 +173,41 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	let messages: JSX.Element[] | JSX.Element = [];
 
 	if (chat.messages.length > 0) {
-		messages = chat.messages.map((message) => {
+		messages = chat.messages.map((message, index, array) => {
+			const { messageId, text, time, sender } = message;
+
+			const currentMessageDate = new Date(message.time);
+			const previousMessageDate = new Date(array[index - 1]?.time);
+
+			const currentMessageDay = currentMessageDate.getDate();
+			const previousMessageDay = previousMessageDate.getDate();
+
+			if (
+				currentMessageDay - previousMessageDay >= 1 ||
+				isNaN(previousMessageDay)
+			) {
+				return (
+					<React.Fragment key={messageId}>
+						<div className={styles.messagesDate}>
+							{formatDate(currentMessageDate, "REGULAR")}
+						</div>
+						<Message
+							messageText={text}
+							isRightAligned={sender === currentUserId}
+							messageId={messageId}
+							messageDate={time}
+						/>
+					</React.Fragment>
+				);
+			}
+
 			return (
 				<Message
-					key={message.messageId}
-					messageText={message.text}
-					isRightAligned={message.sender === currentUserId}
-					messageId={message.messageId}
+					key={messageId}
+					messageText={text}
+					isRightAligned={sender === currentUserId}
+					messageId={messageId}
+					messageDate={time}
 				/>
 			);
 		});

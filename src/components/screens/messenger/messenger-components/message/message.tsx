@@ -1,6 +1,9 @@
 // Dependencies
 import React, { useRef } from "react";
 
+// Utils
+import { formatDate } from "../../../../utils/format-date";
+
 // Styles
 import styles from "./message.module.css";
 
@@ -12,24 +15,35 @@ interface MessageProps {
 	messageText: string;
 	isRightAligned: boolean;
 	messageId: string;
+
+	messageDate: Date;
 }
 
 const Message: React.FC<MessageProps> = (props) => {
-	const { messageText, isRightAligned, messageId } = props;
+	const { messageText, isRightAligned, messageId, messageDate } = props;
 
 	const outerRef = useRef<HTMLDivElement | null>(null);
+
+	const handleCopyText = () => {
+		navigator.clipboard.writeText(messageText);
+	};
 
 	return (
 		<React.Fragment>
 			<ContextMenu outerRef={outerRef}>
-				<ContextMenuItem
-					label="Delete"
-					onClick={() => console.log(messageId)}
-				/>
-				<ContextMenuItem
-					label="Edit"
-					onClick={() => console.log(messageId)}
-				/>
+				<ContextMenuItem label="Copy Text" onClick={handleCopyText} />
+				{isRightAligned && (
+					<ContextMenuItem
+						label="Edit Message"
+						onClick={() => console.log(messageId)}
+					/>
+				)}
+				{isRightAligned && (
+					<ContextMenuItem
+						label="Delete Message"
+						onClick={() => console.log(messageId)}
+					/>
+				)}
 			</ContextMenu>
 			<div
 				className={`${styles.message} ${
@@ -37,7 +51,10 @@ const Message: React.FC<MessageProps> = (props) => {
 				}`}
 				ref={outerRef}
 			>
-				{messageText}
+				<div>{messageText}</div>
+				<div className={styles.timeSend}>
+					{formatDate(messageDate, "TIME")}
+				</div>
 			</div>
 		</React.Fragment>
 	);

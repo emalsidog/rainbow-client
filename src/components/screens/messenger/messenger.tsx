@@ -34,22 +34,26 @@ const Messenger: React.FC = () => {
 
 	const { width } = useWindowSize();
 
+	// Get chats
 	useEffect(() => {
 		dispatch(getChatsRequest());
 	}, [dispatch]);
 
+	// If chatId is changed (user clicked on dialog) - find it in array and set it as displayed chat
 	useEffect(() => {
 		const chat = chats.find((chat) => chat.chatId === chatId);
 		if (!chat) return;
 		setChatToDisplay(chat);
 	}, [chatId, chats]);
 
+	// If user clicked on messenger tab - remove displayed chat
 	useEffect(() => {
 		if (!chatId) {
 			setChatToDisplay(null);
 		}
 	}, [chatId]);
 
+	// Hadnle click on dialog
 	const handleDialogClick = useCallback(
 		(chatId: string): void => {
 			history.push(`/messenger/${chatId}`);
@@ -57,6 +61,7 @@ const Messenger: React.FC = () => {
 		[history]
 	);
 
+	// Handle click on back arrow (appears when width < 850px)
 	const handleGoBack = (): void => {
 		setChatToDisplay(null);
 		history.push("/messenger");

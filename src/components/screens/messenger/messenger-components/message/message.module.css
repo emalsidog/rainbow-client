@@ -16,3 +16,18 @@
 
 	background: #a3ebff;
 }
+
+.timeSend {
+	font-size: 0.8rem;
+	text-align: right;
+}
+
+@media (max-width: 640px) {
+	.message {
+		max-width: 75%;
+	}
+
+	.message.right {
+		width: 75%;
+	}
+}
