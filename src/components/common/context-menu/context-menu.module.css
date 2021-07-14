@@ -6,6 +6,8 @@
 	max-width: 200px;
 	border-radius: 2px;
 
+	z-index: 5;
+
 	animation: Appearing 0.3s forwards;
 }
 

@@ -50,6 +50,8 @@ export interface Message {
 	sender: string;
 	chatId: string;
 	messageId: string;
+	isEdited?: boolean;
+	timeEdited?: Date;
 }
 
 // GET CHATS

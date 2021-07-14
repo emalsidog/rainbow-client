@@ -93,6 +93,14 @@ function initWebsocket(): EventChannel<any> {
 						});
 					}
 
+					case "EDIT_MESSAGE": {
+						console.log("ASD");
+						return emitter({
+							type: "EDIT_MESSAGE_WS",
+							payload: response.payload,
+						});
+					}
+
 					case "NEW_CHAT_CREATED": {
 						return emitter({
 							type: "CHAT_CREATED_WS",

@@ -16,6 +16,9 @@ interface MessageProps {
 	isRightAligned: boolean;
 	messageDate: Date;
 
+	isEdited?: boolean;
+	timeEdited?: Date;
+
 	handleDeleteMessage: () => void;
 	handleEditMessage: () => void;
 }
@@ -25,6 +28,8 @@ const Message: React.FC<MessageProps> = (props) => {
 		messageText,
 		isRightAligned,
 		messageDate,
+		isEdited,
+		timeEdited,
 		handleDeleteMessage,
 		handleEditMessage,
 	} = props;
@@ -78,8 +83,17 @@ const Message: React.FC<MessageProps> = (props) => {
 				ref={outerRef}
 			>
 				<div>{messageText}</div>
-				<div className={styles.timeSend}>
-					{formatDate(messageDate, "TIME")}
+				<div className={styles.messageMeta}>
+					<span>{isEdited ? "edited" : ""}</span>
+					<span>{formatDate(messageDate, "TIME")}</span>
+					<div className={styles.extendedTime}>
+						<div>{formatDate(messageDate, "FULL_DATE")}</div>
+						{isEdited && (
+							<div>
+								edited: {formatDate(timeEdited, "FULL_DATE")}
+							</div>
+						)}
+					</div>
 				</div>
 			</div>
 		</React.Fragment>

@@ -2,16 +2,16 @@
 import { useState, useEffect, useCallback } from "react";
 
 export const useContextMenu = (outerRef) => {
-	const [xPos, setXPos] = useState<string>("0px");
-	const [yPos, setYPos] = useState<string>("0px");
+	const [xPos, setXPos] = useState<number>(0);
+	const [yPos, setYPos] = useState<number>(0);
 	const [showMenu, setShowMenu] = useState<boolean>(false);
 
 	const handleContextMenu = useCallback(
 		(e: any) => {
 			e.preventDefault();
 			if (outerRef && outerRef.current.contains(e.target)) {
-				setXPos(`${e.pageX}px`);
-				setYPos(`${e.pageY}px`);
+				setXPos(e.pageX);
+				setYPos(e.pageY);
 				setShowMenu(true);
 			} else {
 				setShowMenu(false);

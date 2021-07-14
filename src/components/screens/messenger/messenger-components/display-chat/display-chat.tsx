@@ -10,6 +10,7 @@ import { websocket } from "../../../../../redux/websockets/saga";
 import {
 	addMessageRequest,
 	deleteMessage,
+	editMessage,
 } from "../../../../../redux/chat/actions";
 
 // Hooks
@@ -132,13 +133,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	// Send message
 	const sendMessage = (): void => {
-		if (textareaOptions.value.length <= 0) return;
+		if (textareaOptions.value.trim().length <= 0) return;
 
 		const recipients = getParticipants();
 
 		const payload = {
 			message: {
-				text: textareaOptions.value,
+				text: textareaOptions.value.trim(),
 				time: new Date(),
 				sender: currentUserId,
 				chatId: chat.chatId,
@@ -163,8 +164,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	};
 
 	// Handle save edited message
-	const editMessage = (): void => {
-		const newText = textareaOptions.value;
+	const saveEditedMessage = (): void => {
+		const newText = textareaOptions.value.trim();
 
 		const isMatch: boolean = messageToEdit?.text === newText;
 
@@ -172,14 +173,41 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			return handleStopEditing();
 		}
 
-		console.log("DISPATCH AND SEND WS");
+		if (newText.length <= 0) return;
+
+		const recipients = getParticipants();
+
+		const payload = {
+			data: {
+				meta: {
+					messageId: messageToEdit!.messageId,
+					chatId: chat.chatId,
+				},
+				updatedMessageFields: {
+					text: newText,
+					dateEdited: new Date(),
+				},
+			},
+			recipients,
+		};
+
+		websocket.send(
+			JSON.stringify({
+				type: "EDIT_MESSAGE",
+				payload,
+			})
+		);
+
+		dispatch(editMessage(payload.data));
+
+		handleStopEditing();
 	};
 
 	// Handle form submit
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
 		e.preventDefault();
 		if (isEditing) {
-			return editMessage();
+			return saveEditedMessage();
 		}
 		sendMessage();
 	};
@@ -191,7 +219,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
 			if (isEditing) {
-				return editMessage();
+				return saveEditedMessage();
 			}
 			sendMessage();
 		}
@@ -255,14 +283,19 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				case "ArrowUp":
 					if (!isEditing) {
 						e.preventDefault();
-						const lastMessageId: string =
-							chat.messages[chat.messages.length - 1].messageId;
-						handleEditMessage(lastMessageId);
+
+						for (let i = chat.messages.length - 1; i >= 0; i--) {
+							if (chat.messages[i].sender === currentUserId) {
+								return handleEditMessage(
+									chat.messages[i].messageId
+								);
+							}
+						}
 					}
 					break;
 			}
 		},
-		[chat.messages, isEditing, handleEditMessage]
+		[chat.messages, isEditing, handleEditMessage, currentUserId]
 	);
 
 	useEffect(() => {
@@ -287,7 +320,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	if (chat.messages.length > 0) {
 		messages = chat.messages.map((message, index, array) => {
-			const { messageId, text, time, sender } = message;
+			const { messageId, text, time, sender, isEdited, timeEdited } =
+				message;
 
 			const currentMessageDate = new Date(message.time);
 			const previousMessageDate = new Date(array[index - 1]?.time);
@@ -308,6 +342,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 							messageText={text}
 							isRightAligned={sender === currentUserId}
 							messageDate={time}
+							isEdited={isEdited}
+							timeEdited={timeEdited}
 							handleDeleteMessage={() =>
 								handleDeleteMessage(messageId)
 							}
@@ -325,6 +361,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					messageText={text}
 					isRightAligned={sender === currentUserId}
 					messageDate={time}
+					isEdited={isEdited}
+					timeEdited={timeEdited}
 					handleDeleteMessage={() => handleDeleteMessage(messageId)}
 					handleEditMessage={() => handleEditMessage(messageId)}
 				/>

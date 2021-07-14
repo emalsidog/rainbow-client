@@ -1,4 +1,10 @@
-import { Chat, ChatActionTypes, ChatProcesses, Message } from "./types";
+import {
+	Chat,
+	ChatActionTypes,
+	ChatProcesses,
+	EditMessagePayload,
+	Message,
+} from "./types";
 
 interface InitialState {
 	chats: Chat[];
@@ -121,11 +127,26 @@ export const chats = (
 
 		// EDIT MESSAGE
 		case "EDIT_MESSAGE": {
+			const newChats = editMessage(state.chats, action.payload);
+
 			return {
 				...state,
+				chats: newChats,
 			};
 		}
 		case "EDIT_MESSAGE_WS": {
+			const isChat = state.chats.some(
+				(chat) => chat.chatId === action.payload.meta.chatId
+			);
+
+			if (isChat) {
+				const newChats = editMessage(state.chats, action.payload);
+				return {
+					...state,
+					chats: newChats,
+				};
+			}
+
 			return {
 				...state,
 			};
@@ -229,21 +250,25 @@ const deleteMessage = (
 };
 
 // Edit message
-const editMessage = (
-	chats: Chat[],
-	messageId: string,
-	chatId: string
-): Chat[] => {
+const editMessage = (chats: Chat[], payload: EditMessagePayload): Chat[] => {
+	const { meta, updatedMessageFields } = payload;
 	return chats.map((chat) => {
-		if (chat.chatId === chatId) {
+		if (chat.chatId === meta.chatId) {
 			const newMessages = chat.messages.map((message) => {
-				if (message.messageId === messageId) {
+				if (message.messageId === meta.messageId) {
 					return {
 						...message,
+						isEdited: true,
+						timeEdited: updatedMessageFields.dateEdited,
+						text: updatedMessageFields.text,
 					};
 				}
 				return message;
 			});
+			return {
+				...chat,
+				messages: newMessages,
+			};
 		}
 		return chat;
 	});

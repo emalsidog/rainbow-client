@@ -3,7 +3,7 @@ import React from "react";
 
 // Hooks
 import { useContextMenu } from "../../../hocs/useContextMenu";
-// import useWindowSize from "../../../hocs/useWindowsSize";
+import useWindowSize from "../../../hocs/useWindowsSize";
 
 // Styles
 import styles from "./context-menu.module.css";
@@ -23,14 +23,31 @@ interface ContextMenuItemProps {
 const ContextMenu: React.FC<ContextMenuProps> = ({ children, outerRef }) => {
 	const { xPos, yPos, showMenu } = useContextMenu(outerRef);
 
+	const { width, height } = useWindowSize();
+
+	let right: number = 0;
+	let top: number = 0;
+
+	// 200 - width of context menu
+	if (xPos + 200 > width - 100) {
+		right = width - 250;
+	} else {
+		right = xPos;
+	}
+
+	// If context menu
+	if (yPos + 100 > height - 100) {
+		top = height - 180;
+	} else {
+		top = yPos;
+	}
+
 	if (showMenu) {
 		return (
 			<div
 				style={{
-					top: yPos,
-					left: xPos,
-					// transform: `translateX(min(${xPos}, calc(100vw - 100%)))
-					// translateY(min(${}, calc(100vh - 100%)));`
+					top: top,
+					left: right,
 				}}
 				className={styles.wrapper}
 			>

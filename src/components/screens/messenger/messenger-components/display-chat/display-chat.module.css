@@ -170,6 +170,7 @@
 .editingPanel .editStatus div:first-child {
 	color: #17beec;
 	font-style: italic;
+	/* margin-bottom: 1px; */
 }
 
 @media (min-width: 850px) {

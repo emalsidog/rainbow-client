@@ -1,5 +1,5 @@
 // Types
-type Style = "BIRTHDAY" | "REGULAR" | "LAST_SEEN_ONLINE" | "TIME";
+type Style = "BIRTHDAY" | "REGULAR" | "LAST_SEEN_ONLINE" | "TIME" | "FULL_DATE";
 type UnpdarsedDate = Date | undefined;
 
 // Minutes and Seconds (1:53)
@@ -34,6 +34,7 @@ export const formatDate = (
 
 	const minutes = date.getMinutes();
 	const hours = date.getHours();
+	const seconds = date.getSeconds();
 
 	switch (style) {
 		case "BIRTHDAY":
@@ -57,15 +58,26 @@ export const formatDate = (
 			}
 
 			if (new Date().getFullYear() - parsedYear > 0) {
-				return Math.random() < 0.1 ? "probably dead" : "last seen a long time ago"
+				return Math.random() < 0.1
+					? "probably dead"
+					: "last seen a long time ago";
 			}
 
 			return `last seen ${formatMonth(parsedMonth)} ${formatNumber(
 				parsedDay
 			)} at ${time}`;
 
-		case "TIME": 
-			return `${hours}:${formatNumber(minutes)}`
+		case "TIME":
+			return `${hours}:${formatNumber(minutes)}`;
+		case "FULL_DATE": {
+			const weekDay = formatDay(parsedWeekDay);
+			const month = formatMonth(parsedMonth);
+
+			const mins = formatNumber(minutes);
+			const secs = formatNumber(seconds);
+
+			return `${weekDay}, ${month} ${parsedDay}, ${parsedYear} ${hours}:${mins}:${secs}`;
+		}
 	}
 };
 
