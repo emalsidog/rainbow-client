@@ -7,7 +7,10 @@ import { v4 as uuidv4 } from "uuid";
 import { websocket } from "../../../../../redux/websockets/saga";
 
 // Actions
-import { addMessageRequest } from "../../../../../redux/chat/actions";
+import {
+	addMessageRequest,
+	deleteMessage,
+} from "../../../../../redux/chat/actions";
 
 // Hooks
 import { useOnlineStatus } from "../../../../../hocs/useOnlineStatus";
@@ -150,6 +153,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		sendMessage();
 	};
 
+	// On keydown in textarea
 	const handleKeyDown = (
 		e: React.KeyboardEvent<HTMLTextAreaElement>
 	): void => {
@@ -157,6 +161,28 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			e.preventDefault();
 			sendMessage();
 		}
+	};
+
+	// Handle delete message
+	const handleDeleteMessage = (messageId: string) => {
+		const recipients = getParticipants();
+
+		const payload = {
+			messageData: {
+				messageId,
+				chatId: chat.chatId,
+			},
+			recipients,
+		};
+
+		websocket.send(
+			JSON.stringify({
+				type: "DELETE_MESSAGE",
+				payload,
+			})
+		);
+
+		dispatch(deleteMessage(payload.messageData));
 	};
 
 	let givenName: string;
@@ -196,6 +222,9 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 							isRightAligned={sender === currentUserId}
 							messageId={messageId}
 							messageDate={time}
+							handleDeleteMessage={() =>
+								handleDeleteMessage(messageId)
+							}
 						/>
 					</React.Fragment>
 				);
@@ -208,6 +237,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					isRightAligned={sender === currentUserId}
 					messageId={messageId}
 					messageDate={time}
+					handleDeleteMessage={() => handleDeleteMessage(messageId)}
 				/>
 			);
 		});

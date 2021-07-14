@@ -86,6 +86,13 @@ function initWebsocket(): EventChannel<any> {
 						});
 					}
 
+					case "DELETE_MESSAGE": {
+						return emitter({
+							type: "DELETE_MESSAGE_WS",
+							payload: response.payload,
+						});
+					}
+
 					case "NEW_CHAT_CREATED": {
 						return emitter({
 							type: "CHAT_CREATED_WS",

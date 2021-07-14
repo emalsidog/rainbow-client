@@ -15,12 +15,19 @@ interface MessageProps {
 	messageText: string;
 	isRightAligned: boolean;
 	messageId: string;
-
 	messageDate: Date;
+
+	handleDeleteMessage: () => void;
 }
 
 const Message: React.FC<MessageProps> = (props) => {
-	const { messageText, isRightAligned, messageId, messageDate } = props;
+	const {
+		messageText,
+		isRightAligned,
+		messageId,
+		messageDate,
+		handleDeleteMessage,
+	} = props;
 
 	const outerRef = useRef<HTMLDivElement | null>(null);
 
@@ -41,7 +48,7 @@ const Message: React.FC<MessageProps> = (props) => {
 				{isRightAligned && (
 					<ContextMenuItem
 						label="Delete Message"
-						onClick={() => console.log(messageId)}
+						onClick={handleDeleteMessage}
 					/>
 				)}
 			</ContextMenu>

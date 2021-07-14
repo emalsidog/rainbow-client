@@ -92,6 +92,33 @@ export const chats = (
 			};
 		}
 
+		// DELETE MESSAGE
+		case "DELETE_MESSAGE": {
+			const { chatId, messageId } = action.payload;
+
+			const newChats = deleteMessage(state.chats, chatId, messageId);
+
+			return {
+				...state,
+				chats: newChats,
+			};
+		}
+		case "DELETE_MESSAGE_WS": {
+			const { chatId, messageId } = action.payload;
+
+			if (state.chats.some((chat) => chat.chatId === chatId)) {
+				let newChats = deleteMessage(state.chats, chatId, messageId);
+				return {
+					...state,
+					chats: newChats,
+				};
+			}
+
+			return {
+				...state,
+			};
+		}
+
 		// Create new chat
 		case "CREATE_CHAT_REQUEST": {
 			return {
@@ -163,6 +190,26 @@ const addMessage = (chats: Chat[], message: Message): Chat[] => {
 			return {
 				...chat,
 				messages: [...chat.messages, message],
+			};
+		}
+		return chat;
+	});
+};
+
+// Delete message from the chat
+const deleteMessage = (
+	chats: Chat[],
+	chatId: string,
+	messageId: string
+): Chat[] => {
+	return chats.map((chat) => {
+		if (chat.chatId === chatId) {
+			const newMessages = chat.messages.filter(
+				(message) => message.messageId !== messageId
+			);
+			return {
+				...chat,
+				messages: newMessages,
 			};
 		}
 		return chat;
