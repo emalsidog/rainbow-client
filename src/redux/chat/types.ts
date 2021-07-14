@@ -10,6 +10,9 @@ const ADD_MESSAGE_WS = "ADD_MESSAGE_WS";
 const DELETE_MESSAGE = "DELETE_MESSAGE";
 const DELETE_MESSAGE_WS = "DELETE_MESSAGE_WS";
 
+const EDIT_MESSAGE = "EDIT_MESSAGE";
+const EDIT_MESSAGE_WS = "EDIT_MESSAGE_WS";
+
 const CREATE_CHAT_REQUEST = "CREATE_CHAT_REQUEST";
 const CREATE_CHAT_SUCCESS = "CREATE_CHAT_SUCCESS";
 const CREATE_CHAT_FAILURE = "CREATE_CHAT_FAILURE";
@@ -99,6 +102,28 @@ export interface DeleteMessageWS {
 	payload: DeleteMessagePayload;
 }
 
+// EDIT MESSAGE
+export interface EditMessagePayload {
+	meta: {
+		messageId: string;
+		chatId: string;
+	};
+	updatedMessageFields: {
+		text: string;
+		dateEdited: Date;
+	};
+}
+
+export interface EditMessage {
+	type: typeof EDIT_MESSAGE;
+	payload: EditMessagePayload;
+}
+
+export interface EditMessageWS {
+	type: typeof EDIT_MESSAGE_WS;
+	payload: EditMessagePayload;
+}
+
 // Create chat
 export interface CreateChatRequest {
 	type: typeof CREATE_CHAT_REQUEST;
@@ -138,6 +163,8 @@ export type ChatActionTypes =
 	| AddMessageWS
 	| DeleteMessage
 	| DeleteMessageWS
+	| EditMessage
+	| EditMessageWS
 	| CreateChatRequest
 	| CreateChatSuccess
 	| CreateChatFailure

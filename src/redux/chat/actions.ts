@@ -1,5 +1,11 @@
 // Types
-import { Chat, ChatActionTypes, DeleteMessagePayload, Message } from "./types";
+import {
+	Chat,
+	ChatActionTypes,
+	DeleteMessagePayload,
+	EditMessagePayload,
+	Message,
+} from "./types";
 
 // Get chats
 export const getChatsRequest = (): ChatActionTypes => ({
@@ -34,6 +40,12 @@ export const deleteMessage = (
 	payload: DeleteMessagePayload
 ): ChatActionTypes => ({
 	type: "DELETE_MESSAGE",
+	payload,
+});
+
+// Edit message
+export const editMessage = (payload: EditMessagePayload): ChatActionTypes => ({
+	type: "EDIT_MESSAGE",
 	payload,
 });
 

@@ -14,19 +14,19 @@ import ContextMenu, { ContextMenuItem } from "../../../../common/context-menu";
 interface MessageProps {
 	messageText: string;
 	isRightAligned: boolean;
-	messageId: string;
 	messageDate: Date;
 
 	handleDeleteMessage: () => void;
+	handleEditMessage: () => void;
 }
 
 const Message: React.FC<MessageProps> = (props) => {
 	const {
 		messageText,
 		isRightAligned,
-		messageId,
 		messageDate,
 		handleDeleteMessage,
+		handleEditMessage,
 	} = props;
 
 	const outerRef = useRef<HTMLDivElement | null>(null);
@@ -38,18 +38,37 @@ const Message: React.FC<MessageProps> = (props) => {
 	return (
 		<React.Fragment>
 			<ContextMenu outerRef={outerRef}>
-				<ContextMenuItem label="Copy Text" onClick={handleCopyText} />
+				<ContextMenuItem onClick={handleCopyText}>
+					<div>
+						<i
+							style={{ color: "green" }}
+							className="fas fa-copy fa-fw"
+						/>
+						<span>Copy Text</span>
+					</div>
+				</ContextMenuItem>
+
 				{isRightAligned && (
-					<ContextMenuItem
-						label="Edit Message"
-						onClick={() => console.log(messageId)}
-					/>
+					<ContextMenuItem onClick={handleEditMessage}>
+						<div>
+							<i
+								style={{ color: "#17beec" }}
+								className="fas fa-edit fa-fw"
+							/>
+							<span>Edit Message</span>
+						</div>
+					</ContextMenuItem>
 				)}
 				{isRightAligned && (
-					<ContextMenuItem
-						label="Delete Message"
-						onClick={handleDeleteMessage}
-					/>
+					<ContextMenuItem onClick={handleDeleteMessage}>
+						<div>
+							<i
+								style={{ color: "red" }}
+								className="fas fa-trash-alt fa-fw"
+							/>
+							<span>Delete Message</span>
+						</div>
+					</ContextMenuItem>
 				)}
 			</ContextMenu>
 			<div

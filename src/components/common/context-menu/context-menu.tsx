@@ -3,7 +3,7 @@ import React from "react";
 
 // Hooks
 import { useContextMenu } from "../../../hocs/useContextMenu";
-import useWindowSize from "../../../hocs/useWindowsSize";
+// import useWindowSize from "../../../hocs/useWindowsSize";
 
 // Styles
 import styles from "./context-menu.module.css";
@@ -16,6 +16,7 @@ interface ContextMenuProps {
 
 interface ContextMenuItemProps {
 	label?: string;
+	children?: React.ReactNode;
 	onClick?: () => void;
 }
 
@@ -42,10 +43,11 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ children, outerRef }) => {
 };
 
 export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
-	const { label, onClick } = props;
+	const { label, children, onClick } = props;
+
 	return (
 		<button className={styles.menuItem} onClick={onClick}>
-			{label}
+			{label ? label : children ? children : "No label"}
 		</button>
 	);
 };

@@ -8,6 +8,8 @@
 	padding: 7px;
 
 	word-wrap: break-word;
+
+	user-select: none;
 }
 
 .message.right {

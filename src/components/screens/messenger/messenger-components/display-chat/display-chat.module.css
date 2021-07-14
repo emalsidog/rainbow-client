@@ -139,6 +139,39 @@
 	transition: all 0.15s ease-in-out;
 }
 
+/* Editing panel */
+
+.editingPanel {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	padding: 5px 5px;
+}
+
+.editingPanel div:first-child {
+	display: flex;
+	align-items: center;
+}
+
+.editingPanel i {
+	font-size: 1.4rem;
+	color: #17beec;
+}
+
+.editingPanel button {
+	padding: 0 8px;
+}
+
+.editingPanel .editIcon {
+	margin-right: 10px;
+}
+
+.editingPanel .editStatus div:first-child {
+	color: #17beec;
+	font-style: italic;
+}
+
 @media (min-width: 850px) {
 	.backButton {
 		display: none;

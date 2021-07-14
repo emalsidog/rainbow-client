@@ -119,6 +119,18 @@ export const chats = (
 			};
 		}
 
+		// EDIT MESSAGE
+		case "EDIT_MESSAGE": {
+			return {
+				...state,
+			};
+		}
+		case "EDIT_MESSAGE_WS": {
+			return {
+				...state,
+			};
+		}
+
 		// Create new chat
 		case "CREATE_CHAT_REQUEST": {
 			return {
@@ -211,6 +223,27 @@ const deleteMessage = (
 				...chat,
 				messages: newMessages,
 			};
+		}
+		return chat;
+	});
+};
+
+// Edit message
+const editMessage = (
+	chats: Chat[],
+	messageId: string,
+	chatId: string
+): Chat[] => {
+	return chats.map((chat) => {
+		if (chat.chatId === chatId) {
+			const newMessages = chat.messages.map((message) => {
+				if (message.messageId === messageId) {
+					return {
+						...message,
+					};
+				}
+				return message;
+			});
 		}
 		return chat;
 	});

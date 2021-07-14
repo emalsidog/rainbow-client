@@ -24,7 +24,11 @@ import Message from "../message";
 import ThreeDots from "../../../../common/spinners/three-dots";
 
 // Types
-import { Chat, ChatProcesses } from "../../../../../redux/chat/types";
+import {
+	Chat,
+	ChatProcesses,
+	Message as MessageType,
+} from "../../../../../redux/chat/types";
 import { TextAreaOptions } from "../../../../common/textarea/textarea";
 import { formatDate } from "../../../../utils/format-date";
 
@@ -49,6 +53,11 @@ interface WebsocketPayload {
 const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const { chat, currentUserId, currentUserProfileId, onGoBack } = props;
 
+	const [isEditing, setIsEditing] = useState<boolean>(false);
+	const [messageToEdit, setMessageToEdit] = useState<MessageType | null>(
+		null
+	);
+
 	const [textareaOptions, setTextareaOptions] = useState<TextAreaOptions>({
 		rows: 1,
 		minRows: 1,
@@ -68,14 +77,17 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	const messagesDiv = useRef<HTMLDivElement>(null);
 
+	// Scroll to bottom when last message in messages array updates
+	const lastMessage = chat.messages[chat.messages.length - 1];
 	useEffect(() => {
 		if (messagesDiv.current) {
 			messagesDiv.current!.scrollTop = messagesDiv.current!.scrollHeight;
 		}
-	}, [chat.messages]);
+	}, [lastMessage]);
 
 	const isTyping = useRef<boolean>(false);
 
+	// Get ids of participants
 	const getParticipants = useCallback((): string[] => {
 		let recipients: string[] = [chat.creator._id];
 		let filteredParticipants: string[] = chat.participants
@@ -93,6 +105,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		return recipients;
 	}, [chat.creator._id, chat.participants, currentUserId]);
 
+	// Change chat process (typing...)
 	useEffect(() => {
 		const chatParticipantsIds = getParticipants();
 		const payload: WebsocketPayload = {
@@ -117,6 +130,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}, [textareaOptions.value, getParticipants, chat.chatId, currentUserId]);
 
+	// Send message
 	const sendMessage = (): void => {
 		if (textareaOptions.value.length <= 0) return;
 
@@ -148,8 +162,25 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}));
 	};
 
+	// Handle save edited message
+	const editMessage = (): void => {
+		const newText = textareaOptions.value;
+
+		const isMatch: boolean = messageToEdit?.text === newText;
+
+		if (isMatch) {
+			return handleStopEditing();
+		}
+
+		console.log("DISPATCH AND SEND WS");
+	};
+
+	// Handle form submit
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
 		e.preventDefault();
+		if (isEditing) {
+			return editMessage();
+		}
 		sendMessage();
 	};
 
@@ -159,6 +190,9 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	): void => {
 		if (e.key === "Enter") {
 			e.preventDefault();
+			if (isEditing) {
+				return editMessage();
+			}
 			sendMessage();
 		}
 	};
@@ -184,6 +218,59 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 		dispatch(deleteMessage(payload.messageData));
 	};
+
+	// Handle edit message
+	const handleEditMessage = useCallback(
+		(messageId: string): void => {
+			const messageToEdit = chat.messages.find(
+				(message) => message.messageId === messageId
+			);
+			if (!messageToEdit) return;
+
+			setMessageToEdit(messageToEdit);
+			setTextareaOptions((prev) => ({
+				...prev,
+				value: messageToEdit.text,
+			}));
+			setIsEditing(true);
+		},
+		[chat.messages]
+	);
+
+	// Handle stop editing
+	const handleStopEditing = (): void => {
+		setTextareaOptions((prev) => ({ ...prev, value: "" }));
+		setIsEditing(false);
+		setMessageToEdit(null);
+	};
+
+	// handle editing key downs
+	const handleEditingKeyDown = useCallback(
+		(e: any): void => {
+			switch (e.key) {
+				case "Escape":
+					isEditing && handleStopEditing();
+					break;
+
+				case "ArrowUp":
+					if (!isEditing) {
+						e.preventDefault();
+						const lastMessageId: string =
+							chat.messages[chat.messages.length - 1].messageId;
+						handleEditMessage(lastMessageId);
+					}
+					break;
+			}
+		},
+		[chat.messages, isEditing, handleEditMessage]
+	);
+
+	useEffect(() => {
+		document.addEventListener("keydown", handleEditingKeyDown);
+		return () => {
+			document.removeEventListener("keydown", handleEditingKeyDown);
+		};
+	}, [handleEditingKeyDown]);
 
 	let givenName: string;
 	let familyName: string;
@@ -220,10 +307,12 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 						<Message
 							messageText={text}
 							isRightAligned={sender === currentUserId}
-							messageId={messageId}
 							messageDate={time}
 							handleDeleteMessage={() =>
 								handleDeleteMessage(messageId)
+							}
+							handleEditMessage={() =>
+								handleEditMessage(messageId)
 							}
 						/>
 					</React.Fragment>
@@ -235,9 +324,9 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					key={messageId}
 					messageText={text}
 					isRightAligned={sender === currentUserId}
-					messageId={messageId}
 					messageDate={time}
 					handleDeleteMessage={() => handleDeleteMessage(messageId)}
+					handleEditMessage={() => handleEditMessage(messageId)}
 				/>
 			);
 		});
@@ -276,6 +365,30 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				{messages}
 			</div>
 
+			{isEditing && (
+				<div className={styles.editingPanel}>
+					<div>
+						<div className={styles.editIcon}>
+							<i className="fas fa-edit"></i>
+						</div>
+						<div className={styles.editStatus}>
+							<div>Edit message</div>
+							<div>{messageToEdit?.text}</div>
+						</div>
+					</div>
+					<div>
+						<button
+							className="btn-transperent"
+							onClick={handleStopEditing}
+						>
+							<i
+								style={{ color: "#a8a8a8" }}
+								className="fas fa-times"
+							/>
+						</button>
+					</div>
+				</div>
+			)}
 			<form className={styles.writeMessageBlock} onSubmit={handleSubmit}>
 				<Textarea
 					textareaOptions={textareaOptions}
@@ -285,12 +398,21 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					placeholder="Write a message..."
 					classNames={styles.messageTextarea}
 				/>
-				<button onClick={sendMessage} className="btn-transperent">
-					<i
-						style={{ fontSize: "1.4rem" }}
-						className="fas fa-paper-plane"
-					></i>
-				</button>
+				{isEditing ? (
+					<button type="submit" className="btn-transperent">
+						<i
+							style={{ fontSize: "1.4rem" }}
+							className="fas fa-check"
+						/>
+					</button>
+				) : (
+					<button type="submit" className="btn-transperent">
+						<i
+							style={{ fontSize: "1.4rem" }}
+							className="fas fa-paper-plane"
+						></i>
+					</button>
+				)}
 			</form>
 		</div>
 	);
