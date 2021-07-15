@@ -20,6 +20,7 @@ interface MessageProps {
 	timeEdited?: Date;
 
 	isSelected: boolean;
+	isInSelectingMode: boolean;
 	isDeleteMessageVisible: boolean;
 
 	onClick: () => void;
@@ -37,6 +38,7 @@ const Message: React.FC<MessageProps> = (props) => {
 		isEdited,
 		timeEdited,
 		isSelected,
+		isInSelectingMode,
 		isDeleteMessageVisible,
 		onClick,
 		handleCopyText,
@@ -72,21 +74,23 @@ const Message: React.FC<MessageProps> = (props) => {
 						</div>
 					</ContextMenuItem>
 				)}
-				{isRightAligned && isDeleteMessageVisible && (
-					<ContextMenuItem onClick={handleDeleteMessage}>
-						<div>
-							<i
-								style={{ color: "red" }}
-								className="fas fa-trash-alt fa-fw"
-							/>
-							<span>
-								{isSelected
-									? "Delete selected"
-									: "Delete message"}
-							</span>
-						</div>
-					</ContextMenuItem>
-				)}
+				{isRightAligned &&
+					isDeleteMessageVisible &&
+					(!isInSelectingMode || isSelected) && (
+						<ContextMenuItem onClick={handleDeleteMessage}>
+							<div>
+								<i
+									style={{ color: "red" }}
+									className="fas fa-trash-alt fa-fw"
+								/>
+								<span>
+									{isSelected
+										? "Delete selected"
+										: "Delete message"}
+								</span>
+							</div>
+						</ContextMenuItem>
+					)}
 				<ContextMenuItem onClick={handleSelectMessage}>
 					<div>
 						<i className="fas fa-mouse-pointer fa-fw" />
@@ -103,6 +107,12 @@ const Message: React.FC<MessageProps> = (props) => {
 				onClick={onClick}
 				ref={outerRef}
 			>
+				{isSelected && (
+					<i
+						style={{ margin: "0 10px", color: "green" }}
+						className="fas fa-check-circle"
+					/>
+				)}
 				<div
 					className={`${styles.message} ${
 						isRightAligned ? styles.right : ""

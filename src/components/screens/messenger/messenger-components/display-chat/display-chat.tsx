@@ -81,6 +81,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		value: "",
 	});
 
+	const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
 	// Handle keyboard events in textarea
 	const handleTextAreaKeyDown = (
 		e: React.KeyboardEvent<HTMLTextAreaElement>
@@ -212,6 +214,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			rows: 1,
 			value: "",
 		}));
+
+		textAreaRef.current?.focus();
 	};
 
 	// Handle form submit
@@ -255,11 +259,23 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		);
 
 		dispatch(deleteMessage(payload.messageData));
+
+		setIsSelecting(false);
 	};
 
 	/* ======= END OF MESSAGE DELETING ======= */
 
 	/* ======= MESSAGE EDITING ======= */
+
+	// If message, which is being editing was deleted - stop editing mode
+	useEffect(() => {
+		if (isEditing) {
+			const isMatch = chat.messages.some(
+				(message) => message.messageId === messageToEdit?.messageId
+			);
+			!isMatch && handleStopEditing();
+		}
+	}, [chat.messages, isEditing, messageToEdit?.messageId]);
 
 	// Handle "Edit Message" in context menu
 	const handleEditMessage = useCallback(
@@ -277,6 +293,10 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				value: messageToEdit.text,
 			}));
 			setIsEditing(true);
+
+			setTextareaOptions((prev) => ({ ...prev, rows: 3 }));
+
+			textAreaRef.current?.focus();
 		},
 		[chat.messages, isSelecting]
 	);
@@ -286,6 +306,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		setTextareaOptions((prev) => ({ ...prev, value: "" }));
 		setIsEditing(false);
 		setMessageToEdit(null);
+		setTextareaOptions((prev) => ({ ...prev, rows: 1 }));
 	};
 
 	/*
@@ -484,6 +505,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					isEdited={isEdited}
 					timeEdited={timeEdited}
 					isSelected={isSelected}
+					isInSelectingMode={isSelecting}
 					isDeleteMessageVisible={isDeleteMessageVisible}
 					onClick={() => onMessageClick(messageId)}
 					handleCopyText={() => handleCopyText(text)}
@@ -579,6 +601,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					handleKeyDown={handleTextAreaKeyDown}
 					placeholder="Write a message..."
 					classNames={styles.messageTextarea}
+					ref={textAreaRef}
 				/>
 				{isEditing ? (
 					<button type="submit" className="btn-transperent">

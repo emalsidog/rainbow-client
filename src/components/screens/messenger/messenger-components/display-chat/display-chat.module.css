@@ -141,6 +141,8 @@
 	align-items: center;
 
 	padding: 5px 5px;
+
+	word-break: break-all;
 }
 
 .editingPanel div:first-child {

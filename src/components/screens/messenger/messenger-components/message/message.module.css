@@ -1,13 +1,29 @@
 .wrapper {
 	width: 100%;
 	transition: 0.2s;
+
+	display: flex;
+	align-items: center;
+}
+
+.wrapper:last-child {
+	animation: Appearing 0.5s forwards;
+}
+
+@keyframes Appearing {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 .message {
 	background: rgb(228, 228, 228);
 	border-radius: 2px;
 
-	max-width: 40%;
+	width: 40%;
 
 	margin: 0 5px 5px 5px;
 	padding: 7px;
@@ -73,7 +89,7 @@
 
 @media (max-width: 640px) {
 	.message {
-		max-width: 75%;
+		width: 75%;
 	}
 	.message.right {
 		width: 75%;
