@@ -25,7 +25,7 @@
 
 	width: 40%;
 
-	margin: 0 5px 5px 5px;
+	margin: 5px;
 	padding: 7px;
 
 	word-wrap: break-word;
@@ -85,6 +85,24 @@
 /* Selected message */
 .selected {
 	background: #f3f3f3;
+}
+
+.forwardAnim {
+	transition: none;
+	background: rgb(0, 0, 0);
+	animation: ForwardSelectAnimation 3s forwards;
+}
+
+@keyframes ForwardSelectAnimation {
+	0% {
+		background: rgba(146, 202, 235, 0);
+	}
+	50% {
+		background: rgb(146, 202, 235);
+	}
+	100% {
+		background: rgb(146, 202, 235, 0);
+	}
 }
 
 @media (max-width: 640px) {

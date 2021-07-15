@@ -72,6 +72,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const [isSelecting, setIsSelecting] = useState<boolean>(false);
 	const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
 
+	/*
+	 *	Forwarding states.
+	 */
+	const [isForwarding, setIsForwarding] = useState<boolean>(false);
+	const [messageToForward, setMessageToForward] =
+		useState<MessageType | null>(null);
+
 	// ------- Textarea configuration.
 	const [textareaOptions, setTextareaOptions] = useState<TextAreaOptions>({
 		rows: 1,
@@ -265,130 +272,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	/* ======= END OF MESSAGE DELETING ======= */
 
-	/* ======= MESSAGE EDITING ======= */
-
-	// If message, which is being editing was deleted - stop editing mode
-	useEffect(() => {
-		if (isEditing) {
-			const isMatch = chat.messages.some(
-				(message) => message.messageId === messageToEdit?.messageId
-			);
-			!isMatch && handleStopEditing();
-		}
-	}, [chat.messages, isEditing, messageToEdit?.messageId]);
-
-	// Handle "Edit Message" in context menu
-	const handleEditMessage = useCallback(
-		(messageId: string): void => {
-			const messageToEdit = chat.messages.find(
-				(message) => message.messageId === messageId
-			);
-			if (!messageToEdit) return;
-
-			isSelecting && removeSelection();
-
-			setMessageToEdit(messageToEdit);
-			setTextareaOptions((prev) => ({
-				...prev,
-				value: messageToEdit.text,
-			}));
-			setIsEditing(true);
-
-			setTextareaOptions((prev) => ({ ...prev, rows: 3 }));
-
-			textAreaRef.current?.focus();
-		},
-		[chat.messages, isSelecting]
-	);
-
-	// Helper. Call it, when you want to stop editing process
-	const handleStopEditing = (): void => {
-		setTextareaOptions((prev) => ({ ...prev, value: "" }));
-		setIsEditing(false);
-		setMessageToEdit(null);
-		setTextareaOptions((prev) => ({ ...prev, rows: 1 }));
-	};
-
-	/*
-	 *	Handle keyboard pressing.
-	 *	Escape - stop editing process.
-	 *	ArrowUp - start editing last sent message.
-	 */
-	const handleEditingKeyDown = useCallback(
-		(e: any): void => {
-			switch (e.key) {
-				case "Escape":
-					isEditing && handleStopEditing();
-					break;
-
-				case "ArrowUp":
-					if (!isEditing) {
-						e.preventDefault();
-
-						for (let i = chat.messages.length - 1; i >= 0; i--) {
-							if (chat.messages[i].sender === currentUserId) {
-								return handleEditMessage(
-									chat.messages[i].messageId
-								);
-							}
-						}
-					}
-					break;
-			}
-		},
-		[chat.messages, isEditing, handleEditMessage, currentUserId]
-	);
-
-	// Add and remove listeners on mounting and unmounting.
-	useEffect(() => {
-		document.addEventListener("keydown", handleEditingKeyDown);
-		return () => {
-			document.removeEventListener("keydown", handleEditingKeyDown);
-		};
-	}, [handleEditingKeyDown]);
-
-	// Save message after editing.
-	const saveEditedMessage = (): void => {
-		const newText = textareaOptions.value.trim();
-
-		const isMatch: boolean = messageToEdit?.text === newText;
-
-		if (isMatch) {
-			return handleStopEditing();
-		}
-
-		if (newText.length <= 0) return;
-
-		const recipients = getParticipants();
-
-		const payload = {
-			data: {
-				meta: {
-					messageId: messageToEdit!.messageId,
-					chatId: chat.chatId,
-				},
-				updatedMessageFields: {
-					text: newText,
-					dateEdited: new Date(),
-				},
-			},
-			recipients,
-		};
-
-		websocket.send(
-			JSON.stringify({
-				type: "EDIT_MESSAGE",
-				payload,
-			})
-		);
-
-		dispatch(editMessage(payload.data));
-
-		handleStopEditing();
-	};
-
-	/* ======= END OF MESSAGE EDITING ======= */
-
 	/* ======= MESSAGE SELECTING ======= */
 	const [isDeleteMessageVisible, setIsDeleteMessageVisible] =
 		useState<boolean>(true);
@@ -459,6 +342,184 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	/* ======= END OF MESSAGE SELECTING ======= */
 
+	/* ======= MESSAGE FORWARDING ======= */
+
+	// Handle "Forward message" in context menu.
+	const handleForwardMessage = useCallback(
+		(messageId: string): void => {
+			const messageToForward = chat.messages.find(
+				(message) => message.messageId === messageId
+			);
+			if (!messageToForward) return;
+
+			isEditing && handleStopEditing();
+
+			setMessageToForward(messageToForward);
+			setIsForwarding(true);
+
+			textAreaRef.current?.focus();
+		},
+		[chat.messages, isEditing]
+	);
+
+	// Handle stop forwarding
+	const handleStopForwarding = useCallback((): void => {
+		setIsForwarding(false);
+		setMessageToForward(null);
+		setIndex(chat.messages.length - 1);
+	}, [chat.messages.length]);
+
+	/* ======= END OF MESSAGE FORWARDING ======= */
+
+	/* ======= MESSAGE EDITING ======= */
+
+	// If message, which is being editing was deleted - stop editing mode
+	useEffect(() => {
+		if (isEditing) {
+			const isMatch = chat.messages.some(
+				(message) => message.messageId === messageToEdit?.messageId
+			);
+			!isMatch && handleStopEditing();
+		}
+	}, [chat.messages, isEditing, messageToEdit?.messageId]);
+
+	// Handle "Edit Message" in context menu
+	const handleEditMessage = useCallback(
+		(messageId: string): void => {
+			const messageToEdit = chat.messages.find(
+				(message) => message.messageId === messageId
+			);
+			if (!messageToEdit) return;
+
+			isForwarding && handleStopForwarding();
+
+			isSelecting && removeSelection();
+
+			setMessageToEdit(messageToEdit);
+			setTextareaOptions((prev) => ({
+				...prev,
+				value: messageToEdit.text,
+			}));
+			setIsEditing(true);
+
+			setTextareaOptions((prev) => ({ ...prev, rows: 3 }));
+
+			textAreaRef.current?.focus();
+		},
+		[chat.messages, isSelecting, isForwarding, handleStopForwarding]
+	);
+
+	// Helper. Call it, when you want to stop editing process
+	const handleStopEditing = (): void => {
+		setTextareaOptions((prev) => ({ ...prev, value: "" }));
+		setIsEditing(false);
+		setMessageToEdit(null);
+		setTextareaOptions((prev) => ({ ...prev, rows: 1 }));
+	};
+
+	// Save message after editing.
+	const saveEditedMessage = (): void => {
+		const newText = textareaOptions.value.trim();
+
+		const isMatch: boolean = messageToEdit?.text === newText;
+
+		if (isMatch) {
+			return handleStopEditing();
+		}
+
+		if (newText.length <= 0) return;
+
+		const recipients = getParticipants();
+
+		const payload = {
+			data: {
+				meta: {
+					messageId: messageToEdit!.messageId,
+					chatId: chat.chatId,
+				},
+				updatedMessageFields: {
+					text: newText,
+					dateEdited: new Date(),
+				},
+			},
+			recipients,
+		};
+
+		websocket.send(
+			JSON.stringify({
+				type: "EDIT_MESSAGE",
+				payload,
+			})
+		);
+
+		dispatch(editMessage(payload.data));
+
+		handleStopEditing();
+	};
+
+	/* ======= END OF MESSAGE EDITING ======= */
+
+	/*
+	 *	Handle keyboard pressing.
+	 *	Escape - stop editing process.
+	 *	ArrowUp - start editing last sent message.
+	 */
+
+	const [index, setIndex] = useState<number>(chat.messages.length - 1);
+
+	const handleEditingKeyDown = useCallback(
+		(e: any): void => {
+			if (e.ctrlKey && e.key === "ArrowUp") {
+				handleForwardMessage(chat.messages[index].messageId);
+				if (index === 0) {
+					setIndex(chat.messages.length - 1);
+					return;
+				}
+				setIndex((index) => index - 1);
+				return;
+			}
+
+			switch (e.key) {
+				case "Escape":
+					isEditing && handleStopEditing();
+					isForwarding && handleStopForwarding();
+					break;
+
+				case "ArrowUp":
+					if (!isEditing) {
+						e.preventDefault();
+
+						for (let i = chat.messages.length - 1; i >= 0; i--) {
+							if (chat.messages[i].sender === currentUserId) {
+								return handleEditMessage(
+									chat.messages[i].messageId
+								);
+							}
+						}
+					}
+					break;
+			}
+		},
+		[
+			chat.messages,
+			isEditing,
+			currentUserId,
+			isForwarding,
+			index,
+			handleEditMessage,
+			handleForwardMessage,
+			handleStopForwarding,
+		]
+	);
+
+	// Add and remove listeners on mounting and unmounting.
+	useEffect(() => {
+		document.addEventListener("keydown", handleEditingKeyDown);
+		return () => {
+			document.removeEventListener("keydown", handleEditingKeyDown);
+		};
+	}, [handleEditingKeyDown]);
+
 	/* ------- Render interlocutor data. */
 
 	let givenName: string;
@@ -481,7 +542,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		messages = chat.messages.map((message, index, array) => {
 			const { messageId, text, time, sender, isEdited, timeEdited } =
 				message;
-
 			const currentMessageDate = new Date(message.time);
 			const previousMessageDate = new Date(array[index - 1]?.time);
 
@@ -496,6 +556,11 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				isSelected = selectedMessages.includes(messageId);
 			}
 
+			let isSelectedToForward: boolean = false;
+			if (messageId === messageToForward?.messageId) {
+				isSelectedToForward = true;
+			}
+
 			const msg: JSX.Element = (
 				<Message
 					key={messageId}
@@ -507,11 +572,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					isSelected={isSelected}
 					isInSelectingMode={isSelecting}
 					isDeleteMessageVisible={isDeleteMessageVisible}
+					isSelectedToForward={isSelectedToForward}
 					onClick={() => onMessageClick(messageId)}
 					handleCopyText={() => handleCopyText(text)}
 					handleDeleteMessage={() => handleDeleteMessage(messageId)}
 					handleEditMessage={() => handleEditMessage(messageId)}
 					handleSelectMessage={() => handleSelectMessage(messageId)}
+					handleForwardMessage={() => handleForwardMessage(messageId)}
 				/>
 			);
 
@@ -549,6 +616,29 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	/* ------- End of render chat process. */
 
+	let additionalPanelHeader: string | undefined = "";
+	let additionalPanelContent: string | undefined = "";
+	let additionalPanelIcon: JSX.Element | undefined = undefined;
+
+	if (isEditing) {
+		additionalPanelHeader = "Edit message";
+		additionalPanelContent = messageToEdit?.text;
+		additionalPanelIcon = <i className="fas fa-edit" />;
+	} else if (isForwarding) {
+		const allParticipants = [chat.creator, ...chat.participants];
+
+		additionalPanelIcon = <i className="fas fa-share" />;
+
+		if (selectedMessages.length <= 0) {
+			const sender = allParticipants.find(
+				(participant) => participant._id === messageToForward?.sender
+			);
+
+			additionalPanelHeader = sender?.givenName;
+			additionalPanelContent = messageToForward?.text;
+		}
+	}
+
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.header}>
@@ -569,21 +659,25 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				{messages}
 			</div>
 
-			{isEditing && (
+			{(isEditing || isForwarding) && (
 				<div className={styles.editingPanel}>
 					<div>
 						<div className={styles.editIcon}>
-							<i className="fas fa-edit"></i>
+							{additionalPanelIcon}
 						</div>
 						<div className={styles.editStatus}>
-							<div>Edit message</div>
-							<div>{messageToEdit?.text}</div>
+							<div>{additionalPanelHeader}</div>
+							<div>{additionalPanelContent}</div>
 						</div>
 					</div>
 					<div>
 						<button
 							className="btn-transperent"
-							onClick={handleStopEditing}
+							onClick={
+								isEditing
+									? handleStopEditing
+									: handleStopForwarding
+							}
 						>
 							<i
 								style={{ color: "#a8a8a8" }}

@@ -22,12 +22,14 @@ interface MessageProps {
 	isSelected: boolean;
 	isInSelectingMode: boolean;
 	isDeleteMessageVisible: boolean;
+	isSelectedToForward: boolean;
 
 	onClick: () => void;
 	handleCopyText: () => void;
 	handleDeleteMessage: () => void;
 	handleEditMessage: () => void;
 	handleSelectMessage: () => void;
+	handleForwardMessage: () => void;
 }
 
 const Message: React.FC<MessageProps> = (props) => {
@@ -40,14 +42,21 @@ const Message: React.FC<MessageProps> = (props) => {
 		isSelected,
 		isInSelectingMode,
 		isDeleteMessageVisible,
+		isSelectedToForward,
 		onClick,
 		handleCopyText,
 		handleDeleteMessage,
 		handleEditMessage,
 		handleSelectMessage,
+		handleForwardMessage,
 	} = props;
 
 	const outerRef = useRef<HTMLDivElement | null>(null);
+
+	let classNames: string = `
+		${styles.wrapper} 
+		${isSelected ? styles.selected : ""}
+		${isSelectedToForward ? styles.forwardAnim : ""}`;
 
 	return (
 		<React.Fragment>
@@ -74,6 +83,23 @@ const Message: React.FC<MessageProps> = (props) => {
 						</div>
 					</ContextMenuItem>
 				)}
+				<ContextMenuItem onClick={handleSelectMessage}>
+					<div>
+						<i className="fas fa-mouse-pointer fa-fw" />
+						<span>
+							{isSelected ? "Remove selection" : "Select message"}
+						</span>
+					</div>
+				</ContextMenuItem>
+				<ContextMenuItem onClick={handleForwardMessage}>
+					<div>
+						<i
+							style={{ color: "#762ea6" }}
+							className="fas fa-share fa-fw"
+						/>
+						<span>Forward message</span>
+					</div>
+				</ContextMenuItem>
 				{isRightAligned &&
 					isDeleteMessageVisible &&
 					(!isInSelectingMode || isSelected) && (
@@ -91,22 +117,8 @@ const Message: React.FC<MessageProps> = (props) => {
 							</div>
 						</ContextMenuItem>
 					)}
-				<ContextMenuItem onClick={handleSelectMessage}>
-					<div>
-						<i className="fas fa-mouse-pointer fa-fw" />
-						<span>
-							{isSelected ? "Remove selection" : "Select message"}
-						</span>
-					</div>
-				</ContextMenuItem>
 			</ContextMenu>
-			<div
-				className={`${styles.wrapper} ${
-					isSelected ? styles.selected : ""
-				}`}
-				onClick={onClick}
-				ref={outerRef}
-			>
+			<div className={classNames} onClick={onClick} ref={outerRef}>
 				{isSelected && (
 					<i
 						style={{ margin: "0 10px", color: "green" }}

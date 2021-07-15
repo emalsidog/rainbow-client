@@ -94,7 +94,6 @@ function initWebsocket(): EventChannel<any> {
 					}
 
 					case "EDIT_MESSAGE": {
-						console.log("ASD");
 						return emitter({
 							type: "EDIT_MESSAGE_WS",
 							payload: response.payload,
