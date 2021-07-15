@@ -28,8 +28,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ children, outerRef }) => {
 	let right: number = 0;
 	let top: number = 0;
 
-	// 200 - width of context menu
-	if (xPos + 200 > width - 100) {
+	// 250 - width of context menu
+	if (xPos + 250 > width - 100) {
 		right = width - 250;
 	} else {
 		right = xPos;

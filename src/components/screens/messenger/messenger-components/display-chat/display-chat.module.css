@@ -35,6 +35,7 @@
 .userInfo span {
 	font-size: 0.9rem;
 	color: gray;
+	user-select: none;
 }
 
 .divider {
@@ -132,13 +133,6 @@
 	outline: none;
 }
 
-.messageTextarea:focus::-webkit-input-placeholder {
-	opacity: 0;
-	transform: translate(10%);
-	-webkit-transition: all 0.15s ease-in-out;
-	transition: all 0.15s ease-in-out;
-}
-
 /* Editing panel */
 
 .editingPanel {
@@ -170,7 +164,6 @@
 .editingPanel .editStatus div:first-child {
 	color: #17beec;
 	font-style: italic;
-	/* margin-bottom: 1px; */
 }
 
 @media (min-width: 850px) {

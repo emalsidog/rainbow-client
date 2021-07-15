@@ -90,7 +90,7 @@ export interface AddMessageWS {
 
 // DELETE MESSAGE
 export interface DeleteMessagePayload {
-	messageId: string;
+	messagesToDelete: string[];
 	chatId: string;
 }
 

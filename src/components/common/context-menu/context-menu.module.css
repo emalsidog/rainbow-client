@@ -3,7 +3,8 @@
 	border: 1px solid rgb(189, 189, 189);
 	padding: 5px 0;
 	background: #ffffff;
-	max-width: 200px;
+	max-width: 400px;
+	width: 220px;
 	border-radius: 2px;
 
 	z-index: 5;

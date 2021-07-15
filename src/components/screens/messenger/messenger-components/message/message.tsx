@@ -19,8 +19,14 @@ interface MessageProps {
 	isEdited?: boolean;
 	timeEdited?: Date;
 
+	isSelected: boolean;
+	isDeleteMessageVisible: boolean;
+
+	onClick: () => void;
+	handleCopyText: () => void;
 	handleDeleteMessage: () => void;
 	handleEditMessage: () => void;
+	handleSelectMessage: () => void;
 }
 
 const Message: React.FC<MessageProps> = (props) => {
@@ -30,29 +36,31 @@ const Message: React.FC<MessageProps> = (props) => {
 		messageDate,
 		isEdited,
 		timeEdited,
+		isSelected,
+		isDeleteMessageVisible,
+		onClick,
+		handleCopyText,
 		handleDeleteMessage,
 		handleEditMessage,
+		handleSelectMessage,
 	} = props;
 
 	const outerRef = useRef<HTMLDivElement | null>(null);
 
-	const handleCopyText = () => {
-		navigator.clipboard.writeText(messageText);
-	};
-
 	return (
 		<React.Fragment>
 			<ContextMenu outerRef={outerRef}>
-				<ContextMenuItem onClick={handleCopyText}>
-					<div>
-						<i
-							style={{ color: "green" }}
-							className="fas fa-copy fa-fw"
-						/>
-						<span>Copy Text</span>
-					</div>
-				</ContextMenuItem>
-
+				{!isSelected && (
+					<ContextMenuItem onClick={handleCopyText}>
+						<div>
+							<i
+								style={{ color: "green" }}
+								className="fas fa-copy fa-fw"
+							/>
+							<span>Copy text</span>
+						</div>
+					</ContextMenuItem>
+				)}
 				{isRightAligned && (
 					<ContextMenuItem onClick={handleEditMessage}>
 						<div>
@@ -60,39 +68,59 @@ const Message: React.FC<MessageProps> = (props) => {
 								style={{ color: "#17beec" }}
 								className="fas fa-edit fa-fw"
 							/>
-							<span>Edit Message</span>
+							<span>Edit message</span>
 						</div>
 					</ContextMenuItem>
 				)}
-				{isRightAligned && (
+				{isRightAligned && isDeleteMessageVisible && (
 					<ContextMenuItem onClick={handleDeleteMessage}>
 						<div>
 							<i
 								style={{ color: "red" }}
 								className="fas fa-trash-alt fa-fw"
 							/>
-							<span>Delete Message</span>
+							<span>
+								{isSelected
+									? "Delete selected"
+									: "Delete message"}
+							</span>
 						</div>
 					</ContextMenuItem>
 				)}
+				<ContextMenuItem onClick={handleSelectMessage}>
+					<div>
+						<i className="fas fa-mouse-pointer fa-fw" />
+						<span>
+							{isSelected ? "Remove selection" : "Select message"}
+						</span>
+					</div>
+				</ContextMenuItem>
 			</ContextMenu>
 			<div
-				className={`${styles.message} ${
-					isRightAligned ? styles.right : ""
+				className={`${styles.wrapper} ${
+					isSelected ? styles.selected : ""
 				}`}
+				onClick={onClick}
 				ref={outerRef}
 			>
-				<div>{messageText}</div>
-				<div className={styles.messageMeta}>
-					<span>{isEdited ? "edited" : ""}</span>
-					<span>{formatDate(messageDate, "TIME")}</span>
-					<div className={styles.extendedTime}>
-						<div>{formatDate(messageDate, "FULL_DATE")}</div>
-						{isEdited && (
-							<div>
-								edited: {formatDate(timeEdited, "FULL_DATE")}
-							</div>
-						)}
+				<div
+					className={`${styles.message} ${
+						isRightAligned ? styles.right : ""
+					}`}
+				>
+					<div>{messageText}</div>
+					<div className={styles.messageMeta}>
+						<span>{isEdited ? "edited" : ""}</span>
+						<span>{formatDate(messageDate, "TIME")}</span>
+						<div className={styles.extendedTime}>
+							<div>{formatDate(messageDate, "FULL_DATE")}</div>
+							{isEdited && (
+								<div>
+									edited:{" "}
+									{formatDate(timeEdited, "FULL_DATE")}
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 			</div>

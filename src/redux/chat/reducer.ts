@@ -100,9 +100,13 @@ export const chats = (
 
 		// DELETE MESSAGE
 		case "DELETE_MESSAGE": {
-			const { chatId, messageId } = action.payload;
+			const { chatId, messagesToDelete } = action.payload;
 
-			const newChats = deleteMessage(state.chats, chatId, messageId);
+			const newChats = deleteMessage(
+				state.chats,
+				chatId,
+				messagesToDelete
+			);
 
 			return {
 				...state,
@@ -110,10 +114,14 @@ export const chats = (
 			};
 		}
 		case "DELETE_MESSAGE_WS": {
-			const { chatId, messageId } = action.payload;
+			const { chatId, messagesToDelete } = action.payload;
 
 			if (state.chats.some((chat) => chat.chatId === chatId)) {
-				let newChats = deleteMessage(state.chats, chatId, messageId);
+				let newChats = deleteMessage(
+					state.chats,
+					chatId,
+					messagesToDelete
+				);
 				return {
 					...state,
 					chats: newChats,
@@ -233,12 +241,12 @@ const addMessage = (chats: Chat[], message: Message): Chat[] => {
 const deleteMessage = (
 	chats: Chat[],
 	chatId: string,
-	messageId: string
+	messagesToDelete: string[]
 ): Chat[] => {
 	return chats.map((chat) => {
 		if (chat.chatId === chatId) {
 			const newMessages = chat.messages.filter(
-				(message) => message.messageId !== messageId
+				(message) => !messagesToDelete.includes(message.messageId)
 			);
 			return {
 				...chat,

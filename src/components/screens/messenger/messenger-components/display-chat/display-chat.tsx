@@ -54,11 +54,25 @@ interface WebsocketPayload {
 const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const { chat, currentUserId, currentUserProfileId, onGoBack } = props;
 
+	/*
+	 *	Editing states.
+	 *	isEditing - shows if user is in editing mode.
+	 *	messageToEdit - stores messages, which user is currentlu editing.
+	 */
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const [messageToEdit, setMessageToEdit] = useState<MessageType | null>(
 		null
 	);
 
+	/*
+	 *	Selecting states.
+	 *	isSelecting - shows if user is in selecting mode.
+	 *	selectedMessages - stores messages, that were selected by user.
+	 */
+	const [isSelecting, setIsSelecting] = useState<boolean>(false);
+	const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+
+	// ------- Textarea configuration.
 	const [textareaOptions, setTextareaOptions] = useState<TextAreaOptions>({
 		rows: 1,
 		minRows: 1,
@@ -67,18 +81,41 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		value: "",
 	});
 
+	// Handle keyboard events in textarea
+	const handleTextAreaKeyDown = (
+		e: React.KeyboardEvent<HTMLTextAreaElement>
+	): void => {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			if (isEditing) {
+				return saveEditedMessage();
+			}
+			sendMessage();
+		}
+	};
+
+	// ------- End of textarea configuration.
+
+	// Dispatch
 	const dispatch = useDispatch();
 
+	/* ======= GET ONLINE STATUS ======= */
+
+	// Get id of interlocutor
 	let id: string = chat.creator._id;
 	if (currentUserId === id) {
 		id = chat.participants[0]._id;
 	}
 
+	// Getting onlineStatus of interlocutor
 	const onlineStatus = useOnlineStatus(id);
 
+	/* ======= END OF GET ONLINE STATUS ======= */
+
+	// Get last div which is last message.
 	const messagesDiv = useRef<HTMLDivElement>(null);
 
-	// Scroll to bottom when last message in messages array updates
+	// Scroll to bottom of the chat if last message was updated
 	const lastMessage = chat.messages[chat.messages.length - 1];
 	useEffect(() => {
 		if (messagesDiv.current) {
@@ -86,9 +123,10 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}, [lastMessage]);
 
+	// Flag for stopping sending server requests on each changing in textarea.
 	const isTyping = useRef<boolean>(false);
 
-	// Get ids of participants
+	// Helper. Get ids of chat participants
 	const getParticipants = useCallback((): string[] => {
 		let recipients: string[] = [chat.creator._id];
 		let filteredParticipants: string[] = chat.participants
@@ -108,6 +146,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	// Change chat process (typing...)
 	useEffect(() => {
+		if (websocket.readyState !== 1) return;
+
 		const chatParticipantsIds = getParticipants();
 		const payload: WebsocketPayload = {
 			type: "CHANGE_CHAT_PROCESS",
@@ -131,7 +171,18 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}, [textareaOptions.value, getParticipants, chat.chatId, currentUserId]);
 
-	// Send message
+	/* ======= TEXT COPYING ======= */
+
+	// Handle "Copy Text" in context menu
+	const handleCopyText = (messageText: string): void => {
+		navigator.clipboard.writeText(messageText);
+	};
+
+	/* ======= END OF TEXT COPYING ======= */
+
+	/* ======= MESSAGE SENDING ======= */
+
+	// Send message.
 	const sendMessage = (): void => {
 		if (textareaOptions.value.trim().length <= 0) return;
 
@@ -163,7 +214,119 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}));
 	};
 
-	// Handle save edited message
+	// Handle form submit
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+		e.preventDefault();
+		if (isEditing) {
+			return saveEditedMessage();
+		}
+		sendMessage();
+	};
+
+	/* ======= MESSAGE DELETING ======= */
+
+	// Handle "Delete Message" in context menu.
+	const handleDeleteMessage = (messageId: string) => {
+		if (!isDeleteMessageVisible) return;
+
+		const recipients = getParticipants();
+
+		let messagesToDelete: string[] = [];
+
+		if (selectedMessages.length > 0) {
+			messagesToDelete = [...selectedMessages];
+		} else {
+			messagesToDelete = [messageId];
+		}
+
+		const payload = {
+			messageData: {
+				messagesToDelete,
+				chatId: chat.chatId,
+			},
+			recipients,
+		};
+
+		websocket.send(
+			JSON.stringify({
+				type: "DELETE_MESSAGE",
+				payload,
+			})
+		);
+
+		dispatch(deleteMessage(payload.messageData));
+	};
+
+	/* ======= END OF MESSAGE DELETING ======= */
+
+	/* ======= MESSAGE EDITING ======= */
+
+	// Handle "Edit Message" in context menu
+	const handleEditMessage = useCallback(
+		(messageId: string): void => {
+			const messageToEdit = chat.messages.find(
+				(message) => message.messageId === messageId
+			);
+			if (!messageToEdit) return;
+
+			isSelecting && removeSelection();
+
+			setMessageToEdit(messageToEdit);
+			setTextareaOptions((prev) => ({
+				...prev,
+				value: messageToEdit.text,
+			}));
+			setIsEditing(true);
+		},
+		[chat.messages, isSelecting]
+	);
+
+	// Helper. Call it, when you want to stop editing process
+	const handleStopEditing = (): void => {
+		setTextareaOptions((prev) => ({ ...prev, value: "" }));
+		setIsEditing(false);
+		setMessageToEdit(null);
+	};
+
+	/*
+	 *	Handle keyboard pressing.
+	 *	Escape - stop editing process.
+	 *	ArrowUp - start editing last sent message.
+	 */
+	const handleEditingKeyDown = useCallback(
+		(e: any): void => {
+			switch (e.key) {
+				case "Escape":
+					isEditing && handleStopEditing();
+					break;
+
+				case "ArrowUp":
+					if (!isEditing) {
+						e.preventDefault();
+
+						for (let i = chat.messages.length - 1; i >= 0; i--) {
+							if (chat.messages[i].sender === currentUserId) {
+								return handleEditMessage(
+									chat.messages[i].messageId
+								);
+							}
+						}
+					}
+					break;
+			}
+		},
+		[chat.messages, isEditing, handleEditMessage, currentUserId]
+	);
+
+	// Add and remove listeners on mounting and unmounting.
+	useEffect(() => {
+		document.addEventListener("keydown", handleEditingKeyDown);
+		return () => {
+			document.removeEventListener("keydown", handleEditingKeyDown);
+		};
+	}, [handleEditingKeyDown]);
+
+	// Save message after editing.
 	const saveEditedMessage = (): void => {
 		const newText = textareaOptions.value.trim();
 
@@ -203,107 +366,79 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		handleStopEditing();
 	};
 
-	// Handle form submit
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-		e.preventDefault();
-		if (isEditing) {
-			return saveEditedMessage();
-		}
-		sendMessage();
-	};
+	/* ======= END OF MESSAGE EDITING ======= */
 
-	// On keydown in textarea
-	const handleKeyDown = (
-		e: React.KeyboardEvent<HTMLTextAreaElement>
-	): void => {
-		if (e.key === "Enter") {
-			e.preventDefault();
-			if (isEditing) {
-				return saveEditedMessage();
-			}
-			sendMessage();
-		}
-	};
-
-	// Handle delete message
-	const handleDeleteMessage = (messageId: string) => {
-		const recipients = getParticipants();
-
-		const payload = {
-			messageData: {
-				messageId,
-				chatId: chat.chatId,
-			},
-			recipients,
-		};
-
-		websocket.send(
-			JSON.stringify({
-				type: "DELETE_MESSAGE",
-				payload,
-			})
-		);
-
-		dispatch(deleteMessage(payload.messageData));
-	};
-
-	// Handle edit message
-	const handleEditMessage = useCallback(
-		(messageId: string): void => {
-			const messageToEdit = chat.messages.find(
-				(message) => message.messageId === messageId
-			);
-			if (!messageToEdit) return;
-
-			setMessageToEdit(messageToEdit);
-			setTextareaOptions((prev) => ({
-				...prev,
-				value: messageToEdit.text,
-			}));
-			setIsEditing(true);
-		},
-		[chat.messages]
-	);
-
-	// Handle stop editing
-	const handleStopEditing = (): void => {
-		setTextareaOptions((prev) => ({ ...prev, value: "" }));
-		setIsEditing(false);
-		setMessageToEdit(null);
-	};
-
-	// handle editing key downs
-	const handleEditingKeyDown = useCallback(
-		(e: any): void => {
-			switch (e.key) {
-				case "Escape":
-					isEditing && handleStopEditing();
-					break;
-
-				case "ArrowUp":
-					if (!isEditing) {
-						e.preventDefault();
-
-						for (let i = chat.messages.length - 1; i >= 0; i--) {
-							if (chat.messages[i].sender === currentUserId) {
-								return handleEditMessage(
-									chat.messages[i].messageId
-								);
-							}
-						}
-					}
-					break;
-			}
-		},
-		[chat.messages, isEditing, handleEditMessage, currentUserId]
-	);
+	/* ======= MESSAGE SELECTING ======= */
+	const [isDeleteMessageVisible, setIsDeleteMessageVisible] =
+		useState<boolean>(true);
 
 	useEffect(() => {
-		document.addEventListener("keydown", handleEditingKeyDown);
-		return () => {
-			document.removeEventListener("keydown", handleEditingKeyDown);
-		};
-	}, [handleEditingKeyDown]);
+		if (selectedMessages.length <= 0) return;
+
+		const { messages } = chat;
+
+		const interlocutorMessages = messages.filter((message) => {
+			const isCurrentUserSender = message.sender === currentUserId;
+
+			const isInSelectedMessages = selectedMessages.includes(
+				message.messageId
+			);
+
+			if (!isCurrentUserSender && isInSelectedMessages) {
+				return true;
+			}
+			return false;
+		});
+
+		if (interlocutorMessages.length > 0) {
+			setIsDeleteMessageVisible(false);
+		} else {
+			setIsDeleteMessageVisible(true);
+		}
+	}, [selectedMessages, chat, currentUserId]);
+
+	// Handle "Select Message" or "Remove Selection" in context menu
+	const handleSelectMessage = (messageId: string): void => {
+		selectedMessages.length >= 0
+			? setIsSelecting(true)
+			: setIsSelecting(false);
+
+		moveMessage(messageId);
+	};
+
+	// Handle click on message
+	const onMessageClick = (messageId: string): void => {
+		isSelecting && moveMessage(messageId);
+	};
+
+	// Helper. Add or remove message from the selected messages
+	const moveMessage = (messageId: string): void => {
+		const isSelected = selectedMessages.includes(messageId);
+		if (!isSelected) {
+			setSelectedMessages((prev) => [...prev, messageId]);
+		} else {
+			setSelectedMessages((prev) =>
+				prev.filter((id) => id !== messageId)
+			);
+		}
+	};
+
+	// Helper. Disable selection mode. Remove all selected items.
+	const removeSelection = (): void => {
+		setIsSelecting(false);
+		setSelectedMessages([]);
+	};
+
+	// Disable selection mode (isSelecting = false) if there are no selected items
+	useEffect(() => {
+		if (selectedMessages.length <= 0) {
+			setIsSelecting(false);
+		}
+	}, [selectedMessages]);
+
+	/* ======= END OF MESSAGE SELECTING ======= */
+
+	/* ------- Render interlocutor data. */
 
 	let givenName: string;
 	let familyName: string;
@@ -316,6 +451,9 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		familyName = chat.creator.familyName;
 	}
 
+	/* ------- End of render interlocutor data. */
+
+	/* ------- Render messages */
 	let messages: JSX.Element[] | JSX.Element = [];
 
 	if (chat.messages.length > 0) {
@@ -329,33 +467,15 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			const currentMessageDay = currentMessageDate.getDate();
 			const previousMessageDay = previousMessageDate.getDate();
 
-			if (
-				currentMessageDay - previousMessageDay >= 1 ||
-				isNaN(previousMessageDay)
-			) {
-				return (
-					<React.Fragment key={messageId}>
-						<div className={styles.messagesDate}>
-							{formatDate(currentMessageDate, "REGULAR")}
-						</div>
-						<Message
-							messageText={text}
-							isRightAligned={sender === currentUserId}
-							messageDate={time}
-							isEdited={isEdited}
-							timeEdited={timeEdited}
-							handleDeleteMessage={() =>
-								handleDeleteMessage(messageId)
-							}
-							handleEditMessage={() =>
-								handleEditMessage(messageId)
-							}
-						/>
-					</React.Fragment>
-				);
+			const displayMessagedDate: boolean =
+				currentMessageDay - previousMessageDay >= 1;
+
+			let isSelected: boolean = false;
+			if (isSelecting) {
+				isSelected = selectedMessages.includes(messageId);
 			}
 
-			return (
+			const msg: JSX.Element = (
 				<Message
 					key={messageId}
 					messageText={text}
@@ -363,14 +483,36 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					messageDate={time}
 					isEdited={isEdited}
 					timeEdited={timeEdited}
+					isSelected={isSelected}
+					isDeleteMessageVisible={isDeleteMessageVisible}
+					onClick={() => onMessageClick(messageId)}
+					handleCopyText={() => handleCopyText(text)}
 					handleDeleteMessage={() => handleDeleteMessage(messageId)}
 					handleEditMessage={() => handleEditMessage(messageId)}
+					handleSelectMessage={() => handleSelectMessage(messageId)}
 				/>
 			);
+
+			if (displayMessagedDate || isNaN(previousMessageDay)) {
+				return (
+					<React.Fragment key={messageId}>
+						<div className={styles.messagesDate}>
+							{formatDate(currentMessageDate, "REGULAR")}
+						</div>
+						{msg}
+					</React.Fragment>
+				);
+			}
+
+			return msg;
 		});
 	} else {
 		messages = <div className={styles.sayHiBlock}>Say hi!</div>;
 	}
+
+	/* ------- End of render messages. */
+
+	/* ------- Render chat process. */
 
 	let displayChatProcess: JSX.Element | undefined = undefined;
 
@@ -382,6 +524,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			displayChatProcess = <span>{onlineStatus.status}</span>;
 			break;
 	}
+
+	/* ------- End of render chat process. */
 
 	return (
 		<div className={styles.wrapper}>
@@ -432,7 +576,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					textareaOptions={textareaOptions}
 					autoFocus={true}
 					setTextareaOptions={setTextareaOptions}
-					handleKeyDown={handleKeyDown}
+					handleKeyDown={handleTextAreaKeyDown}
 					placeholder="Write a message..."
 					classNames={styles.messageTextarea}
 				/>
