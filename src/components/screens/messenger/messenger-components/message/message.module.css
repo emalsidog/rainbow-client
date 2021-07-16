@@ -6,16 +6,25 @@
 	align-items: center;
 }
 
-.wrapper:last-child {
-	animation: Appearing 0.5s forwards;
+.wrapper.selected {
+	background: #f3f3f3;
 }
 
-@keyframes Appearing {
+.wrapper.forwardAnim {
+	transition: none;
+	background: rgb(0, 0, 0);
+	animation: ForwardSelectAnimation 3s forwards;
+}
+
+@keyframes ForwardSelectAnimation {
 	0% {
-		opacity: 0;
+		background: rgba(146, 202, 235, 0);
+	}
+	50% {
+		background: rgb(146, 202, 235);
 	}
 	100% {
-		opacity: 1;
+		background: rgb(146, 202, 235, 0);
 	}
 }
 
@@ -80,29 +89,6 @@
 .extendedTime div {
 	font-size: 0.8rem;
 	text-align: left;
-}
-
-/* Selected message */
-.selected {
-	background: #f3f3f3;
-}
-
-.forwardAnim {
-	transition: none;
-	background: rgb(0, 0, 0);
-	animation: ForwardSelectAnimation 3s forwards;
-}
-
-@keyframes ForwardSelectAnimation {
-	0% {
-		background: rgba(146, 202, 235, 0);
-	}
-	50% {
-		background: rgb(146, 202, 235);
-	}
-	100% {
-		background: rgb(146, 202, 235, 0);
-	}
 }
 
 @media (max-width: 640px) {

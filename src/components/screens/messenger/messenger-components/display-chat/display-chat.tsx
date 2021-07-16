@@ -78,6 +78,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const [isForwarding, setIsForwarding] = useState<boolean>(false);
 	const [messageToForward, setMessageToForward] =
 		useState<MessageType | null>(null);
+	const index = useRef<number>(chat.messages.length);
 
 	// ------- Textarea configuration.
 	const [textareaOptions, setTextareaOptions] = useState<TextAreaOptions>({
@@ -124,12 +125,15 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	// Get last div which is last message.
 	const messagesDiv = useRef<HTMLDivElement>(null);
 
+	// Helper. Scroll to bottom.
+	const scrollDown = (): void => {
+		messagesDiv.current!.scrollTop = messagesDiv.current!.scrollHeight;
+	};
+
 	// Scroll to bottom of the chat if last message was updated
 	const lastMessage = chat.messages[chat.messages.length - 1];
 	useEffect(() => {
-		if (messagesDiv.current) {
-			messagesDiv.current!.scrollTop = messagesDiv.current!.scrollHeight;
-		}
+		messagesDiv.current && scrollDown();
 	}, [lastMessage]);
 
 	// Flag for stopping sending server requests on each changing in textarea.
@@ -307,6 +311,9 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			? setIsSelecting(true)
 			: setIsSelecting(false);
 
+		setIsForwarding(false);
+		setMessageToForward(null);
+
 		moveMessage(messageId);
 	};
 
@@ -354,19 +361,29 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 			isEditing && handleStopEditing();
 
-			setMessageToForward(messageToForward);
-			setIsForwarding(true);
+			if (isSelecting) {
+				setIsForwarding(true);
+				setIsSelecting(false);
+				textAreaRef.current?.focus();
+				scrollDown();
+				return;
+			}
 
+			setMessageToForward(messageToForward);
+
+			setIsForwarding(true);
 			textAreaRef.current?.focus();
+			scrollDown();
 		},
-		[chat.messages, isEditing]
+		[chat.messages, isEditing, isSelecting]
 	);
 
 	// Handle stop forwarding
 	const handleStopForwarding = useCallback((): void => {
 		setIsForwarding(false);
 		setMessageToForward(null);
-		setIndex(chat.messages.length - 1);
+		setSelectedMessages([]);
+		index.current = chat.messages.length;
 	}, [chat.messages.length]);
 
 	/* ======= END OF MESSAGE FORWARDING ======= */
@@ -405,6 +422,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			setTextareaOptions((prev) => ({ ...prev, rows: 3 }));
 
 			textAreaRef.current?.focus();
+			scrollDown();
 		},
 		[chat.messages, isSelecting, isForwarding, handleStopForwarding]
 	);
@@ -464,19 +482,33 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	 *	Escape - stop editing process.
 	 *	ArrowUp - start editing last sent message.
 	 */
-
-	const [index, setIndex] = useState<number>(chat.messages.length - 1);
-
 	const handleEditingKeyDown = useCallback(
 		(e: any): void => {
 			if (e.ctrlKey && e.key === "ArrowUp") {
-				handleForwardMessage(chat.messages[index].messageId);
-				if (index === 0) {
-					setIndex(chat.messages.length - 1);
+				index.current = index.current - 1;
+
+				if (index.current === 0) {
+					handleForwardMessage(
+						chat.messages[index.current].messageId
+					);
+
+					// removeSelection();
+
+					index.current = chat.messages.length;
 					return;
 				}
-				setIndex((index) => index - 1);
+				handleForwardMessage(chat.messages[index.current].messageId);
+				// removeSelection();
 				return;
+			}
+
+			if (e.ctrlKey && e.key === "ArrowDown") {
+				index.current = index.current + 1;
+				if (index.current === chat.messages.length) {
+					index.current = 0;
+				}
+				handleForwardMessage(chat.messages[index.current].messageId);
+				removeSelection();
 			}
 
 			switch (e.key) {
@@ -505,7 +537,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			isEditing,
 			currentUserId,
 			isForwarding,
-			index,
 			handleEditMessage,
 			handleForwardMessage,
 			handleStopForwarding,
@@ -625,10 +656,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		additionalPanelContent = messageToEdit?.text;
 		additionalPanelIcon = <i className="fas fa-edit" />;
 	} else if (isForwarding) {
+		// Get all populated participants
 		const allParticipants = [chat.creator, ...chat.participants];
 
+		// Set icon
 		additionalPanelIcon = <i className="fas fa-share" />;
 
+		// If there are no selected messages = use single messageToForward
 		if (selectedMessages.length <= 0) {
 			const sender = allParticipants.find(
 				(participant) => participant._id === messageToForward?.sender
@@ -636,6 +670,42 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 			additionalPanelHeader = sender?.givenName;
 			additionalPanelContent = messageToForward?.text;
+		} else {
+			// Get populated messages to forward
+			const messagesToForward = chat.messages.filter((message) =>
+				selectedMessages.includes(message.messageId)
+			);
+
+			// Get all unique ids of senders
+			const idOfSenders = messagesToForward
+				.filter(
+					(message, index, self) =>
+						index ===
+						self.findIndex((msg) => msg.sender === message.sender)
+				)
+				.map((item) => item.sender);
+
+			// Get populated senders
+			const senders = allParticipants.filter((participant) =>
+				idOfSenders.includes(participant._id)
+			);
+
+			if (senders.length === 1) {
+				additionalPanelHeader = senders[0].givenName;
+				additionalPanelContent = messagesToForward[0].text;
+			}
+
+			if (senders.length === 2) {
+				additionalPanelHeader = `${senders[0].givenName} and ${senders[1].givenName}`;
+				additionalPanelContent = `${selectedMessages.length} forwarded messages`;
+			}
+
+			if (senders.length > 2) {
+				additionalPanelHeader = `${senders[0].givenName} and ${
+					senders.length - 1
+				} others`;
+				additionalPanelContent = `${selectedMessages.length} forwarded messages`;
+			}
 		}
 	}
 

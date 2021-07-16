@@ -53,10 +53,9 @@ const Message: React.FC<MessageProps> = (props) => {
 
 	const outerRef = useRef<HTMLDivElement | null>(null);
 
-	let classNames: string = `
-		${styles.wrapper} 
-		${isSelected ? styles.selected : ""}
-		${isSelectedToForward ? styles.forwardAnim : ""}`;
+	let classNames: string = `${styles.wrapper} ${
+		isSelected ? styles.selected : ""
+	} ${isSelectedToForward ? styles.forwardAnim : ""}`;
 
 	return (
 		<React.Fragment>
