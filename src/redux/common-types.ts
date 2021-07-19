@@ -1,7 +1,6 @@
 import { AuthActionTypes } from "./auth/types";
 import { NotificationActionTypes } from "./notifications/types";
 import { UserActionTypes } from "./user/types";
-import { UsersActionTypes } from "./users/types";
 import { PostActionTypes } from "./posts/types";
 import { FriendsActionTypes } from "./friends/types";
 
@@ -9,7 +8,6 @@ export type AppActionTypes =
 	| AuthActionTypes
 	| NotificationActionTypes
 	| UserActionTypes
-	| UsersActionTypes
 	| PostActionTypes
 	| FriendsActionTypes;
 

@@ -10,9 +10,9 @@ import { AxiosPostRequest } from "../utils/server-request";
 
 // Types
 import {
-    AcceptFriendReqRequest,
-	CancelFriendReqRequest,
 	SendFriendReqRequest,
+	AcceptFriendReqRequest,
+	CancelFriendReqRequest,
 	DeclineFriendReqRequest,
 	RemoveFromFriendsRequest,
 	GetPopulatedFriendRequestsRequest,
@@ -24,7 +24,7 @@ export function* friendsWatcher() {
 	yield takeEvery("GET_POPULATED_FRIENDS_REQUEST", getPopulatedFriends);
 	yield takeEvery("GET_POPULATED_FRIEND_REQUESTS_REQUEST", getPopulatedFriendRequests);
 
-    yield takeEvery("SEND_FRIEND_REQ_REQUEST", sendFriendRequest);
+	yield takeEvery("SEND_FRIEND_REQ_REQUEST", sendFriendRequest);
 	yield takeEvery("ACCEPT_FRIEND_REQ_REQUEST", acceptFriendRequest);
 	yield takeEvery("CANCEL_FRIEND_REQ_REQUEST", cancelFriendRequest);
 	yield takeEvery("DECLINE_FRIEND_REQ_REQUEST", declineFriendRequest);
@@ -57,9 +57,7 @@ function* acceptFriendRequest(action: AcceptFriendReqRequest) {
 		);
 		const { body, status } = data;
 
-		yield put(friendsActions.acceptFriendReqSuccess());
-		yield put(friendsActions.updateRequestsCounter(body.requestsCount))
-		yield put(friendsActions.updateFriendsWhenAcceptedRequest(body.newFriendId));
+		yield put(friendsActions.acceptFriendReqSuccess(body));
 		yield put(addNotification(status));
 	} catch (error) {
 		const { status } = error.response.data;
@@ -93,8 +91,7 @@ function* declineFriendRequest(action: DeclineFriendReqRequest) {
 		);
 		const { body, status } = data;
 
-		yield put(friendsActions.declineFriendReqSuccess(body.declinedRequestId));
-		yield put(friendsActions.updateRequestsCounter(body.requestsCount));
+		yield put(friendsActions.declineFriendReqSuccess(body));
 		yield put(addNotification(status));
 	} catch (error) {
 		const { status } = error.response.data;
@@ -109,10 +106,9 @@ function* removeFromFriends(action: RemoveFromFriendsRequest) {
 		const { data } = yield call(() =>
 			AxiosPostRequest("/friends/remove-friend", payload)
 		);
-		const { body, status } = data;
+		const { body: { removedFriendId }, status } = data;
 
-		yield put(friendsActions.removeFromFriendsSuccess(body.idOfUserToRemove));
-		yield put({ type: "REMOVE_FROM_FRIENDS", payload: body });
+		yield put(friendsActions.removeFromFriendsSuccess(removedFriendId));
 		yield put(addNotification(status));
 	} catch (error) {
 		const { status } = error.response.data;

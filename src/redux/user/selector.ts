@@ -7,17 +7,13 @@ import { User } from "../common-types";
 export const selectUser = (state: RootState): User => state.user.user;
 
 // IS FETCHING
-export const selectIsFetching = (state: RootState): boolean =>
-	state.user.isFetching;
+export const selectIsFetching = (state: RootState): boolean => state.user.isFetching;
 
 // IS LOADING
-export const selectIsLoading = (state: RootState): IsLoading =>
-	state.user.isLoading;
+export const selectIsLoading = (state: RootState): IsLoading => state.user.isLoading;
 
 // EMAIL CHANGING PROCESS
-export const selectEmailChangingProcess = (
-	state: RootState
-): EmailChangingProcess => state.user.emailChangingProcess;
+export const selectEmailChangingProcess = (state: RootState): EmailChangingProcess => state.user.emailChangingProcess;
 
 // FRIENDS / HAS MORE DATA / HAS MORE SEARCHED DATA
 export const selectFriends = (state: RootState): [User[], boolean, boolean] => [
@@ -33,5 +29,43 @@ export const selectRequests = (state: RootState): [User[], boolean] => [
 ];
 
 // REQUESTS COUNTER
-export const selectRequestsCounter = (state: RootState): number =>
-	state.user.requestsCounter;
+export const selectRequestsCounter = (state: RootState): number => state.user.requestsCounter;
+
+// =====================================
+// =====================================
+// =====================================
+// =====================================
+// =====================================
+// =====================================
+
+// IS LOADING
+export const selectUsersIsLoading = (state: RootState): IsLoading =>
+	state.user.isLoading;
+
+// IS CURRENT USER
+export const selectIsCurrentUser = (state: RootState): boolean | undefined =>
+	state.user.isCurrentUser;
+
+// USER
+export const selectDisplayedUser = (state: RootState): User =>
+	state.user.displayedUser;
+
+// USERS
+export const selectUsers = (state: RootState): User[] =>
+	state.user.searchedUsers;
+
+// TOTAL USERS
+export const selectHasMoreData = (state: RootState) => [
+	state.user.hasMoreData,
+	state.user.hasMoreSearchedData,
+];
+
+// GET ONLINE USERS
+export const selectOnlineUsers = (state: RootState): string[] =>
+	state.user.onlineUsers;
+
+// =====================================
+// =====================================
+// =====================================
+// =====================================
+// =====================================

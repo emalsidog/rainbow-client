@@ -46,6 +46,18 @@ const CHANGE_BIRTHDAY_REQUEST = "CHANGE_BIRTHDAY_REQUEST";
 const CHANGE_BIRTHDAY_SUCCESS = "CHANGE_BIRTHDAY_SUCCESS";
 const CHANGE_BIRTHDAY_FAILURE = "CHANGE_BIRTHDAY_FAILURE";
 
+const GET_DISPLAYED_USER_BY_ID_REQUEST = "GET_DISPLAYED_USER_BY_ID_REQUEST";
+const GET_DISPLAYED_USER_BY_ID_SUCCESS = "GET_DISPLAYED_USER_BY_ID_SUCCESS";
+const GET_DISPLAYED_USER_BY_ID_FAILURE = "GET_DISPLAYED_USER_BY_ID_FAILURE";
+const SET_IS_FETCHING_DISPLAYED_USER = "SET_IS_FETCHING_DISPLAYED_USER";
+
+const SEARCH_USERS_REQUEST = "SEARCH_USERS_REQUEST";
+const SEARCH_USERS_SUCCESS = "SEARCH_USERS_SUCCESS";
+const SEARCH_USERS_FAILURE = "SEARCH_USERS_FAILURE";
+
+const UPDATE_ONLINE_STATUS = "UPDATE_ONLINE_STATUS";
+const GET_ONLINE_CLIENTS = "GET_ONLINE_CLIENTS";
+
 export interface EmailChangingProcess {
 	timeToNextEmail: number | undefined;
 	isChangingProcess: boolean;
@@ -79,6 +91,33 @@ export interface ChangeBirthday {
 	year: string;
 }
 
+// GET DISPLAYED USER PAYLOAD TYPES
+
+export interface GetDisplayedUserPayload {
+	user: User;
+	isCurrentUser: boolean;
+}
+
+// SEARCH USERS PAYLOAD TYPES
+
+export interface SearchUsersRequestPayload {
+	requestOptions: {
+		page: number;
+	};
+	options?: {
+		displayName: string;
+	};
+}
+
+export interface SearchUsersSuccessPayload {
+	users: User[];
+	meta: {
+		hasMoreData: boolean;
+		hasMoreSearchedData: boolean;
+		usersNeedToBeCleared: boolean;
+	};
+}
+
 export interface IsLoading {
 	changeName: boolean;
 	changeProfileId: boolean;
@@ -90,6 +129,12 @@ export interface IsLoading {
 	changeBirthday: boolean;
 
 	loadingUsers: boolean;
+
+	isFetchingUser: boolean;
+	isFetchingUsers: boolean;
+	loading: boolean;
+
+	loadingPosts: boolean;
 }
 
 // SET USER
@@ -271,6 +316,58 @@ export interface ChangeBirthdayFailure {
 	type: typeof CHANGE_BIRTHDAY_FAILURE;
 }
 
+// GET USER
+
+export interface GetDisplayedUserByIdRequest {
+	type: typeof GET_DISPLAYED_USER_BY_ID_REQUEST;
+	profileId: string;
+}
+
+export interface GetDisplayedUserByIdSuccess {
+	type: typeof GET_DISPLAYED_USER_BY_ID_SUCCESS;
+	payload: GetDisplayedUserPayload;
+}
+
+export interface GetDisplayedUserByIdFailure {
+	type: typeof GET_DISPLAYED_USER_BY_ID_FAILURE;
+}
+
+export interface SetIsFetchingDisplayedUser {
+	type: typeof SET_IS_FETCHING_DISPLAYED_USER;
+	isFetching: boolean;
+}
+
+// SEARCH USERS
+
+export interface SearchUsersRequest {
+	type: typeof SEARCH_USERS_REQUEST;
+	payload: SearchUsersRequestPayload;
+}
+
+export interface SearchUsersSuccess {
+	type: typeof SEARCH_USERS_SUCCESS;
+	payload: SearchUsersSuccessPayload;
+}
+
+export interface SearchUsersFailure {
+	type: typeof SEARCH_USERS_FAILURE;
+}
+
+// UPDATE ONLINE STATUS
+export interface UpdateOnlineStatus {
+	type: typeof UPDATE_ONLINE_STATUS;
+	payload: {
+		isOnline: boolean;
+		id: string;
+	};
+}
+
+// GET ID OF ONLINE USERS
+export interface GetOnlineClients {
+	type: typeof GET_ONLINE_CLIENTS;
+	clients: string[];
+}
+
 export type UserActionTypes =
 	| SetUser
 	| GetUserRequest
@@ -305,4 +402,13 @@ export type UserActionTypes =
 	| ChangeBioFailure
 	| ChangeBirthdayRequest
 	| ChangeBirthdaySuccess
-	| ChangeBirthdayFailure;
+	| ChangeBirthdayFailure
+	| GetDisplayedUserByIdRequest
+	| GetDisplayedUserByIdSuccess
+	| GetDisplayedUserByIdFailure
+	| SetIsFetchingDisplayedUser
+	| SearchUsersRequest
+	| SearchUsersSuccess
+	| SearchUsersFailure
+	| UpdateOnlineStatus
+	| GetOnlineClients;

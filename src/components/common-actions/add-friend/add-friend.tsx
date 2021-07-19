@@ -18,10 +18,7 @@ const AddToFriends: React.FC<AddToFriendsProps> = ({ profileId }) => {
 	};
 
 	return (
-		<button
-            className="btn btn-primary"
-			onClick={handleClick}
-		>
+		<button className="btn btn-primary" onClick={handleClick}>
 			Add to friends
 		</button>
 	);

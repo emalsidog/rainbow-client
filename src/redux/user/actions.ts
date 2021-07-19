@@ -1,17 +1,10 @@
 // Types
 import { AppActionTypes } from "../common-types";
-import {
-	ChangeBirthday,
-	ChangeEmail,
-	ChangeName,
-	ChangePassword,
-	EmailChangingProcess,
-	UserExtended,
-} from "./types";
+import * as types from "./types";
 
 // SET USER
 
-export const setUser = (payload: UserExtended): AppActionTypes => ({
+export const setUser = (payload: types.UserExtended): AppActionTypes => ({
 	type: "SET_USER",
 	payload,
 });
@@ -32,12 +25,12 @@ export const getUserFailure = (): AppActionTypes => ({
 
 // CHANGE NAME
 
-export const changeNameRequest = (payload: ChangeName): AppActionTypes => ({
+export const changeNameRequest = (payload: types.ChangeName): AppActionTypes => ({
 	type: "CHANGE_NAME_REQUEST",
 	payload,
 });
 
-export const changeNameSuccess = (payload: ChangeName): AppActionTypes => ({
+export const changeNameSuccess = (payload: types.ChangeName): AppActionTypes => ({
 	type: "CHANGE_NAME_SUCCESS",
 	payload,
 });
@@ -69,9 +62,7 @@ export const changeEmailReqRequest = (email: string): AppActionTypes => ({
 	email,
 });
 
-export const changeEmailReqSuccess = (
-	payload: EmailChangingProcess
-): AppActionTypes => ({
+export const changeEmailReqSuccess = (payload: types.EmailChangingProcess): AppActionTypes => ({
 	type: "CHANGE_EMAIL_REQ_SUCCESS",
 	payload,
 });
@@ -87,7 +78,7 @@ export const changeEmailRequest = (otp: string): AppActionTypes => ({
 	otp,
 });
 
-export const changeEmailSuccess = (payload: ChangeEmail): AppActionTypes => ({
+export const changeEmailSuccess = (payload: types.ChangeEmail): AppActionTypes => ({
 	type: "CHANGE_EMAIL_SUCCESS",
 	payload,
 });
@@ -102,9 +93,7 @@ export const changeEmailAbortRequest = (): AppActionTypes => ({
 	type: "CHANGE_EMAIL_ABORT_REQUEST",
 });
 
-export const changeEmailAbortSuccess = (
-	payload: EmailChangingProcess
-): AppActionTypes => ({
+export const changeEmailAbortSuccess = (payload: types.EmailChangingProcess): AppActionTypes => ({
 	type: "CHANGE_EMAIL_ABORT_SUCCESS",
 	payload,
 });
@@ -130,16 +119,12 @@ export const deleteAccountFailure = (): AppActionTypes => ({
 
 // CHANGE PASSWORD
 
-export const changePasswordRequest = (
-	payload: ChangePassword
-): AppActionTypes => ({
+export const changePasswordRequest = (payload: types.ChangePassword): AppActionTypes => ({
 	type: "CHANGE_PASSWORD_REQUEST",
 	payload,
 });
 
-export const changePasswordSuccess = (
-	lastTimeChanged: Date
-): AppActionTypes => ({
+export const changePasswordSuccess = (lastTimeChanged: Date): AppActionTypes => ({
 	type: "CHANGE_PASSWORD_SUCCESS",
 	lastTimeChanged,
 });
@@ -182,9 +167,7 @@ export const changeBioFailure = (): AppActionTypes => ({
 
 // CHANGE BIRTHDAY
 
-export const changeBirthdayRequest = (
-	payload: ChangeBirthday
-): AppActionTypes => ({
+export const changeBirthdayRequest = (payload: types.ChangeBirthday): AppActionTypes => ({
 	type: "CHANGE_BIRTHDAY_REQUEST",
 	payload,
 });
@@ -196,4 +179,41 @@ export const changeBirthdaySuccess = (birthday: Date): AppActionTypes => ({
 
 export const changeBirthdayFailure = (): AppActionTypes => ({
 	type: "CHANGE_BIRTHDAY_FAILURE",
+});
+
+// GET DISPLAYED USER BY ID
+
+export const getDisplayedUserByIdRequest = (profileId: string): AppActionTypes => ({
+	type: "GET_DISPLAYED_USER_BY_ID_REQUEST",
+	profileId,
+});
+
+export const getDisplayedUserByIdSuccess = (payload: types.GetDisplayedUserPayload): AppActionTypes => ({
+	type: "GET_DISPLAYED_USER_BY_ID_SUCCESS",
+	payload,
+});
+
+export const getDisplayedUserByIdFailure = (): AppActionTypes => ({
+	type: "GET_DISPLAYED_USER_BY_ID_FAILURE",
+});
+
+export const setIsFetchingDisplayedUser = (isFetching: boolean): AppActionTypes => ({
+	type: "SET_IS_FETCHING_DISPLAYED_USER",
+	isFetching,
+});
+
+// SEARCH USERS
+
+export const searchUsersRequest = (payload: types.SearchUsersRequestPayload): AppActionTypes => ({
+	type: "SEARCH_USERS_REQUEST",
+	payload,
+});
+
+export const searchUsersSuccess = (payload: types.SearchUsersSuccessPayload): AppActionTypes => ({
+	type: "SEARCH_USERS_SUCCESS",
+	payload,
+});
+
+export const searchUsersFailure = (): AppActionTypes => ({
+	type: "SEARCH_USERS_FAILURE",
 });

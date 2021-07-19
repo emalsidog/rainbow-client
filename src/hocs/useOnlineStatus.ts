@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 // Selectors
-import { selectOnlineUsers } from "../redux/users/selectors";
+import { selectOnlineUsers } from "../redux/user/selector";
 
 // Utils
 import { AxiosPostRequest } from "../redux/utils/server-request";

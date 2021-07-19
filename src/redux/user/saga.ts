@@ -21,6 +21,8 @@ import {
 	ChangeAvatarRequest,
 	ChangeBioRequest,
 	ChangeBirthdayRequest,
+	GetDisplayedUserByIdRequest,
+	SearchUsersRequest,
 } from "./types";
 import { UserExtended } from "./types";
 
@@ -39,7 +41,49 @@ export function* userWatcher() {
 	yield takeEvery("CHANGE_BIRTHDAY_REQUEST", changeBirthday);
 
 	yield takeEvery("DELETE_ACCOUNT_REQUEST", deleteAccount);
+
+	// ======
+	yield takeEvery("GET_DISPLAYED_USER_BY_ID_REQUEST", getDisplayedUser);
+	yield takeEvery("SEARCH_USERS_REQUEST", searchUsers);
 }
+
+// ================================================
+// ================================================
+// ================================================
+// ================================================
+// ================================================
+
+function* getDisplayedUser(action: GetDisplayedUserByIdRequest) {
+	try {
+		const {
+			data: { body },
+		} = yield call(() => AxiosGetRequest(`/users/${action.profileId}`));
+
+		yield put(userActions.getDisplayedUserByIdSuccess(body));
+	} catch (error) {
+		const status = error.response.data;
+		yield put(userActions.getDisplayedUserByIdFailure());
+		yield put(addNotification(status));
+	}
+}
+
+function* searchUsers(action: SearchUsersRequest) {
+	try {
+		const { data } = yield call(() =>
+			AxiosPostRequest("/users/search", action.payload)
+		);
+
+		yield put(userActions.searchUsersSuccess(data.body));
+	} catch (error) {
+		yield put(userActions.searchUsersFailure());
+	}
+}
+
+// ================================================
+// ================================================
+// ================================================
+// ================================================
+// ================================================
 
 function* currentUser() {
 	try {

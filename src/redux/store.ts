@@ -7,7 +7,6 @@ import { all } from "redux-saga/effects";
 // Reducers
 import { user } from "./user";
 import { auth } from "./auth";
-import { users } from "./users";
 import { notifications } from "./notifications";
 import { posts } from "./posts";
 import { chats } from "./chat/reducer";
@@ -15,7 +14,6 @@ import { chats } from "./chat/reducer";
 // Watchers
 import { userWatcher } from "./user";
 import { authWatcher } from "./auth";
-import { usersWatcher } from "./users";
 import { wsWatcher } from "./websockets";
 import { postsWatcher } from "./posts";
 import { friendsWatcher } from "./friends";
@@ -26,7 +24,6 @@ export const rootReducer = combineReducers({
 	auth,
 	notifications,
 	user,
-	users,
 	posts,
 	chats,
 });
@@ -36,7 +33,6 @@ function* rootWatcher() {
 	yield all([
 		authWatcher(),
 		userWatcher(),
-		usersWatcher(),
 		wsWatcher(),
 		postsWatcher(),
 		friendsWatcher(),

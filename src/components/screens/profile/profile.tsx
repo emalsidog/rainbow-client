@@ -5,17 +5,17 @@ import { useParams, useHistory } from "react-router-dom";
 
 // Actions
 import {
-	getUserByIdRequest,
-	setIsFetchingUser,
-} from "../../../redux/users/actions";
+	getDisplayedUserByIdRequest,
+	setIsFetchingDisplayedUser,
+} from "../../../redux/user/actions";
 
 // Selectors
 import {
 	selectIsCurrentUser,
 	selectUsersIsLoading,
 	selectUser,
-} from "../../../redux/users/selectors";
-import { selectUser as selectCurrentUser } from "../../../redux/user/selector";
+	selectDisplayedUser
+} from "../../../redux/user/selector";
 import {
 	selectPosts,
 	selectDisplayedUserPosts,
@@ -47,15 +47,15 @@ import MainPhotoSkeleton from "../../skeletons/templates/profile-skeleton/additi
 
 const Profile: React.FC = () => {
 	const dispatch = useDispatch();
-	const displayedUser = useSelector(selectUser);
-	const currentUser = useSelector(selectCurrentUser);
+
+	const displayedUser = useSelector(selectDisplayedUser);
+	const currentUser = useSelector(selectUser);
+
 	const isCurrentUser = useSelector(selectIsCurrentUser);
 	const isLoadingUsers = useSelector(selectUsersIsLoading);
 
 	const { posts, hasMorePosts } = useSelector(selectPosts);
-	const { displayedUserPosts, hasMoreDisplayedUserPosts } = useSelector(
-		selectDisplayedUserPosts
-	);
+	const { displayedUserPosts, hasMoreDisplayedUserPosts } = useSelector(selectDisplayedUserPosts);
 	const isPostsLoading = useSelector(selectIsPostsLoading);
 
 	const history = useHistory();
@@ -65,10 +65,10 @@ const Profile: React.FC = () => {
 	const onlineStatus = useOnlineStatus(displayedUser._id);
 
 	useEffect(() => {
-		dispatch(getUserByIdRequest(profileId));
+		dispatch(getDisplayedUserByIdRequest(profileId));
 
 		return () => {
-			dispatch(setIsFetchingUser(true));
+			dispatch(setIsFetchingDisplayedUser(true));
 		};
 	}, [dispatch, profileId]);
 

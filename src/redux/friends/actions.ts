@@ -1,91 +1,111 @@
 // Types
 import { AppActionTypes, User } from "../common-types";
+import { AcceptFriendReqSuccessPayload, FriendsActionTypes } from "./types";
 
 // SEND FRIEND REQUEST
 
-export const sendFriendReqRequest = (profileId: string): AppActionTypes => ({
+export const sendFriendReqRequest = (profileId: string): FriendsActionTypes => ({
 	type: "SEND_FRIEND_REQ_REQUEST",
 	profileId,
 });
 
-export const sendFriendReqSuccess = (payload: {
-	newRequestId: string;
-	idOfUserToUpdate: string;
-}): AppActionTypes => ({
+export const sendFriendReqSuccess = (payload: {	newRequestId: string; idOfUserToUpdate: string }): FriendsActionTypes => ({
 	type: "SEND_FRIEND_REQ_SUCCESS",
 	payload,
 });
 
-export const sendFriendReqFailure = (): AppActionTypes => ({
+export const sendFriendReqFailure = (): FriendsActionTypes => ({
 	type: "SEND_FRIEND_REQ_FAILURE",
+});
+
+export const sendFriendReqWS = (payload: { newRequestId: string; requestsCount: number }): FriendsActionTypes => ({
+	type: "SEND_FRIEND_REQ_WS",
+	payload,
 });
 
 // ACCEPT FRIEND REQUEST
 
-export const acceptFriendReqRequest = (id: string): AppActionTypes => ({
+export const acceptFriendReqRequest = (id: string): FriendsActionTypes => ({
 	type: "ACCEPT_FRIEND_REQ_REQUEST",
 	id,
 });
 
-export const acceptFriendReqSuccess = (): AppActionTypes => ({
+export const acceptFriendReqSuccess = (payload: AcceptFriendReqSuccessPayload): FriendsActionTypes => ({
 	type: "ACCEPT_FRIEND_REQ_SUCCESS",
+	payload,
 });
 
-export const acceptFriendReqFailure = (): AppActionTypes => ({
+export const acceptFriendReqFailure = (): FriendsActionTypes => ({
 	type: "ACCEPT_FRIEND_REQ_FAILURE",
+});
+
+export const acceptFriendReqWS = (payload: { idOfUserWhoAccepted: string; acceptedUserId: string }): FriendsActionTypes => ({
+	type: "ACCEPT_FRIEND_REQ_WS",
+	payload
 });
 
 // CANCEL FRIEND REQUEST
 
-export const cancelFriendReqRequest = (id: string): AppActionTypes => ({
+export const cancelFriendReqRequest = (id: string): FriendsActionTypes => ({
 	type: "CANCEL_FRIEND_REQ_REQUEST",
-	id,
+	id
 });
 
-export const cancelFriendReqSuccess = (payload: {
-	idOfUserWhoCancelled: string; 
-	userWhoHasRequest: string;
-}): AppActionTypes => ({
+export const cancelFriendReqSuccess = (payload: { cancelledRequestId: string; userToUpdate: string }): FriendsActionTypes => ({
 	type: "CANCEL_FRIEND_REQ_SUCCESS",
 	payload
 });
 
-export const cancelFriendReqFailure = (): AppActionTypes => ({
-	type: "CANCEL_FRIEND_REQ_FAILURE",
+export const cancelFriendReqFailure = (): FriendsActionTypes => ({
+	type: "CANCEL_FRIEND_REQ_FAILURE"
+});
+
+export const cancelFriendReqWS = ( payload: { cancelledRequestId: string; requestsCount: number }): FriendsActionTypes => ({
+	type: "CANCEL_FRIEND_REQ_WS",
+	payload
 });
 
 // DECLINE FRIEND REQUEST
 
-export const declineFriendReqRequest = (id: string): AppActionTypes => ({
+export const declineFriendReqRequest = (id: string): FriendsActionTypes => ({
 	type: "DECLINE_FRIEND_REQ_REQUEST",
 	id,
 });
 
-export const declineFriendReqSuccess = (
-	declinedRequestId: string
-): AppActionTypes => ({
+export const declineFriendReqSuccess = (payload: { declinedRequestId: string; requestsCount: number }): FriendsActionTypes => ({
 	type: "DECLINE_FRIEND_REQ_SUCCESS",
-	declinedRequestId,
+	payload
 });
 
-export const declineFriendReqFailure = (): AppActionTypes => ({
+export const declineFriendReqFailure = (): FriendsActionTypes => ({
 	type: "DECLINE_FRIEND_REQ_FAILURE",
 });
 
+export const declineFriendReqWS = (	payload: { userToUpdate: string; declinedRequestId: string }): FriendsActionTypes => ({
+	type: "DECLINE_FRIEND_REQ_WS",
+	payload
+});
+
+
 // REMOVE FROM FRIENDS
 
-export const removeFromFriendsRequest = (id: string): AppActionTypes => ({
+export const removeFromFriendsRequest = (id: string): FriendsActionTypes => ({
 	type: "REMOVE_FROM_FRIENDS_REQUEST",
-	id,
+	id
 });
 
-export const removeFromFriendsSuccess = (idOfUserToRemove: string): AppActionTypes => ({
+export const removeFromFriendsSuccess = (removedFriendId: string): FriendsActionTypes => ({
 	type: "REMOVE_FROM_FRIENDS_SUCCESS",
-	idOfUserToRemove,
+	removedFriendId
 });
 
-export const removeFromFriendsFailure = (): AppActionTypes => ({
-	type: "REMOVE_FROM_FRIENDS_FAILURE",
+export const removeFromFriendsFailure = (): FriendsActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_FAILURE"
+});
+
+export const removeFromFriendsWS = (removedFriendId: string): FriendsActionTypes => ({
+	type: "REMOVE_FROM_FRIENDS_WS",
+	removedFriendId
 });
 
 // GET POPULATED FRIENDS
@@ -141,7 +161,9 @@ export const getPopulatedFriendRequestsFailure = (): AppActionTypes => ({
 
 // WEBSOCKETS ACTIONS
 
-export const updateFriendsWhenAcceptedRequest = (newFriendId: string): AppActionTypes => ({
+export const updateFriendsWhenAcceptedRequest = (
+	newFriendId: string
+): AppActionTypes => ({
 	type: "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST",
 	newFriendId,
 });

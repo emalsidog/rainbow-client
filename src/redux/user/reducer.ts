@@ -7,6 +7,16 @@ import { FriendsActionTypes } from "../friends/types";
 
 interface InitialState {
 	user: User;
+	displayedUser: User;
+
+	searchedUsers: User[];
+	onlineUsers: string[];
+
+	hasMoreData: boolean;
+	hasMoreSearchedData: boolean;
+
+	isCurrentUser: boolean | undefined;
+
 	populatedFields: {
 		populatedFriends: {
 			friends: User[];
@@ -30,6 +40,16 @@ interface InitialState {
 
 const initialState: InitialState = {
 	user: initialUser,
+	displayedUser: initialUser,
+
+	searchedUsers: [],
+	onlineUsers: [],
+
+	hasMoreData: true,
+	hasMoreSearchedData: true,
+	
+	isCurrentUser: undefined,
+
 	populatedFields: {
 		populatedFriends: {
 			friends: [],
@@ -63,15 +83,18 @@ const initialState: InitialState = {
 		changeBirthday: false,
 
 		loadingUsers: false,
+
+		isFetchingUser: true,
+		isFetchingUsers: false,
+		loading: false,
+
+		loadingPosts: false,
 	},
 };
 
 type ActionType = UserActionTypes | PostActionTypes | FriendsActionTypes;
 
-export const user = (
-	state = initialState,
-	action: ActionType
-): InitialState => {
+export const user = (state = initialState, action: ActionType): InitialState => {
 	switch (action.type) {
 		// SET USER
 
@@ -448,43 +471,250 @@ export const user = (
 			};
 		}
 
-		// DECLINE FRIEND REQUEST
+		// SEND FRIEND REQUEST
 
-		case "DECLINE_FRIEND_REQ_REQUEST": {
+		case "SEND_FRIEND_REQ_REQUEST": {
+			return {
+				...state
+			}
+		}
+
+		case "SEND_FRIEND_REQ_SUCCESS": {
+			const { idOfUserToUpdate, newRequestId } = action.payload;
+
+			const newSearchedUsers = state.searchedUsers.map(user => {
+				if (user._id === idOfUserToUpdate) {
+					return {
+						...user,
+						friendRequests: [...user.friendRequests, newRequestId]
+					}
+				}
+				return user;
+			})
+
+			return {
+				...state,
+				displayedUser: {
+					...state.displayedUser,
+					friendRequests: [...state.displayedUser.friendRequests, newRequestId]
+				},
+				searchedUsers: newSearchedUsers
+			}
+		}
+
+		case "SEND_FRIEND_REQ_FAILURE": {
+			return {
+				...state
+			}
+		}
+
+		case "SEND_FRIEND_REQ_WS": {
+			const { newRequestId, requestsCount } = action.payload;
+			return {
+				...state,
+				user: {
+					...state.user,
+					friendRequests: [...state.user.friendRequests, newRequestId],
+				},
+				requestsCounter: requestsCount
+			}
+		}
+
+		// ACCEPT FRIEND REQUEST
+
+		case "ACCEPT_FRIEND_REQ_REQUEST": {
 			return {
 				...state,
 			};
 		}
-		case "DECLINE_FRIEND_REQ_SUCCESS": {
-			const { declinedRequestId } = action;
-			const newRequests = state.user.friendRequests.filter(
-				(requestId) => requestId !== declinedRequestId
-			);
 
-			const newPopualtedRequests =
-				state.populatedFields.populatedFriendRequests.requests.filter(
-					(request) => request._id !== declinedRequestId
-				);
+		case "ACCEPT_FRIEND_REQ_SUCCESS": {
+			const { newFriendId, requestsCount } = action.payload;
+
+			const newRequests = filterFriendRequests(state.user.friendRequests, newFriendId)
 
 			return {
 				...state,
 				user: {
 					...state.user,
 					friendRequests: newRequests,
+					friends: [...state.user.friends, newFriendId],
 				},
-				populatedFields: {
-					...state.populatedFields,
-					populatedFriendRequests: {
-						...state.populatedFields.populatedFriendRequests,
-						requests: newPopualtedRequests,
-					},
-				},
+				requestsCounter: requestsCount,
 			};
 		}
-		case "DECLINE_FRIEND_REQ_FAILURE": {
+
+		case "ACCEPT_FRIEND_REQ_FAILURE": {
 			return {
 				...state,
 			};
+		}
+
+		case "ACCEPT_FRIEND_REQ_WS": {
+			const { acceptedUserId, idOfUserWhoAccepted } = action.payload;
+
+			const newSearchedUsers = state.searchedUsers.map(user => {
+				if (user._id === idOfUserWhoAccepted) {
+					const newRequests = filterFriendRequests(user.friendRequests, acceptedUserId);
+
+					return {
+						...user,
+						friendRequests: newRequests,
+						friends: [...user.friends, acceptedUserId]	
+					}
+				}
+				return user;
+			})
+
+			return {
+				...state,
+				user: {
+					...state.user,
+					friends: [...state.user.friends, idOfUserWhoAccepted],
+				},
+				displayedUser: {
+					...state.displayedUser,
+					friendRequests: filterFriendRequests(state.displayedUser.friendRequests, acceptedUserId),
+					friends: [...state.displayedUser.friends, acceptedUserId]
+				},
+				searchedUsers: newSearchedUsers
+			};
+		}
+
+		// CANCEL FRIEND REQUEST
+
+		case "CANCEL_FRIEND_REQ_REQUEST": {
+			return {
+				...state
+			}
+		}
+
+		case "CANCEL_FRIEND_REQ_SUCCESS": {
+			const { cancelledRequestId, userToUpdate } = action.payload;
+
+			const newSearchedUsers = state.searchedUsers.map(user => {
+				if (user._id === userToUpdate) {
+					return {
+						...user,
+						friendRequests: filterFriendRequests(user.friendRequests, cancelledRequestId)
+					}
+				}
+				return user;
+			});
+
+			return {
+				...state,
+				displayedUser: {
+					...state.displayedUser,
+					friendRequests: filterFriendRequests(state.displayedUser.friendRequests, cancelledRequestId)
+				},
+				searchedUsers: newSearchedUsers
+			}
+		}
+
+		case "CANCEL_FRIEND_REQ_FAILURE": {
+			return {
+				...state
+			}
+		}
+
+		case "CANCEL_FRIEND_REQ_WS": {
+			const { cancelledRequestId, requestsCount } = action.payload;
+			return {
+				...state,
+				user: {
+					...state.user,
+					friendRequests: filterFriendRequests(state.user.friendRequests, cancelledRequestId)
+				},
+				requestsCounter: requestsCount
+			}
+		}
+
+		// DECLINE FRIEND REQUEST
+
+		case "DECLINE_FRIEND_REQ_REQUEST": {
+			return {
+				...state
+			}
+		}
+
+		case "DECLINE_FRIEND_REQ_SUCCESS": {
+			const { declinedRequestId, requestsCount } = action.payload;
+			return {
+				...state,
+				user: {
+					...state.user,
+					friendRequests: filterFriendRequests(state.user.friendRequests, declinedRequestId)
+				},
+				requestsCounter: requestsCount
+			}
+		}
+
+		case "DECLINE_FRIEND_REQ_FAILURE": {
+			return {
+				...state
+			}
+		}
+
+		case "DECLINE_FRIEND_REQ_WS": {
+			const { declinedRequestId, userToUpdate } = action.payload;
+
+			const newSearchedUsers = state.searchedUsers.map(user => {
+				if (user._id === userToUpdate) {
+					return {
+						...user,
+						friendRequests: filterFriendRequests(user.friendRequests, declinedRequestId)
+					}
+				}
+				return user;
+			})
+
+			return {
+				...state,
+				displayedUser: {
+					...state.displayedUser,
+					friendRequests: filterFriendRequests(state.displayedUser.friendRequests, declinedRequestId)
+				},
+				searchedUsers: newSearchedUsers
+			}
+		}
+
+		// REMOVE FROM FRIENDS
+
+		case "REMOVE_FROM_FRIENDS_REQUEST": {
+			return {
+				...state
+			}
+		}
+
+		case "REMOVE_FROM_FRIENDS_SUCCESS": {
+			const { removedFriendId } = action;
+
+			return {
+				...state,
+				user: {
+					...state.user,
+					friends: state.user.friends.filter(friend => friend !== removedFriendId)
+				}
+			}
+		}
+
+		case "REMOVE_FROM_FRIENDS_FAILURE": {
+			return {
+				...state
+			}
+		}
+
+		case "REMOVE_FROM_FRIENDS_WS": {
+			const { removedFriendId } = action;
+
+			return {
+				...state,
+				user: {
+					...state.user,
+					friends: state.user.friends.filter(friend => friend !== removedFriendId)
+				},
+			}
 		}
 
 		// GET POPULATED FRIENDS
@@ -585,121 +815,128 @@ export const user = (
 			};
 		}
 
-		// REMOVE FROM FRIENDS
+		// GET DISPLAYED USER
 
-		case "REMOVE_FROM_FRIENDS_REQUEST": {
+		case "GET_DISPLAYED_USER_BY_ID_REQUEST": {
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: true,
+				},
 			};
 		}
 
-		case "REMOVE_FROM_FRIENDS_SUCCESS": {
-			const { idOfUserToRemove } = action;
-			const newFriends = state.user.friends.filter(
-				(friendId) => friendId !== idOfUserToRemove
-			);
+		case "GET_DISPLAYED_USER_BY_ID_SUCCESS": {
+			const { isCurrentUser, user } = action.payload;
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: false,
+				},
+				displayedUser: {
+					...user,
+				},
+				isCurrentUser,
+			};
+		}
 
-			const newPopualtedFriends =
-				state.populatedFields.populatedFriends.friends.filter(
-					(friend) => friend._id !== idOfUserToRemove
+		case "GET_DISPLAYED_USER_BY_ID_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: false,
+				},
+			};
+		}
+
+		case "SET_IS_FETCHING_DISPLAYED_USER": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUser: action.isFetching,
+				},
+			};
+		}
+
+		// SEARCH USERS
+
+		case "SEARCH_USERS_REQUEST": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUsers: true,
+				},
+			};
+		}
+
+		case "SEARCH_USERS_SUCCESS": {
+			const { meta, users } = action.payload;
+
+			let newUsers;
+			if (meta.usersNeedToBeCleared) {
+				newUsers = [...users];
+			} else {
+				newUsers = [...state.searchedUsers, ...users];
+			}
+
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUsers: false,
+				},
+				searchedUsers: newUsers,
+				hasMoreData: meta.hasMoreData,
+				hasMoreSearchedData: meta.hasMoreSearchedData,
+			};
+		}
+
+		case "SEARCH_USERS_FAILURE": {
+			return {
+				...state,
+				isLoading: {
+					...state.isLoading,
+					isFetchingUsers: false,
+				},
+			};
+		}
+
+		// UPDATE ONLINE STATUS
+		
+		case "UPDATE_ONLINE_STATUS": {
+			const { isOnline, id } = action.payload;
+
+			let newOnlineUsers: string[] = [];
+
+			const alreadyInList = state.onlineUsers.includes(id);
+
+			if (isOnline && alreadyInList) {
+				newOnlineUsers = [...state.onlineUsers];
+			} else if (isOnline) {
+				newOnlineUsers = [...state.onlineUsers, id];
+			} else {
+				newOnlineUsers = state.onlineUsers.filter(
+					(userId) => userId !== id
 				);
+			}
 
 			return {
 				...state,
-				user: {
-					...state.user,
-					friends: newFriends,
-				},
-				populatedFields: {
-					...state.populatedFields,
-					populatedFriends: {
-						...state.populatedFields.populatedFriends,
-						friends: newPopualtedFriends,
-					},
-				},
+				onlineUsers: newOnlineUsers,
 			};
 		}
 
-		case "REMOVE_FROM_FRIENDS_FAILURE": {
-			return {
-				...state,
-			};
-		}
+		// GET ONLINE CLIENTS IDS
 
-		/* 
-			"NEW_FRIEND_REQUEST" - responsible for updating client,
-			which have got a notification (add currentUserId to friendRequests)
-		*/
-		case "NEW_FRIEND_REQUEST": {
+		case "GET_ONLINE_CLIENTS": {
 			return {
 				...state,
-				user: {
-					...state.user,
-					friendRequests: [
-						...state.user.friendRequests,
-						action.payload.currentUserId,
-					],
-				},
-			};
-		}
-
-		/*
-			UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST - update current user of client which was accepted
-			(update user.user of client which was accepted) with new friends (add idOfUserWhoAccepted) and
-			new requests (remove idOfUserWhoAccepted)
-		*/
-		case "UPDATE_FRIENDS_WHEN_ACCEPTED_REQUEST": {
-			const { newFriendId } = action;
-			const newRequests = state.user.friendRequests.filter(
-				(requestId) => requestId.toString() !== newFriendId.toString()
-			);
-
-			const newPopualtedRequests =
-				state.populatedFields.populatedFriendRequests.requests.filter(
-					(request) => request._id !== newFriendId
-				);
-
-			return {
-				...state,
-				user: {
-					...state.user,
-					friendRequests: newRequests,
-					friends: [...state.user.friends, newFriendId],
-				},
-				populatedFields: {
-					...state.populatedFields,
-					populatedFriendRequests: {
-						...state.populatedFields.populatedFriendRequests,
-						requests: newPopualtedRequests,
-					},
-				},
-			};
-		}
-		/*
-			FRIEND_REQUEST_CANCELLED - after some client has cancelled its request - update client (user.user)
-			who	had this request by removing idOfUserWhoCancelled from the friendRequests
-		*/
-		case "FRIEND_REQUEST_CANCELLED": {
-			const { idOfUserWhoCancelled } = action;
-			const newRequests = state.user.friendRequests.filter(
-				(requestId) => requestId !== idOfUserWhoCancelled
-			);
-			return {
-				...state,
-				user: {
-					...state.user,
-					friendRequests: newRequests,
-				},
-			};
-		}
-		/*
-			UPDATE_REQUEST_COUNTER - update requests counter
-		*/
-		case "UPDATE_REQUEST_COUNTER": {
-			const { count } = action;
-			return {
-				...state,
-				requestsCounter: count,
+				onlineUsers: action.clients,
 			};
 		}
 
@@ -710,3 +947,8 @@ export const user = (
 		}
 	}
 };
+
+
+const filterFriendRequests = (requests: string[], idToRemove: string): string[] => {
+	return requests.filter(request => request !== idToRemove);
+}

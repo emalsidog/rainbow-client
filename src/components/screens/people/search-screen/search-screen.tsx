@@ -3,14 +3,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // Actions
-import { searchUsersRequest } from "../../../../redux/users/actions";
+import { searchUsersRequest } from "../../../../redux/user/actions";
 
 // Selectors
 import {
 	selectHasMoreData,
 	selectUsers,
 	selectUsersIsLoading,
-} from "../../../../redux/users/selectors";
+} from "../../../../redux/user/selector";
 
 // Hooks
 import useDebounce from "../../../../hocs/useDebounce";
