@@ -179,3 +179,9 @@
 		height: calc(100vh - 104.29px);
 	}
 }
+
+@media (pointer:none), (pointer:coarse) and (max-width: 850px) {
+	.wrapper {
+		height: calc(100vh - 104.29px - 56px);
+	}
+}

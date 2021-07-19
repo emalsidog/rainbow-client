@@ -9,6 +9,9 @@ import { logoutRequest } from "../../../../redux/auth/actions";
 // Selectors
 import { selectUser } from "../../../../redux/user/selector";
 
+// Assets
+import { ReactComponent as Logo } from "./assets/vector_logo.svg";
+
 // Styles
 import "./navbar.css";
 
@@ -58,7 +61,7 @@ const Navbar = () => {
 		<header className={classNames}>
 			<div className="navbar-container">
 				<div className="navbar-logo">
-					<img src="/assets/images/logo.png" alt="Rainbow" />
+					<Logo style={{ height: 35 }} />
 				</div>
 				<Dropdown avatar={user.avatar}>
 					<DropdownItem

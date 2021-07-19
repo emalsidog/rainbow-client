@@ -1,0 +1,31 @@
+.wrapper {
+	width: 100vw;
+	min-height: 100vh;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.wrapper span {
+	padding: 0 20px;
+}
+
+.wrapper span:first-child {
+	font-size: 50px;
+	border-right: 2px solid black;
+}
+
+.wrapper span:last-child {
+	font-size: 30px;
+}
+
+@media (max-width: 400px) {
+	.wrapper span:first-child {
+		font-size: 40px;
+	}
+
+	.wrapper span:last-child {
+		font-size: 20px;
+	}
+}

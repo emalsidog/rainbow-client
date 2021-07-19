@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 // Actions
 import { getUserRequest } from "../../redux/user/actions";
@@ -20,7 +21,6 @@ import Profile from "../screens/profile";
 import SearchScreen from "../screens/people/search-screen";
 import FriendsScreen from "../screens/people/friends-screen";
 import RequestScreen from "../screens/people/requests-screen";
-
 import Messenger from "../screens/messenger";
 import Music from "../screens/music";
 import Settings from "../screens/settings";
@@ -28,6 +28,7 @@ import Settings from "../screens/settings";
 import Notification from "../common/notification";
 import BgAnimation from "../common/bg-animation";
 import MainLoader from "../common/spinners/main-loader";
+import Page404 from "../common/page-404";
 
 import ProtectedRoute from "../../hocs/protected-route";
 
@@ -38,11 +39,19 @@ const App: React.FC = () => {
 	const isAuthenticated = useSelector(selectIsAuthenticated);
 	const isFetching = useSelector((state: RootState) => state.user.isFetching);
 
+	const history = useHistory();
+
 	useEffect(() => {
 		if (!isAuthenticated) {
 			dispatch(getUserRequest());
 		}
 	}, [dispatch, isAuthenticated]);
+
+	useEffect(() => {
+		if (!isFetching && !isAuthenticated) {
+			history.push("/users/login");
+		}
+	}, [isFetching, isAuthenticated, history])
 
 	if (isFetching) {
 		return <MainLoader />;
@@ -96,7 +105,7 @@ const App: React.FC = () => {
 				/>
 				<Route path="/users/reset/:resetToken" component={Reset} />
 
-				<Route path="/" render={() => <h1>404</h1>} />
+				<Route path="/" component={Page404} />
 			</Switch>
 		</React.Fragment>
 	);
