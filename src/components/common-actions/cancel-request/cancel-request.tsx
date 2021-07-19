@@ -1,9 +1,12 @@
 // Dependencies
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // Actions
 import { cancelFriendReqRequest } from "../../../redux/friends/actions";
+
+// Selectors
+import { selectIsLoading } from "../../../redux/user/selector";
 
 // Types
 interface CancelRequestProps {
@@ -13,12 +16,14 @@ interface CancelRequestProps {
 const CancelRequest: React.FC<CancelRequestProps> = ({ id }) => {
 	const dispatch = useDispatch();
 
+	const { friendsAction } = useSelector(selectIsLoading);
+
 	const handleClick = (): void => {
 		dispatch(cancelFriendReqRequest(id));
 	};
 
 	return (
-		<button className="btn btn-danger" onClick={handleClick}>
+		<button disabled={friendsAction} className="btn btn-danger" onClick={handleClick}>
 			Cancel request
 		</button>
 	);

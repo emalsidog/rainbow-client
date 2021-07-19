@@ -31,28 +31,17 @@ export const selectRequests = (state: RootState): [User[], boolean] => [
 // REQUESTS COUNTER
 export const selectRequestsCounter = (state: RootState): number => state.user.requestsCounter;
 
-// =====================================
-// =====================================
-// =====================================
-// =====================================
-// =====================================
-// =====================================
-
 // IS LOADING
-export const selectUsersIsLoading = (state: RootState): IsLoading =>
-	state.user.isLoading;
+export const selectUsersIsLoading = (state: RootState): IsLoading => state.user.isLoading;
 
 // IS CURRENT USER
-export const selectIsCurrentUser = (state: RootState): boolean | undefined =>
-	state.user.isCurrentUser;
+export const selectIsCurrentUser = (state: RootState): boolean | undefined => state.user.isCurrentUser;
 
-// USER
-export const selectDisplayedUser = (state: RootState): User =>
-	state.user.displayedUser;
+// DISPLAYED USERS
+export const selectDisplayedUser = (state: RootState): User => state.user.displayedUser;
 
-// USERS
-export const selectUsers = (state: RootState): User[] =>
-	state.user.searchedUsers;
+// SEARCHED USERS
+export const selectUsers = (state: RootState): User[] => state.user.searchedUsers;
 
 // TOTAL USERS
 export const selectHasMoreData = (state: RootState) => [
@@ -61,11 +50,4 @@ export const selectHasMoreData = (state: RootState) => [
 ];
 
 // GET ONLINE USERS
-export const selectOnlineUsers = (state: RootState): string[] =>
-	state.user.onlineUsers;
-
-// =====================================
-// =====================================
-// =====================================
-// =====================================
-// =====================================
+export const selectOnlineUsers = (state: RootState): string[] => state.user.onlineUsers;

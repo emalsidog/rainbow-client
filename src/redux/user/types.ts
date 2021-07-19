@@ -135,6 +135,8 @@ export interface IsLoading {
 	loading: boolean;
 
 	loadingPosts: boolean;
+
+	friendsAction: boolean;
 }
 
 // SET USER

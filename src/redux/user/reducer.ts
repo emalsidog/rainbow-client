@@ -89,6 +89,8 @@ const initialState: InitialState = {
 		loading: false,
 
 		loadingPosts: false,
+
+		friendsAction: false,
 	},
 };
 
@@ -475,7 +477,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "SEND_FRIEND_REQ_REQUEST": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: true,
+				}
 			}
 		}
 
@@ -494,6 +500,10 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				},
 				displayedUser: {
 					...state.displayedUser,
 					friendRequests: [...state.displayedUser.friendRequests, newRequestId]
@@ -504,7 +514,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "SEND_FRIEND_REQ_FAILURE": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				}
 			}
 		}
 
@@ -525,6 +539,10 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 		case "ACCEPT_FRIEND_REQ_REQUEST": {
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: true,
+				}
 			};
 		}
 
@@ -535,6 +553,10 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				},
 				user: {
 					...state.user,
 					friendRequests: newRequests,
@@ -547,6 +569,10 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 		case "ACCEPT_FRIEND_REQ_FAILURE": {
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				}
 			};
 		}
 
@@ -585,7 +611,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "CANCEL_FRIEND_REQ_REQUEST": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: true,
+				}
 			}
 		}
 
@@ -604,6 +634,10 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				},
 				displayedUser: {
 					...state.displayedUser,
 					friendRequests: filterFriendRequests(state.displayedUser.friendRequests, cancelledRequestId)
@@ -614,7 +648,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "CANCEL_FRIEND_REQ_FAILURE": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				}
 			}
 		}
 
@@ -634,7 +672,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "DECLINE_FRIEND_REQ_REQUEST": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: true,
+				}
 			}
 		}
 
@@ -642,6 +684,10 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 			const { declinedRequestId, requestsCount } = action.payload;
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				},
 				user: {
 					...state.user,
 					friendRequests: filterFriendRequests(state.user.friendRequests, declinedRequestId)
@@ -652,7 +698,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "DECLINE_FRIEND_REQ_FAILURE": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				}
 			}
 		}
 
@@ -683,7 +733,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "REMOVE_FROM_FRIENDS_REQUEST": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: true,
+				}
 			}
 		}
 
@@ -692,6 +746,10 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 			return {
 				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				},
 				user: {
 					...state.user,
 					friends: state.user.friends.filter(friend => friend !== removedFriendId)
@@ -701,7 +759,11 @@ export const user = (state = initialState, action: ActionType): InitialState => 
 
 		case "REMOVE_FROM_FRIENDS_FAILURE": {
 			return {
-				...state
+				...state,
+				isLoading: {
+					...state.isLoading,
+					friendsAction: false,
+				}
 			}
 		}
 
