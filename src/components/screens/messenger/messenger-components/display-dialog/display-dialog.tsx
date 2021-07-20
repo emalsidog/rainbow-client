@@ -38,8 +38,8 @@ const DisplayDialog: React.FC<DisplayDialogProps> = (props) => {
 
 	let lastMessageFormatted = lastMessage;
 
-	if (lastMessage && lastMessage.length > 25) {
-		lastMessageFormatted = lastMessage.slice(0, 25) + "...";
+	if (lastMessage && lastMessage.length > 15) {
+		lastMessageFormatted = lastMessage.slice(0, 15) + "...";
 	}
 
 	let onlineCircleStyle = {

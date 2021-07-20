@@ -49,6 +49,25 @@ export const editMessage = (payload: EditMessagePayload): ChatActionTypes => ({
 	payload,
 });
 
+// Forward Message
+export const forwardMessageRequest = (message: Message): ChatActionTypes => ({
+	type: "FORWARD_MESSAGE_REQUEST",
+	message,
+});
+
+export const forwardMessageSuccess = (): ChatActionTypes => ({
+	type: "FORWARD_MESSAGE_SUCCESS",
+});
+
+export const forwardMessageFailure = (): ChatActionTypes => ({
+	type: "FORWARD_MESSAGE_FAILURE",
+});
+
+export const forwardMessageWS = (message: Message): ChatActionTypes => ({
+	type: "FORWARD_MESSAGE_WS",
+	message,
+});
+
 // Create chat
 export const createChatRequest = (participants: string[]): ChatActionTypes => ({
 	type: "CREATE_CHAT_REQUEST",

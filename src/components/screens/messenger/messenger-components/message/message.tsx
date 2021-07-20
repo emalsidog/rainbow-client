@@ -1,5 +1,5 @@
 // Dependencies
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 
 // Utils
 import { formatDate } from "../../../../utils/format-date";
@@ -11,6 +11,8 @@ import styles from "./message.module.css";
 import ContextMenu, { ContextMenuItem } from "../../../../common/context-menu";
 
 // Types
+import { ForwardedMessage } from "../../../../../redux/chat/types";
+
 interface MessageProps {
 	messageText: string;
 	isRightAligned: boolean;
@@ -23,6 +25,8 @@ interface MessageProps {
 	isInSelectingMode: boolean;
 	isDeleteMessageVisible: boolean;
 	isSelectedToForward: boolean;
+	forwardedTo?: ForwardedMessage;
+	styleForwarded?: boolean;
 
 	onClick: () => void;
 	handleCopyText: () => void;
@@ -43,6 +47,8 @@ const Message: React.FC<MessageProps> = (props) => {
 		isInSelectingMode,
 		isDeleteMessageVisible,
 		isSelectedToForward,
+		forwardedTo,
+		styleForwarded = false,
 		onClick,
 		handleCopyText,
 		handleDeleteMessage,
@@ -56,6 +62,57 @@ const Message: React.FC<MessageProps> = (props) => {
 	let classNames: string = `${styles.wrapper} ${
 		isSelected ? styles.selected : ""
 	} ${isSelectedToForward ? styles.forwardAnim : ""}`;
+
+	const [timerId, setTimerId] = useState<number>(0);
+
+	const touchStart = useRef<{ x: number; y: number }>();
+	const touchPosition = useRef<{ x: number; y: number }>();
+
+	const onTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
+		if (isInSelectingMode) return handleSelectMessage();
+
+		touchStart.current = {
+			x: e.changedTouches[0].clientX,
+			y: e.changedTouches[0].clientY,
+		};
+		touchPosition.current = {
+			x: touchStart.current.x,
+			y: touchStart.current.y,
+		};
+
+		const id = window.setTimeout(handleSelectMessage, 700);
+
+		setTimerId(id);
+	};
+
+	const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+		touchPosition.current = {
+			x: e.changedTouches[0].clientX,
+			y: e.changedTouches[0].clientY,
+		};
+	};
+
+	const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>): void => {
+		e.preventDefault();
+
+		timerId && clearTimeout(timerId);
+
+
+		if (isInSelectingMode) return;
+
+		const sensitivity = 20;
+
+		const x = touchStart.current!.x - touchPosition.current!.x;
+		const y = touchStart.current!.y - touchPosition.current!.y;
+
+		if (Math.abs(x) > Math.abs(y)) {
+			if (Math.abs(x) > sensitivity) {
+				if (x > 0) {
+					handleForwardMessage();
+				}
+			}
+		}
+	};
 
 	return (
 		<React.Fragment>
@@ -96,7 +153,11 @@ const Message: React.FC<MessageProps> = (props) => {
 							style={{ color: "#762ea6" }}
 							className="fas fa-share fa-fw"
 						/>
-						<span>Forward message</span>
+						<span>
+							{isSelected
+								? "Forward selected"
+								: "Forward message"}
+						</span>
 					</div>
 				</ContextMenuItem>
 				{isRightAligned &&
@@ -117,7 +178,15 @@ const Message: React.FC<MessageProps> = (props) => {
 						</ContextMenuItem>
 					)}
 			</ContextMenu>
-			<div className={classNames} onClick={onClick} ref={outerRef}>
+			<div
+				className={classNames}
+				onClick={onClick}
+				onDoubleClick={handleForwardMessage}
+				ref={outerRef}
+				onTouchStart={onTouchStart}
+				onTouchMove={onTouchMove}
+				onTouchEnd={onTouchEnd}
+			>
 				{isSelected && (
 					<i
 						style={{ margin: "0 10px", color: "green" }}
@@ -129,7 +198,25 @@ const Message: React.FC<MessageProps> = (props) => {
 						isRightAligned ? styles.right : ""
 					}`}
 				>
-					<div>{messageText}</div>
+					{forwardedTo && !styleForwarded && (
+						<div className={styles.singleForwarded}>
+							<div>{forwardedTo.sender?.givenName}</div>
+							<div>{forwardedTo.message.text}</div>
+						</div>
+					)}
+
+					{forwardedTo && styleForwarded && (
+						<div className={styles.styleForwarded}>
+							Forwarded from {forwardedTo.sender?.givenName}
+						</div>
+					)}
+
+					<div>
+						{styleForwarded
+							? forwardedTo?.message.text
+							: messageText}
+					</div>
+
 					<div className={styles.messageMeta}>
 						<span>{isEdited ? "edited" : ""}</span>
 						<span>{formatDate(messageDate, "TIME")}</span>

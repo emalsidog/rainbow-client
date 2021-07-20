@@ -1,5 +1,5 @@
 // Dependencies
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
 
@@ -44,8 +44,11 @@ import DisplayAccountType from "../../common/display-account-type";
 
 import ProfileSkeleton from "../../skeletons/templates/profile-skeleton";
 import MainPhotoSkeleton from "../../skeletons/templates/profile-skeleton/additional/main-photo-skeleton";
+import Page404 from "../../common/page-404";
 
 const Profile: React.FC = () => {
+	const [is404, setIs404] = useState<boolean>(false);
+
 	const dispatch = useDispatch();
 
 	const displayedUser = useSelector(selectDisplayedUser);
@@ -71,6 +74,12 @@ const Profile: React.FC = () => {
 			dispatch(setIsFetchingDisplayedUser(true));
 		};
 	}, [dispatch, profileId]);
+
+	useEffect(() => {
+		if (!isLoadingUsers.isFetchingUser && !displayedUser._id) {
+			setIs404(true);
+		}
+	}, [isLoadingUsers.isFetchingUser, displayedUser._id]);
 
 	const handleEdit = (): void => {
 		history.push("/settings");
@@ -98,6 +107,10 @@ const Profile: React.FC = () => {
 				</div>
 			</Layout>
 		);
+	}
+
+	if (is404) {
+		return <Page404 />
 	}
 
 	return (

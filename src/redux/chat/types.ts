@@ -13,6 +13,11 @@ const DELETE_MESSAGE_WS = "DELETE_MESSAGE_WS";
 const EDIT_MESSAGE = "EDIT_MESSAGE";
 const EDIT_MESSAGE_WS = "EDIT_MESSAGE_WS";
 
+const FORWARD_MESSAGE_REQUEST = "FORWARD_MESSAGE_REQUEST";
+const FORWARD_MESSAGE_SUCCESS = "FORWARD_MESSAGE_SUCCESS";
+const FORWARD_MESSAGE_FAILURE = "FORWARD_MESSAGE_FAILURE";
+const FORWARD_MESSAGE_WS = "FORWARD_MESSAGE_WS";
+
 const CREATE_CHAT_REQUEST = "CREATE_CHAT_REQUEST";
 const CREATE_CHAT_SUCCESS = "CREATE_CHAT_SUCCESS";
 const CREATE_CHAT_FAILURE = "CREATE_CHAT_FAILURE";
@@ -52,6 +57,12 @@ export interface Message {
 	messageId: string;
 	isEdited?: boolean;
 	timeEdited?: Date;
+	repliedToMessages?: Message[];
+}
+
+export interface ForwardedMessage {
+	message: Message;
+	sender?: Participant;
 }
 
 // GET CHATS
@@ -126,6 +137,25 @@ export interface EditMessageWS {
 	payload: EditMessagePayload;
 }
 
+// FORWARD MESSAGE
+export interface ForwardMessageRequest {
+	type: typeof FORWARD_MESSAGE_REQUEST;
+	message: Message;
+}
+
+export interface ForwardMessageSuccess {
+	type: typeof FORWARD_MESSAGE_SUCCESS;
+}
+
+export interface ForwardMessageFailure {
+	type: typeof FORWARD_MESSAGE_FAILURE;
+}
+
+export interface ForwardMessageWS {
+	type: typeof FORWARD_MESSAGE_WS;
+	message: Message;
+}
+
 // Create chat
 export interface CreateChatRequest {
 	type: typeof CREATE_CHAT_REQUEST;
@@ -167,6 +197,10 @@ export type ChatActionTypes =
 	| DeleteMessageWS
 	| EditMessage
 	| EditMessageWS
+	| ForwardMessageRequest
+	| ForwardMessageSuccess
+	| ForwardMessageFailure
+	| ForwardMessageWS
 	| CreateChatRequest
 	| CreateChatSuccess
 	| CreateChatFailure

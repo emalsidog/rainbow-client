@@ -11,6 +11,7 @@ import {
 	addMessageRequest,
 	deleteMessage,
 	editMessage,
+	forwardMessageRequest,
 } from "../../../../../redux/chat/actions";
 
 // Hooks
@@ -28,7 +29,9 @@ import ThreeDots from "../../../../common/spinners/three-dots";
 import {
 	Chat,
 	ChatProcesses,
+	ForwardedMessage,
 	Message as MessageType,
+	Participant,
 } from "../../../../../redux/chat/types";
 import { TextAreaOptions } from "../../../../common/textarea/textarea";
 import { formatDate } from "../../../../utils/format-date";
@@ -76,8 +79,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	 *	Forwarding states.
 	 */
 	const [isForwarding, setIsForwarding] = useState<boolean>(false);
-	const [messageToForward, setMessageToForward] =
-		useState<MessageType | null>(null);
+	const [messageToForward, setMessageToForward] =	useState<MessageType | null>(null);
 	const index = useRef<number>(chat.messages.length);
 
 	// ------- Textarea configuration.
@@ -92,14 +94,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
 	// Handle keyboard events in textarea
-	const handleTextAreaKeyDown = (
-		e: React.KeyboardEvent<HTMLTextAreaElement>
-	): void => {
+	const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
 		if (e.key === "Enter") {
 			e.preventDefault();
-			if (isEditing) {
-				return saveEditedMessage();
-			}
+
+			if (isEditing) return saveEditedMessage();
+			if (isForwarding) return sendForwardedMessage();
+
 			sendMessage();
 		}
 	};
@@ -125,15 +126,10 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	// Get last div which is last message.
 	const messagesDiv = useRef<HTMLDivElement>(null);
 
-	// Helper. Scroll to bottom.
-	const scrollDown = (): void => {
-		messagesDiv.current!.scrollTop = messagesDiv.current!.scrollHeight;
-	};
-
 	// Scroll to bottom of the chat if last message was updated
 	const lastMessage = chat.messages[chat.messages.length - 1];
 	useEffect(() => {
-		messagesDiv.current && scrollDown();
+		messagesDiv.current && scrollDown(messagesDiv);
 	}, [lastMessage]);
 
 	// Flag for stopping sending server requests on each changing in textarea.
@@ -142,16 +138,15 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	// Helper. Get ids of chat participants
 	const getParticipants = useCallback((): string[] => {
 		let recipients: string[] = [chat.creator._id];
+
 		let filteredParticipants: string[] = chat.participants
-			.filter((participant) => participant._id !== currentUserId)
-			.map((filteredParticipant) => filteredParticipant._id);
+			.filter(participant => participant._id !== currentUserId)
+			.map(filteredParticipant => filteredParticipant._id);
 
 		recipients = [...recipients, ...filteredParticipants];
 
 		if (chat.creator._id === currentUserId) {
-			recipients = chat.participants.map(
-				(participant) => participant._id
-			);
+			recipients = chat.participants.map(participant => participant._id);
 		}
 
 		return recipients;
@@ -184,22 +179,11 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}, [textareaOptions.value, getParticipants, chat.chatId, currentUserId]);
 
-	/* ======= TEXT COPYING ======= */
-
-	// Handle "Copy Text" in context menu
-	const handleCopyText = (messageText: string): void => {
-		navigator.clipboard.writeText(messageText);
-	};
-
-	/* ======= END OF TEXT COPYING ======= */
-
 	/* ======= MESSAGE SENDING ======= */
 
 	// Send message.
 	const sendMessage = (): void => {
 		if (textareaOptions.value.trim().length <= 0) return;
-
-		const recipients = getParticipants();
 
 		const payload = {
 			message: {
@@ -209,49 +193,40 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				chatId: chat.chatId,
 				messageId: uuidv4(),
 			},
-			recipients,
+			recipients: getParticipants(),
 		};
 
-		websocket.send(
-			JSON.stringify({
-				type: "ADD_MESSAGE",
-				payload,
-			})
-		);
+		sendByWS("ADD_MESSAGE", payload);
 		dispatch(addMessageRequest(payload.message));
 
-		setTextareaOptions((prev) => ({
-			...prev,
-			rows: 1,
-			value: "",
-		}));
-
+		setTextareaOptions((prev) => ({	...prev, rows: 1, value: "" }));
 		textAreaRef.current?.focus();
 	};
 
 	// Handle form submit
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
 		e.preventDefault();
-		if (isEditing) {
-			return saveEditedMessage();
-		}
+
+		if (isEditing) return saveEditedMessage();
+		if (isForwarding) return sendForwardedMessage();
+
 		sendMessage();
 	};
 
 	/* ======= MESSAGE DELETING ======= */
 
 	// Handle "Delete Message" in context menu.
-	const handleDeleteMessage = (messageId: string) => {
+	const handleDeleteMessage = (messageId?: string) => {
 		if (!isDeleteMessageVisible) return;
-
-		const recipients = getParticipants();
 
 		let messagesToDelete: string[] = [];
 
+		if (messageId) {
+			messagesToDelete = [messageId];
+		}
+
 		if (selectedMessages.length > 0) {
 			messagesToDelete = [...selectedMessages];
-		} else {
-			messagesToDelete = [messageId];
 		}
 
 		const payload = {
@@ -259,16 +234,10 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				messagesToDelete,
 				chatId: chat.chatId,
 			},
-			recipients,
+			recipients: getParticipants(),
 		};
 
-		websocket.send(
-			JSON.stringify({
-				type: "DELETE_MESSAGE",
-				payload,
-			})
-		);
-
+		sendByWS("DELETE_MESSAGE", payload);
 		dispatch(deleteMessage(payload.messageData));
 
 		setIsSelecting(false);
@@ -277,8 +246,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	/* ======= END OF MESSAGE DELETING ======= */
 
 	/* ======= MESSAGE SELECTING ======= */
-	const [isDeleteMessageVisible, setIsDeleteMessageVisible] =
-		useState<boolean>(true);
+	const [isDeleteMessageVisible, setIsDeleteMessageVisible] =	useState<boolean>(true);
 
 	useEffect(() => {
 		if (selectedMessages.length <= 0) return;
@@ -307,13 +275,11 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	// Handle "Select Message" or "Remove Selection" in context menu
 	const handleSelectMessage = (messageId: string): void => {
-		selectedMessages.length >= 0
-			? setIsSelecting(true)
-			: setIsSelecting(false);
-
+		selectedMessages.length >= 0 ? setIsSelecting(true) : setIsSelecting(false);
+		
 		setIsForwarding(false);
 		setMessageToForward(null);
-
+		
 		moveMessage(messageId);
 	};
 
@@ -325,13 +291,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	// Helper. Add or remove message from the selected messages
 	const moveMessage = (messageId: string): void => {
 		const isSelected = selectedMessages.includes(messageId);
+
 		if (!isSelected) {
-			setSelectedMessages((prev) => [...prev, messageId]);
-		} else {
-			setSelectedMessages((prev) =>
-				prev.filter((id) => id !== messageId)
-			);
+			setSelectedMessages(prev => [...prev, messageId]);
+			return;
 		}
+
+		setSelectedMessages(prev =>	prev.filter((id) => id !== messageId));
 	};
 
 	// Helper. Disable selection mode. Remove all selected items.
@@ -352,39 +318,73 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	/* ======= MESSAGE FORWARDING ======= */
 
 	// Handle "Forward message" in context menu.
-	const handleForwardMessage = useCallback(
-		(messageId: string): void => {
-			const messageToForward = chat.messages.find(
-				(message) => message.messageId === messageId
-			);
-			if (!messageToForward) return;
+	const handleForwardMessage = useCallback((messageId?: string): void => {
+			const messageToForward = chat.messages.find(({ messageId: id }) => id === messageId);
 
 			isEditing && handleStopEditing();
-
+			
 			if (isSelecting) {
-				setIsForwarding(true);
 				setIsSelecting(false);
-				textAreaRef.current?.focus();
-				scrollDown();
+				setForwarding();
 				return;
 			}
-
-			setMessageToForward(messageToForward);
-
-			setIsForwarding(true);
-			textAreaRef.current?.focus();
-			scrollDown();
+			
+			selectedMessages.length > 0 && setSelectedMessages([]);
+			messageToForward && setMessageToForward(messageToForward);
+			setForwarding();
 		},
-		[chat.messages, isEditing, isSelecting]
+		[chat.messages, isEditing, isSelecting, selectedMessages.length]
 	);
+
+	const setForwarding = (): void => {
+		setIsForwarding(true);
+		textAreaRef.current?.focus();
+		scrollDown(messagesDiv);
+	}
 
 	// Handle stop forwarding
 	const handleStopForwarding = useCallback((): void => {
 		setIsForwarding(false);
 		setMessageToForward(null);
 		setSelectedMessages([]);
-		index.current = chat.messages.length;
-	}, [chat.messages.length]);
+	}, []);
+
+	// Send message with forwarded messages
+	const sendForwardedMessage = (): void => {
+		if (textareaOptions.value.trim().length <= 0) return;
+
+		let messagesToForward: MessageType[] = [];
+
+		if (messageToForward) {
+			messagesToForward = [messageToForward];
+		}
+
+		if (selectedMessages.length > 0) {
+			messagesToForward = chat.messages.filter(message =>
+				selectedMessages.includes(message.messageId)
+			);
+		}
+
+		const payload = {
+			message: {
+				text: textareaOptions.value.trim(),
+				time: new Date(),
+				sender: currentUserId,
+				chatId: chat.chatId,
+				messageId: uuidv4(),
+				repliedToMessages: messagesToForward,
+			},
+			recipients: getParticipants(),
+		};
+
+		sendByWS("FORWARD_MESSAGE", payload);
+		dispatch(forwardMessageRequest(payload.message));
+
+		setTextareaOptions(prev => ({ ...prev, rows: 1,	value: "" }));
+		textAreaRef.current?.focus();
+
+		handleStopForwarding();
+	};
 
 	/* ======= END OF MESSAGE FORWARDING ======= */
 
@@ -401,38 +401,28 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	}, [chat.messages, isEditing, messageToEdit?.messageId]);
 
 	// Handle "Edit Message" in context menu
-	const handleEditMessage = useCallback(
-		(messageId: string): void => {
-			const messageToEdit = chat.messages.find(
-				(message) => message.messageId === messageId
-			);
+	const handleEditMessage = useCallback((messageId: string): void => {
+			const messageToEdit = chat.messages.find(({ messageId: id }) => id === messageId);
 			if (!messageToEdit) return;
 
 			isForwarding && handleStopForwarding();
-
 			isSelecting && removeSelection();
 
 			setMessageToEdit(messageToEdit);
-			setTextareaOptions((prev) => ({
-				...prev,
-				value: messageToEdit.text,
-			}));
+			setTextareaOptions((prev) => ({ ...prev, value: messageToEdit.text }));
 			setIsEditing(true);
 
-			setTextareaOptions((prev) => ({ ...prev, rows: 3 }));
-
 			textAreaRef.current?.focus();
-			scrollDown();
+			scrollDown(messagesDiv);
 		},
 		[chat.messages, isSelecting, isForwarding, handleStopForwarding]
 	);
 
 	// Helper. Call it, when you want to stop editing process
 	const handleStopEditing = (): void => {
-		setTextareaOptions((prev) => ({ ...prev, value: "" }));
+		setTextareaOptions((prev) => ({ ...prev, value: "", rows: 1 }));
 		setIsEditing(false);
 		setMessageToEdit(null);
-		setTextareaOptions((prev) => ({ ...prev, rows: 1 }));
 	};
 
 	// Save message after editing.
@@ -441,13 +431,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 		const isMatch: boolean = messageToEdit?.text === newText;
 
-		if (isMatch) {
-			return handleStopEditing();
-		}
-
+		if (isMatch) return handleStopEditing();
 		if (newText.length <= 0) return;
-
-		const recipients = getParticipants();
 
 		const payload = {
 			data: {
@@ -460,16 +445,10 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 					dateEdited: new Date(),
 				},
 			},
-			recipients,
+			recipients: getParticipants(),
 		};
 
-		websocket.send(
-			JSON.stringify({
-				type: "EDIT_MESSAGE",
-				payload,
-			})
-		);
-
+		sendByWS("EDIT_MESSAGE", payload)
 		dispatch(editMessage(payload.data));
 
 		handleStopEditing();
@@ -481,34 +460,28 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	 *	Handle keyboard pressing.
 	 *	Escape - stop editing process.
 	 *	ArrowUp - start editing last sent message.
+	 * 	CTRL + ArrowUp - start forwarding mode by going up in messages
+	 * 	CTRL + ArrowDown - start forwarding mode by going down in messages
 	 */
-	const handleEditingKeyDown = useCallback(
-		(e: any): void => {
+
+	const handleEditingKeyDown = useCallback((e: any): void => {
+
 			if (e.ctrlKey && e.key === "ArrowUp") {
 				index.current = index.current - 1;
-
-				if (index.current === 0) {
-					handleForwardMessage(
-						chat.messages[index.current].messageId
-					);
-
-					// removeSelection();
-
-					index.current = chat.messages.length;
-					return;
+				if (index.current < 0) {
+					index.current = chat.messages.length - 1;
 				}
-				handleForwardMessage(chat.messages[index.current].messageId);
-				// removeSelection();
+				handleForwardMessage(chat.messages[index.current].messageId)
 				return;
 			}
 
 			if (e.ctrlKey && e.key === "ArrowDown") {
 				index.current = index.current + 1;
-				if (index.current === chat.messages.length) {
+				if (index.current > chat.messages.length - 1) {
 					index.current = 0;
 				}
-				handleForwardMessage(chat.messages[index.current].messageId);
-				removeSelection();
+				handleForwardMessage(chat.messages[index.current].messageId)
+				return;
 			}
 
 			switch (e.key) {
@@ -534,11 +507,12 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		},
 		[
 			chat.messages,
+			index,
 			isEditing,
 			currentUserId,
 			isForwarding,
-			handleEditMessage,
 			handleForwardMessage,
+			handleEditMessage,
 			handleStopForwarding,
 		]
 	);
@@ -571,16 +545,9 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	if (chat.messages.length > 0) {
 		messages = chat.messages.map((message, index, array) => {
-			const { messageId, text, time, sender, isEdited, timeEdited } =
-				message;
-			const currentMessageDate = new Date(message.time);
-			const previousMessageDate = new Date(array[index - 1]?.time);
+			const { messageId, text, time, sender, isEdited, timeEdited } =	message;
 
-			const currentMessageDay = currentMessageDate.getDate();
-			const previousMessageDay = previousMessageDate.getDate();
-
-			const displayMessagedDate: boolean =
-				currentMessageDay - previousMessageDay >= 1;
+			const { displaySeparator, date } = displayDateSeparator(message.time, array[index - 1]?.time);
 
 			let isSelected: boolean = false;
 			if (isSelecting) {
@@ -592,39 +559,54 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				isSelectedToForward = true;
 			}
 
-			const msg: JSX.Element = (
-				<Message
-					key={messageId}
-					messageText={text}
-					isRightAligned={sender === currentUserId}
-					messageDate={time}
-					isEdited={isEdited}
-					timeEdited={timeEdited}
-					isSelected={isSelected}
-					isInSelectingMode={isSelecting}
-					isDeleteMessageVisible={isDeleteMessageVisible}
-					isSelectedToForward={isSelectedToForward}
-					onClick={() => onMessageClick(messageId)}
-					handleCopyText={() => handleCopyText(text)}
-					handleDeleteMessage={() => handleDeleteMessage(messageId)}
-					handleEditMessage={() => handleEditMessage(messageId)}
-					handleSelectMessage={() => handleSelectMessage(messageId)}
-					handleForwardMessage={() => handleForwardMessage(messageId)}
-				/>
-			);
+			const allParticipants = [chat.creator, ...chat.participants];
 
-			if (displayMessagedDate || isNaN(previousMessageDay)) {
+			const result = formForwardedMessages(allParticipants, message);
+
+			const methods = {
+				onClick: () => onMessageClick(messageId),
+				handleCopyText: () => handleCopyText(text),
+				handleDeleteMessage: () => handleDeleteMessage(messageId),
+				handleEditMessage: () => handleEditMessage(messageId),
+				handleSelectMessage: () => handleSelectMessage(messageId),
+				handleForwardMessage: () => handleForwardMessage(messageId),
+			}
+
+			const props = {
+				messageText: text,
+				isRightAligned: sender === currentUserId,
+				messageDate: time,
+				isEdited: isEdited,
+				timeEdited: timeEdited,
+				isSelected: isSelected,
+				isInSelectingMode: isSelecting,
+				isDeleteMessageVisible: isDeleteMessageVisible,
+				isSelectedToForward: isSelectedToForward,
+			}
+
+			if (displaySeparator) {
 				return (
 					<React.Fragment key={messageId}>
 						<div className={styles.messagesDate}>
-							{formatDate(currentMessageDate, "REGULAR")}
+							{formatDate(date, "REGULAR")}
 						</div>
-						{msg}
+						<Message
+							forwardedTo={result?.quantity === 1	? result.forwardedMessages[0] : undefined}
+							{ ...props }
+							{ ...methods }
+						/>
 					</React.Fragment>
 				);
 			}
 
-			return msg;
+			return (
+				<Message
+					key={messageId}
+					forwardedTo={result?.quantity === 1	? result.forwardedMessages[0] : undefined}
+					{ ...props }
+					{ ...methods }
+				/>
+			);
 		});
 	} else {
 		messages = <div className={styles.sayHiBlock}>Say hi!</div>;
@@ -655,7 +637,9 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		additionalPanelHeader = "Edit message";
 		additionalPanelContent = messageToEdit?.text;
 		additionalPanelIcon = <i className="fas fa-edit" />;
-	} else if (isForwarding) {
+	} 
+	
+	if (isForwarding) {
 		// Get all populated participants
 		const allParticipants = [chat.creator, ...chat.participants];
 
@@ -663,13 +647,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		additionalPanelIcon = <i className="fas fa-share" />;
 
 		// If there are no selected messages = use single messageToForward
-		if (selectedMessages.length <= 0) {
+		if (messageToForward) {
 			const sender = allParticipants.find(
-				(participant) => participant._id === messageToForward?.sender
+				(participant) => participant._id === messageToForward.sender
 			);
 
 			additionalPanelHeader = sender?.givenName;
-			additionalPanelContent = messageToForward?.text;
+			additionalPanelContent = messageToForward.text;
 		} else {
 			// Get populated messages to forward
 			const messagesToForward = chat.messages.filter((message) =>
@@ -678,10 +662,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 			// Get all unique ids of senders
 			const idOfSenders = messagesToForward
-				.filter(
-					(message, index, self) =>
-						index ===
-						self.findIndex((msg) => msg.sender === message.sender)
+				.filter((message, index, self) =>
+					index === self.findIndex((msg) => msg.sender === message.sender)
 				)
 				.map((item) => item.sender);
 
@@ -690,7 +672,12 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				idOfSenders.includes(participant._id)
 			);
 
-			if (senders.length === 1) {
+			if (senders.length === 1 && messagesToForward.length > 1) {
+				additionalPanelHeader = senders[0].givenName;
+				additionalPanelContent = `${selectedMessages.length} forwarded messages`;
+			}
+
+			if (senders.length === 1 && messagesToForward.length === 1) {
 				additionalPanelHeader = senders[0].givenName;
 				additionalPanelContent = messagesToForward[0].text;
 			}
@@ -701,9 +688,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			}
 
 			if (senders.length > 2) {
-				additionalPanelHeader = `${senders[0].givenName} and ${
-					senders.length - 1
-				} others`;
+				additionalPanelHeader = `${senders[0].givenName} and ${senders.length - 1} others`;
 				additionalPanelContent = `${selectedMessages.length} forwarded messages`;
 			}
 		}
@@ -717,10 +702,30 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 						<i className="fas fa-arrow-left"></i>
 					</button>
 				</div>
-				<div className={styles.userInfo}>
-					<div>{`${givenName} ${familyName}`}</div>
-					{displayChatProcess}
-				</div>
+				{
+					!isSelecting ? (
+						<div className={styles.userInfo}>
+							<div>{`${givenName} ${familyName}`}</div>
+							{displayChatProcess}
+						</div>
+					) : (
+						<div className={styles.actions}>
+							<button 
+								disabled={!isDeleteMessageVisible}
+								onClick={() => handleDeleteMessage()}
+								className="btn btn-primary"
+							>
+								Delete
+							</button>
+							<button 
+								onClick={() => handleForwardMessage()}
+								className="btn btn-primary"
+							>
+									Forward
+							</button>
+						</div>
+					)
+				}
 			</div>
 
 			<div className={styles.divider}></div>
@@ -786,5 +791,77 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		</div>
 	);
 };
+
+/*
+ *	Display date if date of sending message is the next day
+ *
+ *	16 June 1942
+ *	- Old message
+ *	17 June 1942
+ *	- New message
+ */
+
+const displayDateSeparator = (current: Date, previous: Date): {
+	displaySeparator: boolean;
+	date?: Date
+} => {
+	const currentMessageDate = new Date(current);
+	const previousMessageDate = new Date(previous);
+
+	const currentMessageDay = currentMessageDate.getDate();
+	const previousMessageDay = previousMessageDate.getDate();
+
+	const displayMessagedDate: boolean = currentMessageDay - previousMessageDay >= 1;
+
+	if (displayMessagedDate || isNaN(previousMessageDay)) {
+		return {
+			displaySeparator: true,
+			date: currentMessageDate
+		}
+	}
+
+	return {
+		displaySeparator: false,
+	}
+}
+
+// Handle scrolling down
+const scrollDown = (element: React.RefObject<HTMLDivElement>): void => {
+	element.current!.scrollTop = element.current!.scrollHeight;
+};
+
+// Handle "Copy Text" in context menu
+const handleCopyText = (messageText: string): void => {
+	navigator.clipboard.writeText(messageText);
+};
+
+// Handle send by websocket
+const sendByWS = (type, payload): void => {
+	websocket.send(JSON.stringify({ type, payload }));
+}
+
+// Form forwarded messages
+const formForwardedMessages = (participants: Participant[], message: MessageType): {
+	quantity: number;
+	forwardedMessages: ForwardedMessage[];
+} | undefined => {
+	let forwardedMessages: ForwardedMessage[] = [];
+
+	if (message.repliedToMessages) {
+		forwardedMessages = message.repliedToMessages.map((message) => {
+			const sender = participants.find(
+				(participant) => participant._id === message.sender
+			);
+			return { message, sender };
+		});
+
+		return {
+			quantity: forwardedMessages.length,
+			forwardedMessages
+		}
+	}
+
+	return undefined;
+}
 
 export default DisplayChat;

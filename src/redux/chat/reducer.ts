@@ -160,6 +160,36 @@ export const chats = (
 			};
 		}
 
+		// FORWARD MESSAGE
+		case "FORWARD_MESSAGE_REQUEST": {
+			const { message } = action;
+			const newChats = addMessage(state.chats, message);
+
+			return {
+				...state,
+				chats: newChats,
+			}
+		}
+		case "FORWARD_MESSAGE_SUCCESS": {
+			return {
+				...state
+			}
+		}
+		case "FORWARD_MESSAGE_FAILURE": {
+			return {
+				...state
+			}
+		}
+		case "FORWARD_MESSAGE_WS": {
+			const { message } = action;
+			const newChats = addMessage(state.chats, message);
+
+			return {
+				...state,
+				chats: newChats
+			}
+		}
+
 		// Create new chat
 		case "CREATE_CHAT_REQUEST": {
 			return {
@@ -238,11 +268,7 @@ const addMessage = (chats: Chat[], message: Message): Chat[] => {
 };
 
 // Delete message from the chat
-const deleteMessage = (
-	chats: Chat[],
-	chatId: string,
-	messagesToDelete: string[]
-): Chat[] => {
+const deleteMessage = (chats: Chat[], chatId: string, messagesToDelete: string[]): Chat[] => {
 	return chats.map((chat) => {
 		if (chat.chatId === chatId) {
 			const newMessages = chat.messages.filter(

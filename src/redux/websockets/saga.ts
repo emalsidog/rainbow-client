@@ -6,6 +6,7 @@ import { Action } from "redux";
 // Actions
 import { acceptFriendReqWS, cancelFriendReqWS, declineFriendReqWS, removeFromFriendsWS, sendFriendReqWS } from "../friends/actions";
 import { addUserNotification } from "../notifications/actions";
+import { forwardMessageWS } from "../chat/actions";
 
 export function* wsWatcher() {
 	yield takeEvery("LOGIN_SUCCESS", wsConnectionWorker);
@@ -118,6 +119,10 @@ function initWebsocket(): EventChannel<any> {
 							type: "CHANGE_CHAT_PROCESS",
 							payload: response.payload,
 						});
+					}
+
+					case "FORWARD_MESSAGE": {
+						return emitter(forwardMessageWS(response.payload))
 					}
 
 					// Posts

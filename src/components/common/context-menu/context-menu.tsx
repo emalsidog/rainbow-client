@@ -35,7 +35,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ children, outerRef }) => {
 		right = xPos;
 	}
 
-	// If context menu
 	if (yPos + 100 > height - 100) {
 		top = height - 180;
 	} else {

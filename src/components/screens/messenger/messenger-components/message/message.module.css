@@ -34,7 +34,7 @@
 
 	width: 40%;
 
-	margin: 5px;
+	margin: 3px 5px;
 	padding: 7px;
 
 	word-wrap: break-word;
@@ -91,11 +91,41 @@
 	text-align: left;
 }
 
+.singleForwarded {
+	padding-left: 5px;
+	margin-bottom: 7px;
+	border-left: 2px solid #A25FEE;
+}
+
+.singleForwarded div:first-child {
+	color: #A25FEE;
+}
+
+.singleForwarded div {
+	font-size: .9rem;
+}
+
+.styleForwarded {
+	border-left: 2px solid #A25FEE;
+	color: #A25FEE;
+
+	font-size: .9rem;
+
+	padding-left: 5px;
+	margin-bottom: 5px;
+}
+
 @media (max-width: 640px) {
 	.message {
 		width: 75%;
 	}
 	.message.right {
 		width: 75%;
+	}
+}
+
+@media (max-width: 850px) {
+	.extendedTime {
+		display: none;
 	}
 }
