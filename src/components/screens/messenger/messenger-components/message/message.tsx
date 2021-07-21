@@ -62,7 +62,6 @@ const Message: React.FC<MessageProps> = (props) => {
 		isSelected ? styles.selected : ""
 	} ${isSelectedToForward ? styles.forwardAnim : ""}`;
 
-
 	const [timerId, setTimerId] = useState<number>(0);
 	const [intervalId, setIntervalId] = useState<number>(0);
 
@@ -71,8 +70,12 @@ const Message: React.FC<MessageProps> = (props) => {
 	const touchStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 	const touchPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
+	const index = useRef<boolean>(true);
+
 	const onTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
 		if (isInSelectingMode) return handleSelectMessage();
+
+		index.current = true;
 
 		touchStart.current = {
 			x: e.changedTouches[0].clientX,
@@ -84,12 +87,13 @@ const Message: React.FC<MessageProps> = (props) => {
 		};
 
 		const intervalId = window.setInterval(() => {
-			const difference: number = touchPosition.current.x - touchStart.current.x;
+			const difference: number =
+				touchPosition.current.x - touchStart.current.x;
+			index.current = false;
 
 			if (difference > 0) return;
-			
 
-			if (difference > -150) {				
+			if (difference > -150) {
 				setOffset(difference);
 			}
 		}, 10);
@@ -97,14 +101,16 @@ const Message: React.FC<MessageProps> = (props) => {
 		setIntervalId(intervalId);
 
 		const id = window.setTimeout(() => {
+			index.current = false;
 
-			const isXEqual: boolean = touchPosition.current.x === touchStart.current.x;
-			const isYEqual: boolean = touchPosition.current.y === touchStart.current.y;
+			const isXEqual: boolean =
+				touchPosition.current.x === touchStart.current.x;
+			const isYEqual: boolean =
+				touchPosition.current.y === touchStart.current.y;
 
 			if (isXEqual && isYEqual) {
 				handleSelectMessage();
 			}
-
 		}, 700);
 
 		setTimerId(id);
@@ -142,68 +148,72 @@ const Message: React.FC<MessageProps> = (props) => {
 
 	return (
 		<React.Fragment>
-			<ContextMenu outerRef={outerRef}>
-				{!isSelected && (
-					<ContextMenuItem onClick={handleCopyText}>
-						<div>
-							<i
-								style={{ color: "green" }}
-								className="fas fa-copy fa-fw"
-							/>
-							<span>Copy text</span>
-						</div>
-					</ContextMenuItem>
-				)}
-				{isRightAligned && (
-					<ContextMenuItem onClick={handleEditMessage}>
-						<div>
-							<i
-								style={{ color: "#17beec" }}
-								className="fas fa-edit fa-fw"
-							/>
-							<span>Edit message</span>
-						</div>
-					</ContextMenuItem>
-				)}
-				<ContextMenuItem onClick={handleSelectMessage}>
-					<div>
-						<i className="fas fa-mouse-pointer fa-fw" />
-						<span>
-							{isSelected ? "Remove selection" : "Select message"}
-						</span>
-					</div>
-				</ContextMenuItem>
-				<ContextMenuItem onClick={handleForwardMessage}>
-					<div>
-						<i
-							style={{ color: "#762ea6" }}
-							className="fas fa-share fa-fw"
-						/>
-						<span>
-							{isSelected
-								? "Forward selected"
-								: "Forward message"}
-						</span>
-					</div>
-				</ContextMenuItem>
-				{isRightAligned &&
-					isDeleteMessageVisible &&
-					(!isInSelectingMode || isSelected) && (
-						<ContextMenuItem onClick={handleDeleteMessage}>
+			{index.current && (
+				<ContextMenu outerRef={outerRef}>
+					{!isSelected && (
+						<ContextMenuItem onClick={handleCopyText}>
 							<div>
 								<i
-									style={{ color: "red" }}
-									className="fas fa-trash-alt fa-fw"
+									style={{ color: "green" }}
+									className="fas fa-copy fa-fw"
 								/>
-								<span>
-									{isSelected
-										? "Delete selected"
-										: "Delete message"}
-								</span>
+								<span>Copy text</span>
 							</div>
 						</ContextMenuItem>
 					)}
-			</ContextMenu>
+					{isRightAligned && (
+						<ContextMenuItem onClick={handleEditMessage}>
+							<div>
+								<i
+									style={{ color: "#17beec" }}
+									className="fas fa-edit fa-fw"
+								/>
+								<span>Edit message</span>
+							</div>
+						</ContextMenuItem>
+					)}
+					<ContextMenuItem onClick={handleSelectMessage}>
+						<div>
+							<i className="fas fa-mouse-pointer fa-fw" />
+							<span>
+								{isSelected
+									? "Remove selection"
+									: "Select message"}
+							</span>
+						</div>
+					</ContextMenuItem>
+					<ContextMenuItem onClick={handleForwardMessage}>
+						<div>
+							<i
+								style={{ color: "#762ea6" }}
+								className="fas fa-share fa-fw"
+							/>
+							<span>
+								{isSelected
+									? "Forward selected"
+									: "Forward message"}
+							</span>
+						</div>
+					</ContextMenuItem>
+					{isRightAligned &&
+						isDeleteMessageVisible &&
+						(!isInSelectingMode || isSelected) && (
+							<ContextMenuItem onClick={handleDeleteMessage}>
+								<div>
+									<i
+										style={{ color: "red" }}
+										className="fas fa-trash-alt fa-fw"
+									/>
+									<span>
+										{isSelected
+											? "Delete selected"
+											: "Delete message"}
+									</span>
+								</div>
+							</ContextMenuItem>
+						)}
+				</ContextMenu>
+			)}
 			<div
 				className={classNames}
 				onClick={onClick}
@@ -224,33 +234,29 @@ const Message: React.FC<MessageProps> = (props) => {
 						isRightAligned ? styles.right : ""
 					}`}
 					style={{
-						transform: `translate(${offset}px)` 
+						transform: `translate(${offset}px)`,
 					}}
 				>
-
-					{
-						isForwarded?.isForwarded && isForwarded.style === "SINGLE" && (
+					{isForwarded?.isForwarded &&
+						isForwarded.style === "SINGLE" && (
 							<div className={styles.singleForwarded}>
 								<div>{isForwarded.message?.senderName}</div>
 								<div>{isForwarded.message?.text}</div>
 							</div>
-						)
-					}
+						)}
 
-					{
-						isForwarded?.isForwarded && isForwarded.style === "MULTIPLE" && (
+					{isForwarded?.isForwarded &&
+						isForwarded.style === "MULTIPLE" && (
 							<div className={styles.styleForwarded}>
 								Forwarded from {isForwarded.message?.senderName}
 							</div>
-						)
-					}
+						)}
 
 					<div>
-						{
-							isForwarded?.isForwarded && isForwarded.style === "MULTIPLE" 
-								? isForwarded.message?.text 
-								: messageText
-						}
+						{isForwarded?.isForwarded &&
+						isForwarded.style === "MULTIPLE"
+							? isForwarded.message?.text
+							: messageText}
 					</div>
 
 					<div className={styles.messageMeta}>

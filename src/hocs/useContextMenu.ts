@@ -6,8 +6,6 @@ export const useContextMenu = (outerRef) => {
 	const [yPos, setYPos] = useState<number>(0);
 	const [showMenu, setShowMenu] = useState<boolean>(false);
 
-	const [timerId, setTimerId] = useState<number>(0);
-
 	const handleContextMenu = useCallback(
 		(e: any) => {
 			e.preventDefault();
@@ -26,23 +24,20 @@ export const useContextMenu = (outerRef) => {
 		showMenu && setShowMenu(false);
 	}, [showMenu]);
 
-	const handleTouchStart = useCallback((e: any): void => {
-		if (outerRef && outerRef.current.contains(e.target)) {
-			const id: number = window.setTimeout(() => {
+	const handleTouchStart = useCallback(() => {}, [])
+
+	const handleTouchEnd = useCallback(
+		(e): void => {
+			if (outerRef && outerRef.current.contains(e.target)) {
 				setShowMenu(true);
 				setXPos(e.changedTouches[0].clientX);
 				setYPos(e.changedTouches[0].clientY);
-			}, 50);
-	
-			setTimerId(id)
-		} else {
-			setShowMenu(false);
-		}
-	}, [setXPos, setYPos, outerRef])
-
-	const handleTouchEnd = useCallback((): void => {
-		timerId && clearTimeout(timerId);
-	}, [timerId])
+			} else {
+				setShowMenu(false);
+			}
+		},
+		[outerRef]
+	);
 
 	useEffect(() => {
 		document.addEventListener("click", handleClick);
