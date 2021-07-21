@@ -62,7 +62,7 @@ export const ContextMenuItem: React.FC<ContextMenuItemProps> = (props) => {
 	const { label, children, onClick } = props;
 
 	return (
-		<button className={styles.menuItem} onClick={onClick}>
+		<button className={styles.menuItem} onClick={onClick} onTouchStart={onClick}>
 			{label ? label : children ? children : "No label"}
 		</button>
 	);

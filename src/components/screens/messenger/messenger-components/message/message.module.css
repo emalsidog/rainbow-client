@@ -40,6 +40,8 @@
 	word-wrap: break-word;
 
 	user-select: none;
+
+	transition: .2s;
 }
 
 .message.right {

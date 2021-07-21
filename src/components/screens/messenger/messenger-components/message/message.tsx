@@ -63,10 +63,14 @@ const Message: React.FC<MessageProps> = (props) => {
 		isSelected ? styles.selected : ""
 	} ${isSelectedToForward ? styles.forwardAnim : ""}`;
 
-	const [timerId, setTimerId] = useState<number>(0);
 
-	const touchStart = useRef<{ x: number; y: number }>();
-	const touchPosition = useRef<{ x: number; y: number }>();
+	const [timerId, setTimerId] = useState<number>(0);
+	const [intervalId, setIntervalId] = useState<number>(0);
+
+	const [offset, setOffset] = useState<number>(0);
+
+	const touchStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+	const touchPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
 	const onTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
 		if (isInSelectingMode) return handleSelectMessage();
@@ -80,7 +84,29 @@ const Message: React.FC<MessageProps> = (props) => {
 			y: touchStart.current.y,
 		};
 
-		const id = window.setTimeout(handleSelectMessage, 700);
+		const intervalId = window.setInterval(() => {
+			const difference: number = touchPosition.current.x - touchStart.current.x;
+
+			if (difference > 0) return;
+			
+
+			if (difference > -150) {				
+				setOffset(difference);
+			}
+		}, 10);
+
+		setIntervalId(intervalId);
+
+		const id = window.setTimeout(() => {
+
+			const isXEqual: boolean = touchPosition.current.x === touchStart.current.x;
+			const isYEqual: boolean = touchPosition.current.y === touchStart.current.y;
+
+			if (isXEqual && isYEqual) {
+				handleSelectMessage();
+			}
+
+		}, 700);
 
 		setTimerId(id);
 	};
@@ -96,11 +122,12 @@ const Message: React.FC<MessageProps> = (props) => {
 		e.preventDefault();
 
 		timerId && clearTimeout(timerId);
-
+		intervalId && clearInterval(intervalId);
+		setOffset(0);
 
 		if (isInSelectingMode) return;
 
-		const sensitivity = 20;
+		const sensitivity = 50;
 
 		const x = touchStart.current!.x - touchPosition.current!.x;
 		const y = touchStart.current!.y - touchPosition.current!.y;
@@ -197,6 +224,9 @@ const Message: React.FC<MessageProps> = (props) => {
 					className={`${styles.message} ${
 						isRightAligned ? styles.right : ""
 					}`}
+					style={{
+						transform: `translate(${offset}px)` 
+					}}
 				>
 					{forwardedTo && !styleForwarded && (
 						<div className={styles.singleForwarded}>
