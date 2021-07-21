@@ -32,7 +32,7 @@ export const useContextMenu = (outerRef) => {
 				setShowMenu(true);
 				setXPos(e.changedTouches[0].clientX);
 				setYPos(e.changedTouches[0].clientY);
-			}, 100);
+			}, 50);
 	
 			setTimerId(id)
 		} else {

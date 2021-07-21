@@ -60,9 +60,14 @@ export interface Message {
 	repliedToMessages?: Message[];
 }
 
-export interface ForwardedMessage {
-	message: Message;
-	sender?: Participant;
+export interface IsForwarded {
+	isForwarded: boolean;
+	style: "SINGLE" | "MULTIPLE" | "NONE";
+	message?: {
+		text: string,
+		senderName: string;
+		senderId: string;
+	},
 }
 
 // GET CHATS

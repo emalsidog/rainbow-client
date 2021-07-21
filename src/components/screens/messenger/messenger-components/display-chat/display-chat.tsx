@@ -29,9 +29,8 @@ import ThreeDots from "../../../../common/spinners/three-dots";
 import {
 	Chat,
 	ChatProcesses,
-	ForwardedMessage,
+	IsForwarded,
 	Message as MessageType,
-	Participant,
 } from "../../../../../redux/chat/types";
 import { TextAreaOptions } from "../../../../common/textarea/textarea";
 import { formatDate } from "../../../../utils/format-date";
@@ -464,6 +463,10 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	 * 	CTRL + ArrowDown - start forwarding mode by going down in messages
 	 */
 
+	useEffect(() => {
+		index.current = chat.messages.length;
+	}, [chat.messages]);
+
 	const handleEditingKeyDown = useCallback((e: any): void => {
 
 			if (e.ctrlKey && e.key === "ArrowUp") {
@@ -541,13 +544,77 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	/* ------- End of render interlocutor data. */
 
 	/* ------- Render messages */
+	let messagesToRender: {
+		message: MessageType;
+		isForwarded: IsForwarded;
+	}[] = [];
+
+	for (let i = 0; i < chat.messages.length; i++) {
+		let currentMessage = chat.messages[i]
+
+		const allParticipants = [chat.creator, ...chat.participants];
+		
+		if (currentMessage.repliedToMessages && currentMessage.repliedToMessages.length === 1) {
+			const replied = currentMessage.repliedToMessages[0];
+			const populatedSender = allParticipants.find(participant => participant._id === replied.sender);
+			
+			messagesToRender.push({ 
+				message: currentMessage, 
+				isForwarded: {
+					isForwarded: true,
+					style: "SINGLE",
+					message: {
+						text: replied.text,
+						senderName: populatedSender!.givenName,
+						senderId: populatedSender!._id
+					}
+				},
+			});
+		} else if (currentMessage.repliedToMessages && currentMessage.repliedToMessages.length > 1) {
+			messagesToRender.push({ 
+				message: currentMessage, 
+				isForwarded: {
+					isForwarded: false,
+					style: "NONE",
+				} 
+			});
+			
+			currentMessage.repliedToMessages.forEach(message => {
+				const populatedSender = allParticipants.find(participant => participant._id === message.sender);
+
+				messagesToRender.push({ 
+					message, 
+					isForwarded: {
+						isForwarded: true,
+						style: "MULTIPLE",
+						message: {
+							text: message.text,
+							senderName: populatedSender!.givenName,
+							senderId: populatedSender!._id
+						}
+					},
+				});
+			});
+		} else {
+			messagesToRender.push({ 
+				message: currentMessage, 
+				isForwarded: {
+					isForwarded: false,
+					style: "NONE",
+				} 
+			});
+		}
+	}
+
 	let messages: JSX.Element[] | JSX.Element = [];
 
-	if (chat.messages.length > 0) {
-		messages = chat.messages.map((message, index, array) => {
+	if (messagesToRender.length > 0) {
+		messages = messagesToRender.map((item, index, array) => {
+			const { isForwarded, message } = item;
+
 			const { messageId, text, time, sender, isEdited, timeEdited } =	message;
 
-			const { displaySeparator, date } = displayDateSeparator(message.time, array[index - 1]?.time);
+			const { displaySeparator, date } = displayDateSeparator(message.time, array[index - 1]?.message.time);
 
 			let isSelected: boolean = false;
 			if (isSelecting) {
@@ -559,9 +626,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				isSelectedToForward = true;
 			}
 
-			const allParticipants = [chat.creator, ...chat.participants];
-
-			const result = formForwardedMessages(allParticipants, message);
 
 			const methods = {
 				onClick: () => onMessageClick(messageId),
@@ -591,7 +655,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 							{formatDate(date, "REGULAR")}
 						</div>
 						<Message
-							forwardedTo={result?.quantity === 1	? result.forwardedMessages[0] : undefined}
+							isForwarded={isForwarded}
 							{ ...props }
 							{ ...methods }
 						/>
@@ -602,7 +666,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			return (
 				<Message
 					key={messageId}
-					forwardedTo={result?.quantity === 1	? result.forwardedMessages[0] : undefined}
+					isForwarded={isForwarded}
 					{ ...props }
 					{ ...methods }
 				/>
@@ -838,30 +902,6 @@ const handleCopyText = (messageText: string): void => {
 // Handle send by websocket
 const sendByWS = (type, payload): void => {
 	websocket.send(JSON.stringify({ type, payload }));
-}
-
-// Form forwarded messages
-const formForwardedMessages = (participants: Participant[], message: MessageType): {
-	quantity: number;
-	forwardedMessages: ForwardedMessage[];
-} | undefined => {
-	let forwardedMessages: ForwardedMessage[] = [];
-
-	if (message.repliedToMessages) {
-		forwardedMessages = message.repliedToMessages.map((message) => {
-			const sender = participants.find(
-				(participant) => participant._id === message.sender
-			);
-			return { message, sender };
-		});
-
-		return {
-			quantity: forwardedMessages.length,
-			forwardedMessages
-		}
-	}
-
-	return undefined;
 }
 
 export default DisplayChat;

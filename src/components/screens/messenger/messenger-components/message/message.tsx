@@ -11,7 +11,7 @@ import styles from "./message.module.css";
 import ContextMenu, { ContextMenuItem } from "../../../../common/context-menu";
 
 // Types
-import { ForwardedMessage } from "../../../../../redux/chat/types";
+import { IsForwarded } from "../../../../../redux/chat/types";
 
 interface MessageProps {
 	messageText: string;
@@ -25,8 +25,8 @@ interface MessageProps {
 	isInSelectingMode: boolean;
 	isDeleteMessageVisible: boolean;
 	isSelectedToForward: boolean;
-	forwardedTo?: ForwardedMessage;
-	styleForwarded?: boolean;
+
+	isForwarded: IsForwarded;
 
 	onClick: () => void;
 	handleCopyText: () => void;
@@ -47,8 +47,7 @@ const Message: React.FC<MessageProps> = (props) => {
 		isInSelectingMode,
 		isDeleteMessageVisible,
 		isSelectedToForward,
-		forwardedTo,
-		styleForwarded = false,
+		isForwarded,
 		onClick,
 		handleCopyText,
 		handleDeleteMessage,
@@ -228,23 +227,30 @@ const Message: React.FC<MessageProps> = (props) => {
 						transform: `translate(${offset}px)` 
 					}}
 				>
-					{forwardedTo && !styleForwarded && (
-						<div className={styles.singleForwarded}>
-							<div>{forwardedTo.sender?.givenName}</div>
-							<div>{forwardedTo.message.text}</div>
-						</div>
-					)}
 
-					{forwardedTo && styleForwarded && (
-						<div className={styles.styleForwarded}>
-							Forwarded from {forwardedTo.sender?.givenName}
-						</div>
-					)}
+					{
+						isForwarded?.isForwarded && isForwarded.style === "SINGLE" && (
+							<div className={styles.singleForwarded}>
+								<div>{isForwarded.message?.senderName}</div>
+								<div>{isForwarded.message?.text}</div>
+							</div>
+						)
+					}
+
+					{
+						isForwarded?.isForwarded && isForwarded.style === "MULTIPLE" && (
+							<div className={styles.styleForwarded}>
+								Forwarded from {isForwarded.message?.senderName}
+							</div>
+						)
+					}
 
 					<div>
-						{styleForwarded
-							? forwardedTo?.message.text
-							: messageText}
+						{
+							isForwarded?.isForwarded && isForwarded.style === "MULTIPLE" 
+								? isForwarded.message?.text 
+								: messageText
+						}
 					</div>
 
 					<div className={styles.messageMeta}>
