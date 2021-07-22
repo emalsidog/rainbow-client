@@ -31,7 +31,7 @@ export const useContextMenu = (outerRef) => {
 	const handleTouchEnd = useCallback(
 		(e): void => {
 
-			if (!showMenu && outerRef && outerRef.current.contains(e.target)) {
+			if (outerRef && outerRef.current.contains(e.target)) {
 				setShowMenu(true);
 				setXPos(e.changedTouches[0].clientX);
 				setYPos(e.changedTouches[0].clientY);
@@ -39,7 +39,7 @@ export const useContextMenu = (outerRef) => {
 				setShowMenu(false);
 			}
 		},
-		[outerRef, showMenu]
+		[outerRef]
 	);
 
 	useEffect(() => {

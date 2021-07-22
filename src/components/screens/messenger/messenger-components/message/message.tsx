@@ -77,16 +77,18 @@ const Message: React.FC<MessageProps> = (props) => {
 
 	const [offset, setOffset] = useState<number>(0);
 
-
 	const touchStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 	const touchPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
 	const time = useRef<number>(0);
 
-	const [index, setIndex] = useState<boolean>(false);
+	const [showContextMenu, setShowContextMenu] = useState<boolean>(true);
+
+	const [animateBack, setAnimateBack] = useState<boolean>(false);
 
 	const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-		setIndex(false);
+		setShowContextMenu(false);
+		setAnimateBack(false);
 
 		touchStart.current = {
 			x: e.changedTouches[0].clientX,
@@ -138,11 +140,10 @@ const Message: React.FC<MessageProps> = (props) => {
 
 		clearTimeout(longPressTimeout);
 		clearInterval(intervalId);
+		setAnimateBack(true);
 		setOffset(0);
 
 		let timestamp: number = new Date().getTime();
-
-
 
 		const differenceX = touchPosition.current.x - touchStart.current.x;
 		const differenceY = touchPosition.current.y - touchStart.current.y;
@@ -153,15 +154,13 @@ const Message: React.FC<MessageProps> = (props) => {
 			&& differenceY === 0
 		) {
 			if (!isInSelectingMode) {
-				setIndex(true);
+				setShowContextMenu(true);
 				handleShowOverlay(true);
 			} else {
 				handleSelectMessage();
 			}
 		}
 
-
-		
 		if (isInSelectingMode) return;
 
 		const sensitivity = 50;
@@ -179,9 +178,20 @@ const Message: React.FC<MessageProps> = (props) => {
 
 	}
 
+
+	let messageClassNames = `${styles.message} `;
+
+	if (isRightAligned) {
+		messageClassNames += `${styles.right} `;
+	}
+
+	if (animateBack) {
+		messageClassNames += `${styles.exit} `;
+	}
+
 	return (
 		<React.Fragment>
-			<ContextMenu outerRef={outerRef} additionalShowFlag={index}>
+			<ContextMenu outerRef={outerRef} additionalShowFlag={showContextMenu}>
 					{!isSelected && (
 						<ContextMenuItem onClick={handleCopyText}>
 							<div>
@@ -261,9 +271,7 @@ const Message: React.FC<MessageProps> = (props) => {
 					/>
 				)}
 				<div
-					className={`${styles.message} ${
-						isRightAligned ? styles.right : ""
-					}`}
+					className={messageClassNames}
 					style={{
 						transform: `translate(${offset}px)`,
 					}}

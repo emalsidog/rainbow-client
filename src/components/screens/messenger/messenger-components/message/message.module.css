@@ -40,8 +40,6 @@
 	word-wrap: break-word;
 
 	user-select: none;
-
-	transition: .2s;
 }
 
 .message.right {
@@ -115,6 +113,10 @@
 
 	padding-left: 5px;
 	margin-bottom: 5px;
+}
+
+.message.exit {
+	transition: .5s;
 }
 
 @media (max-width: 640px) {

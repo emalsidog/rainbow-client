@@ -35,6 +35,7 @@ import {
 } from "../../../../../redux/chat/types";
 import { TextAreaOptions } from "../../../../common/textarea/textarea";
 import { formatDate } from "../../../../utils/format-date";
+import Modal from "../../../../common/modal";
 
 interface DisplayChatProps {
 	chat: Chat;
@@ -56,6 +57,9 @@ interface WebsocketPayload {
 
 const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const { chat, currentUserId, currentUserProfileId, onGoBack } = props;
+
+	// Overlay state
+	const [showOverlay, setShowOverlay] = useState<boolean>(false);
 
 	/*
 	 *	Editing states.
@@ -179,6 +183,12 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}, [textareaOptions.value, getParticipants, chat.chatId, currentUserId]);
 
+	// Handle "Copy Text" in context menu
+	const handleCopyText = (messageText: string): void => {
+		handleShowOverlay(false);
+		navigator.clipboard.writeText(messageText);
+	};
+
 	/* ======= MESSAGE SENDING ======= */
 
 	// Send message.
@@ -219,6 +229,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	// Handle "Delete Message" in context menu.
 	const handleDeleteMessage = (messageId?: string) => {
 		if (!isDeleteMessageVisible) return;
+		handleShowOverlay(false);
 
 		let messagesToDelete: string[] = [];
 
@@ -276,6 +287,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	// Handle "Select Message" or "Remove Selection" in context menu
 	const handleSelectMessage = (messageId: string): void => {
+		handleShowOverlay(false);
 		selectedMessages.length >= 0 ? setIsSelecting(true) : setIsSelecting(false);
 		
 		setIsForwarding(false);
@@ -320,6 +332,8 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 
 	// Handle "Forward message" in context menu.
 	const handleForwardMessage = useCallback((messageId?: string): void => {
+			handleShowOverlay(false);
+
 			const messageToForward = chat.messages.find(({ messageId: id }) => id === messageId);
 
 			isEditing && handleStopEditing();
@@ -340,7 +354,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const setForwarding = (): void => {
 		setIsForwarding(true);
 		textAreaRef.current?.focus();
-		scrollDown(messagesDiv);
 	}
 
 	// Handle stop forwarding
@@ -432,6 +445,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			const messageToEdit = chat.messages.find(({ messageId: id }) => id === messageId);
 			if (!messageToEdit) return;
 
+			handleShowOverlay(false);
 			isForwarding && handleStopForwarding();
 			isSelecting && removeSelection();
 
@@ -556,6 +570,16 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		};
 	}, [handleEditingKeyDown]);
 
+	// Overlay handlers
+	const handleShowOverlay = (show: boolean): void => {
+		setShowOverlay(show);
+	}
+
+	const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		handleShowOverlay(false);
+	}
+
 	/* ------- Render interlocutor data. */
 
 	let givenName: string;
@@ -574,13 +598,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	/* ------- Render messages */
 	
 	let messages: JSX.Element[] | JSX.Element = [];
-
-	
-	const [showOverlay, setShowOverlay] = useState<boolean>(false);
-
-	const handleShowOverlay = (show: boolean): void => {
-		setShowOverlay(show);
-	}
 
 	if (chat.messages.length > 0) {
 		messages = chat.messages.map((message, index, array) => {
@@ -751,15 +768,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}
 
-
-	const onTouchEnd = (e) => {
-		e.preventDefault();
-
-		handleShowOverlay(false);
-
-	}
-
-
 	return (
 		<div className={styles.wrapper}>
 			{showOverlay && <div onTouchEnd={onTouchEnd} className={styles.overlay}></div>}
@@ -895,11 +903,6 @@ const displayDateSeparator = (current: Date, previous: Date): {
 // Handle scrolling down
 const scrollDown = (element: React.RefObject<HTMLDivElement>): void => {
 	element.current!.scrollTop = element.current!.scrollHeight;
-};
-
-// Handle "Copy Text" in context menu
-const handleCopyText = (messageText: string): void => {
-	navigator.clipboard.writeText(messageText);
 };
 
 // Handle send by websocket
