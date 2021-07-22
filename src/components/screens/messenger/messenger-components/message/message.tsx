@@ -11,7 +11,7 @@ import styles from "./message.module.css";
 import ContextMenu, { ContextMenuItem } from "../../../../common/context-menu";
 
 // Types
-import { IsForwarded } from "../../../../../redux/chat/types";
+import { Participant } from "../../../../../redux/chat/types";
 
 interface MessageProps {
 	messageText: string;
@@ -26,7 +26,12 @@ interface MessageProps {
 	isDeleteMessageVisible: boolean;
 	isSelectedToForward: boolean;
 
-	isForwarded: IsForwarded;
+	isForwarded: boolean;
+	repliedToMessage?: {
+		senderName: string;
+		messageText: string;
+	};
+	sender?: Participant;
 
 	onClick: () => void;
 	handleCopyText: () => void;
@@ -48,6 +53,8 @@ const Message: React.FC<MessageProps> = (props) => {
 		isDeleteMessageVisible,
 		isSelectedToForward,
 		isForwarded,
+		repliedToMessage,
+		sender,
 		onClick,
 		handleCopyText,
 		handleDeleteMessage,
@@ -237,27 +244,26 @@ const Message: React.FC<MessageProps> = (props) => {
 						transform: `translate(${offset}px)`,
 					}}
 				>
-					{isForwarded?.isForwarded &&
-						isForwarded.style === "SINGLE" && (
+
+					{
+						repliedToMessage &&	(
 							<div className={styles.singleForwarded}>
-								<div>{isForwarded.message?.senderName}</div>
-								<div>{isForwarded.message?.text}</div>
+								<div>{repliedToMessage.senderName}</div>
+								<div>{repliedToMessage.messageText}</div>
 							</div>
-						)}
+						)
+					}
 
-					{isForwarded?.isForwarded &&
-						isForwarded.style === "MULTIPLE" && (
+
+					{
+						isForwarded && (
 							<div className={styles.styleForwarded}>
-								Forwarded from {isForwarded.message?.senderName}
+								Forwarded from {sender?.givenName}
 							</div>
-						)}
+						)
+					}
 
-					<div>
-						{isForwarded?.isForwarded &&
-						isForwarded.style === "MULTIPLE"
-							? isForwarded.message?.text
-							: messageText}
-					</div>
+					<div>{messageText}</div>
 
 					<div className={styles.messageMeta}>
 						<span>{isEdited ? "edited" : ""}</span>

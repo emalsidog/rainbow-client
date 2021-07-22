@@ -29,8 +29,9 @@ import ThreeDots from "../../../../common/spinners/three-dots";
 import {
 	Chat,
 	ChatProcesses,
-	IsForwarded,
 	Message as MessageType,
+	ForwardMessagePayload,
+	Participant
 } from "../../../../../redux/chat/types";
 import { TextAreaOptions } from "../../../../common/textarea/textarea";
 import { formatDate } from "../../../../utils/format-date";
@@ -191,6 +192,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				sender: currentUserId,
 				chatId: chat.chatId,
 				messageId: uuidv4(),
+				isForwarded: false,
 			},
 			recipients: getParticipants(),
 		};
@@ -352,32 +354,58 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	const sendForwardedMessage = (): void => {
 		if (textareaOptions.value.trim().length <= 0) return;
 
-		let messagesToForward: MessageType[] = [];
+		const message: MessageType = {
+			text: textareaOptions.value.trim(),
+			time: new Date(),
+			sender: currentUserId,
+			chatId: chat.chatId,
+			isForwarded: false,
+			messageId: uuidv4(),
+		}
+
+		let payload: ForwardMessagePayload;
 
 		if (messageToForward) {
-			messagesToForward = [messageToForward];
+			payload = {
+				type: "SINGLE_FORWARDED",
+				message: {
+					...message,
+					repliedToMessage: messageToForward,
+				}
+			}
+
+			dispatch(forwardMessageRequest(payload));
+			sendByWS("FORWARD_MESSAGE", { ...payload, recipients: getParticipants() });
 		}
 
 		if (selectedMessages.length > 0) {
-			messagesToForward = chat.messages.filter(message =>
+
+			const populatedMessages = chat.messages.filter(message =>
 				selectedMessages.includes(message.messageId)
 			);
+
+			const forwardedMessages: MessageType[] = populatedMessages.map(message => {
+				return {
+					text: message.text,
+					time: new Date(),
+					sender: currentUserId,
+					chatId: chat.chatId,
+					messageId: uuidv4(),
+					isForwarded: true,	
+				}
+			})
+
+			payload = {
+				type: "MULTIPLE_FORWARDED",
+				messages: [message, ...forwardedMessages],
+				meta: {
+					chatId: chat.chatId
+				}
+			}
+
+			dispatch(forwardMessageRequest(payload));
+			sendByWS("FORWARD_MESSAGE", { ...payload, recipients: getParticipants() });
 		}
-
-		const payload = {
-			message: {
-				text: textareaOptions.value.trim(),
-				time: new Date(),
-				sender: currentUserId,
-				chatId: chat.chatId,
-				messageId: uuidv4(),
-				repliedToMessages: messagesToForward,
-			},
-			recipients: getParticipants(),
-		};
-
-		sendByWS("FORWARD_MESSAGE", payload);
-		dispatch(forwardMessageRequest(payload.message));
 
 		setTextareaOptions(prev => ({ ...prev, rows: 1,	value: "" }));
 		textAreaRef.current?.focus();
@@ -544,77 +572,14 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	/* ------- End of render interlocutor data. */
 
 	/* ------- Render messages */
-	let messagesToRender: {
-		message: MessageType;
-		isForwarded: IsForwarded;
-	}[] = [];
-
-	for (let i = 0; i < chat.messages.length; i++) {
-		let currentMessage = chat.messages[i]
-
-		const allParticipants = [chat.creator, ...chat.participants];
-		
-		if (currentMessage.repliedToMessages && currentMessage.repliedToMessages.length === 1) {
-			const replied = currentMessage.repliedToMessages[0];
-			const populatedSender = allParticipants.find(participant => participant._id === replied.sender);
-			
-			messagesToRender.push({ 
-				message: currentMessage, 
-				isForwarded: {
-					isForwarded: true,
-					style: "SINGLE",
-					message: {
-						text: replied.text,
-						senderName: populatedSender!.givenName,
-						senderId: populatedSender!._id
-					}
-				},
-			});
-		} else if (currentMessage.repliedToMessages && currentMessage.repliedToMessages.length > 1) {
-			messagesToRender.push({ 
-				message: currentMessage, 
-				isForwarded: {
-					isForwarded: false,
-					style: "NONE",
-				} 
-			});
-			
-			currentMessage.repliedToMessages.forEach(message => {
-				const populatedSender = allParticipants.find(participant => participant._id === message.sender);
-
-				messagesToRender.push({ 
-					message, 
-					isForwarded: {
-						isForwarded: true,
-						style: "MULTIPLE",
-						message: {
-							text: message.text,
-							senderName: populatedSender!.givenName,
-							senderId: populatedSender!._id
-						}
-					},
-				});
-			});
-		} else {
-			messagesToRender.push({ 
-				message: currentMessage, 
-				isForwarded: {
-					isForwarded: false,
-					style: "NONE",
-				} 
-			});
-		}
-	}
-
+	
 	let messages: JSX.Element[] | JSX.Element = [];
 
-	if (messagesToRender.length > 0) {
-		messages = messagesToRender.map((item, index, array) => {
-			const { isForwarded, message } = item;
+	if (chat.messages.length > 0) {
+		messages = chat.messages.map((message, index, array) => {
+			const { messageId, text, time, sender, isEdited, timeEdited, repliedToMessage, isForwarded } = message;
 
-			const { messageId, text, time, sender, isEdited, timeEdited } =	message;
-
-			const { displaySeparator, date } = displayDateSeparator(message.time, array[index - 1]?.message.time);
+			const { displaySeparator, date } = displayDateSeparator(message.time, array[index - 1]?.time);
 
 			let isSelected: boolean = false;
 			if (isSelecting) {
@@ -626,6 +591,23 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				isSelectedToForward = true;
 			}
 
+			const allParticipants = [chat.creator, ...chat.participants];
+
+			let transformedRepliedMessage;
+			if (repliedToMessage) {
+				const populatedSender = allParticipants.find(participant => participant._id === repliedToMessage.sender);
+
+				transformedRepliedMessage = {
+					messageText: repliedToMessage.text,
+					senderName: populatedSender?.givenName
+				}
+
+			}
+
+			let populatedSender: Participant | undefined;
+			if (isForwarded) {
+				populatedSender = allParticipants.find(participant => participant._id === message.sender);
+			}
 
 			const methods = {
 				onClick: () => onMessageClick(messageId),
@@ -640,12 +622,16 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				messageText: text,
 				isRightAligned: sender === currentUserId,
 				messageDate: time,
-				isEdited: isEdited,
-				timeEdited: timeEdited,
-				isSelected: isSelected,
+				isEdited,
+				timeEdited,
+				isSelected,
 				isInSelectingMode: isSelecting,
-				isDeleteMessageVisible: isDeleteMessageVisible,
-				isSelectedToForward: isSelectedToForward,
+				isDeleteMessageVisible,
+				isSelectedToForward,
+
+				repliedToMessage: transformedRepliedMessage,
+				isForwarded,
+				sender: isForwarded ? populatedSender : undefined
 			}
 
 			if (displaySeparator) {
@@ -655,7 +641,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 							{formatDate(date, "REGULAR")}
 						</div>
 						<Message
-							isForwarded={isForwarded}
 							{ ...props }
 							{ ...methods }
 						/>
@@ -666,7 +651,6 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			return (
 				<Message
 					key={messageId}
-					isForwarded={isForwarded}
 					{ ...props }
 					{ ...methods }
 				/>

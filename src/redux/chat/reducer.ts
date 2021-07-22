@@ -162,12 +162,39 @@ export const chats = (
 
 		// FORWARD MESSAGE
 		case "FORWARD_MESSAGE_REQUEST": {
-			const { message } = action;
-			const newChats = addMessage(state.chats, message);
+			if (action.payload.type === "SINGLE_FORWARDED") {
+				const { message } = action.payload;
+
+				const newChats = addMessage(state.chats, message);
+
+				return {
+					...state,
+					chats: newChats,
+				}
+			}
+
+			if (action.payload.type === "MULTIPLE_FORWARDED") {
+				const { messages, meta } = action.payload;
+
+
+				const newChats = state.chats.map((chat) => {
+					if (chat.chatId === meta.chatId) {
+						return {
+							...chat,
+							messages: [...chat.messages, ...messages],
+						};
+					}
+					return chat;
+				});
+
+				return {
+					...state,
+					chats: newChats
+				}
+			}
 
 			return {
 				...state,
-				chats: newChats,
 			}
 		}
 		case "FORWARD_MESSAGE_SUCCESS": {
@@ -181,12 +208,39 @@ export const chats = (
 			}
 		}
 		case "FORWARD_MESSAGE_WS": {
-			const { message } = action;
-			const newChats = addMessage(state.chats, message);
+			if (action.payload.type === "SINGLE_FORWARDED") {
+				const { message } = action.payload;
+
+				const newChats = addMessage(state.chats, message);
+
+				return {
+					...state,
+					chats: newChats,
+				}
+			}
+
+			if (action.payload.type === "MULTIPLE_FORWARDED") {
+				const { messages, meta } = action.payload;
+
+
+				const newChats = state.chats.map((chat) => {
+					if (chat.chatId === meta.chatId) {
+						return {
+							...chat,
+							messages: [...chat.messages, ...messages],
+						};
+					}
+					return chat;
+				});
+
+				return {
+					...state,
+					chats: newChats
+				}
+			}
 
 			return {
 				...state,
-				chats: newChats
 			}
 		}
 

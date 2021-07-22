@@ -4,6 +4,7 @@ import {
 	ChatActionTypes,
 	DeleteMessagePayload,
 	EditMessagePayload,
+	ForwardMessagePayload,
 	Message,
 } from "./types";
 
@@ -50,9 +51,9 @@ export const editMessage = (payload: EditMessagePayload): ChatActionTypes => ({
 });
 
 // Forward Message
-export const forwardMessageRequest = (message: Message): ChatActionTypes => ({
+export const forwardMessageRequest = (payload: ForwardMessagePayload): ChatActionTypes => ({
 	type: "FORWARD_MESSAGE_REQUEST",
-	message,
+	payload,
 });
 
 export const forwardMessageSuccess = (): ChatActionTypes => ({
@@ -63,9 +64,9 @@ export const forwardMessageFailure = (): ChatActionTypes => ({
 	type: "FORWARD_MESSAGE_FAILURE",
 });
 
-export const forwardMessageWS = (message: Message): ChatActionTypes => ({
+export const forwardMessageWS = (payload: ForwardMessagePayload): ChatActionTypes => ({
 	type: "FORWARD_MESSAGE_WS",
-	message,
+	payload,
 });
 
 // Create chat

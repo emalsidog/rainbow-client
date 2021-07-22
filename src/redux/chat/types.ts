@@ -55,19 +55,12 @@ export interface Message {
 	sender: string;
 	chatId: string;
 	messageId: string;
+
 	isEdited?: boolean;
 	timeEdited?: Date;
-	repliedToMessages?: Message[];
-}
 
-export interface IsForwarded {
-	isForwarded: boolean;
-	style: "SINGLE" | "MULTIPLE" | "NONE";
-	message?: {
-		text: string,
-		senderName: string;
-		senderId: string;
-	},
+	repliedToMessage?: Message;
+	isForwarded: boolean; 
 }
 
 // GET CHATS
@@ -143,9 +136,24 @@ export interface EditMessageWS {
 }
 
 // FORWARD MESSAGE
+interface SingleForwarded {
+	type: "SINGLE_FORWARDED";
+	message: Message;
+}
+
+interface MultipleForwarded {
+	type: "MULTIPLE_FORWARDED";
+	messages: Message[];
+	meta: {
+		chatId: string;
+	}
+}
+
+export type ForwardMessagePayload = SingleForwarded | MultipleForwarded;
+
 export interface ForwardMessageRequest {
 	type: typeof FORWARD_MESSAGE_REQUEST;
-	message: Message;
+	payload: ForwardMessagePayload;
 }
 
 export interface ForwardMessageSuccess {
@@ -158,7 +166,7 @@ export interface ForwardMessageFailure {
 
 export interface ForwardMessageWS {
 	type: typeof FORWARD_MESSAGE_WS;
-	message: Message;
+	payload: ForwardMessagePayload;
 }
 
 // Create chat
