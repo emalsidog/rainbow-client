@@ -38,7 +38,9 @@ interface MessageProps {
 	handleDeleteMessage: () => void;
 	handleEditMessage: () => void;
 	handleSelectMessage: () => void;
-	handleForwardMessage: () => void;
+	handleForwardMessage: () => void;	
+
+	handleShowOverlay: (show: boolean) => void;
 }
 
 const Message: React.FC<MessageProps> = (props) => {
@@ -61,6 +63,7 @@ const Message: React.FC<MessageProps> = (props) => {
 		handleEditMessage,
 		handleSelectMessage,
 		handleForwardMessage,
+		handleShowOverlay
 	} = props;
 
 	const outerRef = useRef<HTMLDivElement | null>(null);
@@ -83,7 +86,6 @@ const Message: React.FC<MessageProps> = (props) => {
 	const [index, setIndex] = useState<boolean>(false);
 
 	const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-
 		setIndex(false);
 
 		touchStart.current = {
@@ -152,6 +154,7 @@ const Message: React.FC<MessageProps> = (props) => {
 		) {
 			if (!isInSelectingMode) {
 				setIndex(true);
+				handleShowOverlay(true);
 			} else {
 				handleSelectMessage();
 			}
@@ -175,76 +178,6 @@ const Message: React.FC<MessageProps> = (props) => {
 		}
 
 	}
-
-	// const onTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
-	// 	if (isInSelectingMode) return handleSelectMessage();
-
-	// 	touchStart.current = {
-	// 		x: e.changedTouches[0].clientX,
-	// 		y: e.changedTouches[0].clientY,
-	// 	};
-	// 	touchPosition.current = {
-	// 		x: touchStart.current.x,
-	// 		y: touchStart.current.y,
-	// 	};
-
-	// 	const intervalId = window.setInterval(() => {
-	// 		const difference: number =
-	// 			touchPosition.current.x - touchStart.current.x;
-
-
-	// 		if (difference > 0) return;
-
-	// 		if (difference > -75) {
-	// 			setOffset(difference);
-	// 		}
-	// 	}, 10);
-
-	// 	setIntervalId(intervalId);
-
-	// 	const id = window.setTimeout(() => {
-	// 		const isXEqual: boolean =
-	// 			touchPosition.current.x === touchStart.current.x;
-	// 		const isYEqual: boolean =
-	// 			touchPosition.current.y === touchStart.current.y;
-
-	// 		if (isXEqual && isYEqual) {
-	// 			handleSelectMessage();
-	// 		}
-	// 	}, 700);
-
-	// 	setTimerId(id);
-	// };
-
-	// const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-	// 	touchPosition.current = {
-	// 		x: e.changedTouches[0].clientX,
-	// 		y: e.changedTouches[0].clientY,
-	// 	};
-	// };
-
-	// const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>): void => {
-	// 	e.preventDefault();
-
-	// 	timerId && clearTimeout(timerId);
-	// 	intervalId && clearInterval(intervalId);
-	// 	setOffset(0);
-
-	// 	if (isInSelectingMode) return;
-
-	// 	const sensitivity = 50;
-
-	// 	const x = touchStart.current!.x - touchPosition.current!.x;
-	// 	const y = touchStart.current!.y - touchPosition.current!.y;
-
-	// 	if (Math.abs(x) > Math.abs(y)) {
-	// 		if (Math.abs(x) > sensitivity) {
-	// 			if (x > 0) {
-	// 				handleForwardMessage();
-	// 			}
-	// 		}
-	// 	}
-	// };
 
 	return (
 		<React.Fragment>

@@ -575,6 +575,13 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 	
 	let messages: JSX.Element[] | JSX.Element = [];
 
+	
+	const [showOverlay, setShowOverlay] = useState<boolean>(false);
+
+	const handleShowOverlay = (show: boolean): void => {
+		setShowOverlay(show);
+	}
+
 	if (chat.messages.length > 0) {
 		messages = chat.messages.map((message, index, array) => {
 			const { messageId, text, time, sender, isEdited, timeEdited, repliedToMessage, isForwarded } = message;
@@ -616,9 +623,11 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 				handleEditMessage: () => handleEditMessage(messageId),
 				handleSelectMessage: () => handleSelectMessage(messageId),
 				handleForwardMessage: () => handleForwardMessage(messageId),
+
+				handleShowOverlay
 			}
 
-			const props = {
+			const properties = {
 				messageText: text,
 				isRightAligned: sender === currentUserId,
 				messageDate: time,
@@ -641,7 +650,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 							{formatDate(date, "REGULAR")}
 						</div>
 						<Message
-							{ ...props }
+							{ ...properties }
 							{ ...methods }
 						/>
 					</React.Fragment>
@@ -651,7 +660,7 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 			return (
 				<Message
 					key={messageId}
-					{ ...props }
+					{ ...properties }
 					{ ...methods }
 				/>
 			);
@@ -742,8 +751,18 @@ const DisplayChat: React.FC<DisplayChatProps> = (props) => {
 		}
 	}
 
+
+	const onTouchEnd = (e) => {
+		e.preventDefault();
+
+		handleShowOverlay(false);
+
+	}
+
+
 	return (
 		<div className={styles.wrapper}>
+			{showOverlay && <div onTouchEnd={onTouchEnd} className={styles.overlay}></div>}
 			<div className={styles.header}>
 				<div className={styles.backButton}>
 					<button onClick={onGoBack} className="btn-transperent">

@@ -189,6 +189,13 @@
 	margin-right: 10px;
 }
 
+.overlay {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	z-index: 11;
+}
+
 @media (min-width: 850px) {
 	.backButton {
 		display: none;

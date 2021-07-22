@@ -24,10 +24,13 @@ export const useContextMenu = (outerRef) => {
 		showMenu && setShowMenu(false);
 	}, [showMenu]);
 
-	const handleTouchStart = useCallback(() => {}, []);
+	const handleTouchStart = useCallback(() => {
+
+	}, []);
 
 	const handleTouchEnd = useCallback(
 		(e): void => {
+
 			if (!showMenu && outerRef && outerRef.current.contains(e.target)) {
 				setShowMenu(true);
 				setXPos(e.changedTouches[0].clientX);
