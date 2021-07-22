@@ -69,74 +69,96 @@ const Message: React.FC<MessageProps> = (props) => {
 		isSelected ? styles.selected : ""
 	} ${isSelectedToForward ? styles.forwardAnim : ""}`;
 
-	const [timerId, setTimerId] = useState<number>(0);
+	const [longPressTimeout, setLongPressTimeout] = useState<number>(0);
 	const [intervalId, setIntervalId] = useState<number>(0);
 
 	const [offset, setOffset] = useState<number>(0);
 
+
 	const touchStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 	const touchPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-	const index = useRef<boolean>(true);
+	const time = useRef<number>(0);
 
-	const onTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
-		if (isInSelectingMode) return handleSelectMessage();
+	const [index, setIndex] = useState<boolean>(false);
 
-		index.current = true;
+	const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+
+		setIndex(false);
 
 		touchStart.current = {
 			x: e.changedTouches[0].clientX,
 			y: e.changedTouches[0].clientY,
 		};
-		touchPosition.current = {
-			x: touchStart.current.x,
-			y: touchStart.current.y,
-		};
 
-		const intervalId = window.setInterval(() => {
-			const difference: number =
-				touchPosition.current.x - touchStart.current.x;
-			index.current = false;
-
-			if (difference > 0) return;
-
-			if (difference > -150) {
-				setOffset(difference);
-			}
-		}, 10);
-
-		setIntervalId(intervalId);
-
-		const id = window.setTimeout(() => {
-			index.current = false;
-
-			const isXEqual: boolean =
-				touchPosition.current.x === touchStart.current.x;
-			const isYEqual: boolean =
-				touchPosition.current.y === touchStart.current.y;
-
-			if (isXEqual && isYEqual) {
-				handleSelectMessage();
-			}
-		}, 700);
-
-		setTimerId(id);
-	};
-
-	const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
 		touchPosition.current = {
 			x: e.changedTouches[0].clientX,
 			y: e.changedTouches[0].clientY,
 		};
-	};
+		
+		if (e.touches.length < 2) {
+			time.current = new Date().getTime();
 
-	const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>): void => {
+			let timerId: number = window.setTimeout(() => {
+				handleSelectMessage();
+			}, 800);
+
+			setLongPressTimeout(timerId);
+
+			const intervalId = window.setInterval(() => {
+				const difference: number =
+					touchPosition.current.x - touchStart.current.x;
+
+
+				if (difference > 0) return;
+
+				if (difference > -75) {
+					setOffset(difference);
+				}
+			}, 10);
+
+			setIntervalId(intervalId);
+		}
+
+	}
+
+	const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+		clearTimeout(longPressTimeout);
+
+		touchPosition.current = {
+			x: e.changedTouches[0].clientX,
+			y: e.changedTouches[0].clientY,
+		};
+	}
+
+	const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
 		e.preventDefault();
 
-		timerId && clearTimeout(timerId);
-		intervalId && clearInterval(intervalId);
+		clearTimeout(longPressTimeout);
+		clearInterval(intervalId);
 		setOffset(0);
 
+		let timestamp: number = new Date().getTime();
+
+
+
+		const differenceX = touchPosition.current.x - touchStart.current.x;
+		const differenceY = touchPosition.current.y - touchStart.current.y;
+
+		if (
+			timestamp - time.current < 500 
+			&& differenceX === 0 
+			&& differenceY === 0
+		) {
+			if (!isInSelectingMode) {
+				setIndex(true);
+			} else {
+				handleSelectMessage();
+			}
+		}
+
+
+		
 		if (isInSelectingMode) return;
 
 		const sensitivity = 50;
@@ -151,12 +173,82 @@ const Message: React.FC<MessageProps> = (props) => {
 				}
 			}
 		}
-	};
+
+	}
+
+	// const onTouchStart = (e: React.TouchEvent<HTMLDivElement>): void => {
+	// 	if (isInSelectingMode) return handleSelectMessage();
+
+	// 	touchStart.current = {
+	// 		x: e.changedTouches[0].clientX,
+	// 		y: e.changedTouches[0].clientY,
+	// 	};
+	// 	touchPosition.current = {
+	// 		x: touchStart.current.x,
+	// 		y: touchStart.current.y,
+	// 	};
+
+	// 	const intervalId = window.setInterval(() => {
+	// 		const difference: number =
+	// 			touchPosition.current.x - touchStart.current.x;
+
+
+	// 		if (difference > 0) return;
+
+	// 		if (difference > -75) {
+	// 			setOffset(difference);
+	// 		}
+	// 	}, 10);
+
+	// 	setIntervalId(intervalId);
+
+	// 	const id = window.setTimeout(() => {
+	// 		const isXEqual: boolean =
+	// 			touchPosition.current.x === touchStart.current.x;
+	// 		const isYEqual: boolean =
+	// 			touchPosition.current.y === touchStart.current.y;
+
+	// 		if (isXEqual && isYEqual) {
+	// 			handleSelectMessage();
+	// 		}
+	// 	}, 700);
+
+	// 	setTimerId(id);
+	// };
+
+	// const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+	// 	touchPosition.current = {
+	// 		x: e.changedTouches[0].clientX,
+	// 		y: e.changedTouches[0].clientY,
+	// 	};
+	// };
+
+	// const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>): void => {
+	// 	e.preventDefault();
+
+	// 	timerId && clearTimeout(timerId);
+	// 	intervalId && clearInterval(intervalId);
+	// 	setOffset(0);
+
+	// 	if (isInSelectingMode) return;
+
+	// 	const sensitivity = 50;
+
+	// 	const x = touchStart.current!.x - touchPosition.current!.x;
+	// 	const y = touchStart.current!.y - touchPosition.current!.y;
+
+	// 	if (Math.abs(x) > Math.abs(y)) {
+	// 		if (Math.abs(x) > sensitivity) {
+	// 			if (x > 0) {
+	// 				handleForwardMessage();
+	// 			}
+	// 		}
+	// 	}
+	// };
 
 	return (
 		<React.Fragment>
-			{index.current && (
-				<ContextMenu outerRef={outerRef}>
+			<ContextMenu outerRef={outerRef} additionalShowFlag={index}>
 					{!isSelected && (
 						<ContextMenuItem onClick={handleCopyText}>
 							<div>
@@ -220,7 +312,6 @@ const Message: React.FC<MessageProps> = (props) => {
 							</ContextMenuItem>
 						)}
 				</ContextMenu>
-			)}
 			<div
 				className={classNames}
 				onClick={onClick}

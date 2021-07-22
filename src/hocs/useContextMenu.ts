@@ -24,11 +24,11 @@ export const useContextMenu = (outerRef) => {
 		showMenu && setShowMenu(false);
 	}, [showMenu]);
 
-	const handleTouchStart = useCallback(() => {}, [])
+	const handleTouchStart = useCallback(() => {}, []);
 
 	const handleTouchEnd = useCallback(
 		(e): void => {
-			if (outerRef && outerRef.current.contains(e.target)) {
+			if (!showMenu && outerRef && outerRef.current.contains(e.target)) {
 				setShowMenu(true);
 				setXPos(e.changedTouches[0].clientX);
 				setYPos(e.changedTouches[0].clientY);
@@ -36,7 +36,7 @@ export const useContextMenu = (outerRef) => {
 				setShowMenu(false);
 			}
 		},
-		[outerRef]
+		[outerRef, showMenu]
 	);
 
 	useEffect(() => {

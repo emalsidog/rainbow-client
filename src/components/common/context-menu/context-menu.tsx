@@ -12,6 +12,7 @@ import styles from "./context-menu.module.css";
 interface ContextMenuProps {
 	children?: React.ReactNode;
 	outerRef: React.ReactNode | null;
+	additionalShowFlag?: boolean;
 }
 
 interface ContextMenuItemProps {
@@ -20,7 +21,7 @@ interface ContextMenuItemProps {
 	onClick?: () => void;
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({ children, outerRef }) => {
+const ContextMenu: React.FC<ContextMenuProps> = ({ children, outerRef, additionalShowFlag = true }) => {
 	const { xPos, yPos, showMenu } = useContextMenu(outerRef);
 
 	const { width, height } = useWindowSize();
@@ -41,7 +42,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ children, outerRef }) => {
 		top = yPos;
 	}
 
-	if (showMenu) {
+	if (showMenu && additionalShowFlag) {
 		return (
 			<div
 				style={{
